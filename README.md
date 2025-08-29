@@ -38,6 +38,6 @@ Discuss what you need to develop this project. This includes background informat
 <div align="center">
 
 [//]: # (Replace with your collaborators)
-[Ian Tyler Applebaum](https://github.com/ApplebaumIan) • [Kyle Dragon Lee](https://github.com/leekd99) • [Tam Trang](https://github.com/HolyGodEze) • [Michael Colbert](https://github.com/colbert95)
+[Ian Tyler Applebaum](https://github.com/ApplebaumIan) • [Kyle Dragon Lee](https://github.com/leekd99) • [Tam Trang](https://github.com/HolyGodEze) • [Michael Colbert](https://github.com/colbert95) • [Jessica Hutchison](https://github.com/jesshutchison)
 
 </div>
