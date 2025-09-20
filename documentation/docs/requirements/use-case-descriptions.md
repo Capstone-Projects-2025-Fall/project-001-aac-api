@@ -6,23 +6,119 @@ sidebar_position: 5
 
 ### Use Case 1 - Voice Recognition
 
-Suzy is a child whose main form of communication is her AAC device. She opens a supported game, taps the in-game microphone icon, and says “start.” The API detects adequate mic level, converts the response to a Start Game command, and the game begins. If confidence is low, Suzy sees a prompt like “Could you say that again?” before the game starts.
+Actor: Suzy (player / AAC device user)
+
+Triggering event: Suzy opens a supported game and taps the in-game microphone icon (or activates mic).
+
+Preconditions: Game is running and in a state that accepts the Start command; microphone access is granted; network (if required) is available.
+
+Normal flow (happy path):
+    1. Suzy taps the microphone icon.
+    2. System checks microphone level and readiness.
+    3. System begins listening and records the utterance.
+    4. ASR (speech→text) transcribes the audio.
+    5. The transcribed text is normalized and matched to the command set; the text maps to the StartGame command.
+    6. If the command confidence is high, the API sends the StartGame command to the game.
+    7. The game changes to the playing state and the UI shows confirmation (visual cue like “Game started”).
+    8. The event is logged in command history.
+
+Alternate flows / exceptions:
+    1. Low mic level: show prompt “Please increase mic volume / move closer to the device” 
+    2. Low confidence: show prompt “Could you say that again?” → re-listen one retry; if still low, show “Try again later” or offer manual control.
+    3. Network error: show “Unable to process voice now” and fallback to manual start.
+
+Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 
 ### Use Case 2 - Filter Out Filler Words
 
-During play, Suzy says, “uh  jump now.” The API removes filler/ non command words “uh,” “now”, recognizes JUMP, and triggers the jump action without delay.
+Actor: Suzy (player)
+
+Triggering event: Suzy speaks while playing, e.g., “uh jump now.”
+
+Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
+
+Normal flow:
+    1. The system captures Suzy’s voice.
+    2. ASR transcribes the audio into text (e.g., “uh jump now”).
+    3. The pipeline runs a filler-word filter and removes tokens like “uh”, “um”, “now”.
+    4. Remaining tokens are tokenized and mapped to command(s) (e.g., “jump” → Jump).
+    5. If mapping confidence is high, the API issues the Jump action to the game immediately.
+    6. UI gives immediate feedback (visual cue + animation) and logs the command.
+
+Alternate flows / exceptions:
+    1. Filter removes all meaningful words (e.g., utterance was “uh now”): ask the player to repeat.
+    2. Multiple possible commands: request quick confirmation (“Did you mean JUMP?”) or choose highest-confidence and log uncertainty.
+    3. Low confidence: prompt for repeat.
+
+Postconditions: Jump action executed (or user prompted to repeat); command history updated.
 
 ### Use Case 3 - Speaker Seperation
 
-Suzy and her dad speak near the device. When Suzy says “pause,” the API uses speakerseparation to prefer the enrolled player stream and issues PauseGame, ignoring overlapping non-player chatter. If uncertainty remains, the API requests a quick confirmation.
+Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
+
+Triggering event: Suzy speaks a command while other people speak at the same time.
+
+Preconditions: Enrolled player voice profile exists; speaker-separation model is enabled.
+
+Normal flow:
+    1. System captures mixed audio with multiple speakers.
+    2. The speaker-separation model isolates the enrolled player’s audio stream (prefer enrolled stream).
+    3. ASR runs on the isolated player stream and transcribes the utterance.
+    4. Transcription is normalized and mapped to a game command (e.g., PauseGame).
+    5. If confidence is high, API sends PauseGame to the game; UI confirms action.
+    6. Log command and speaker attribution.
+
+Alternate flows / exceptions:
+    1. No enrolled profile available
+    2. Separation uncertain / low confidence: show a quick confirmation prompt (“Did you say ‘pause’?”). If the player confirms, proceed; otherwise ignore.
+    3. Overlapping identical words from multiple speakers: use confidence + enrolled preference; if unresolved, request confirmation.
+
+Postconditions: Game paused (if confirmed); system records speaker attribution and confidence.
 
 ### Use Case 4 - Background Noise Filtering
 
-Suzy’s sibling is talking in the background and a TV is on. Suzy says “left.” The API’s noise filtering suppresses TV chatter, isolates Suzy’s voice, and sends MoveLeft. If noise overwhelms the signal, the API asks for a repeat.
+Actor: Suzy (player)
+
+Triggering event: Suzy issues a command in a noisy environment (e.g., TV).
+
+Preconditions: Noise-robust ASR / denoising pipeline active; microphone picks up signal.
+
+Normal flow:
+    1. System captures the noisy audio.
+    2. Noise suppression/denoising module processes the audio to reduce background interference.
+    3. ASR transcribes the cleaned audio.
+    4. Transcription is matched to a command (e.g., “left” → MoveLeft).
+    5. If confidence is high, API sends MoveLeft to the game and UI shows visual confirmation.
+    6. Command and environment metadata (noise level) are logged.
+
+Alternate flows / exceptions:
+    1. Noise overwhelms voice: prompt the user to repeat or show a “can’t hear” note.
+    2. Misrecognized phrase due to residual noise: if confidence low, ask for repeat or confirmation.
+    3. Adaptive fallback: optionally switch to a push-to-talk or require closer mic.
+
+Postconditions: Movement executed (or prompt shown); noise metrics recorded for debugging.
 
 ### Use Case 5 - Interpret Synonyms of Commands
 
-Suzy says “go” instead of “move,” and later “hop” instead of “jump.” The API maps recognized synonyms to the fix command set (Move, Jump) defined for the game and executes the correct actions.
+Actor: Suzy (player); Developer (configures mapping)
+
+Triggering event: Suzy uses a synonym (e.g., “go” for Move, “hop” for Jump).
+
+Preconditions: Synonym mapping table exists (configured by developer or default set); ASR and command mapper active.
+
+Normal flow:
+    1. System captures the utterance and ASR produces text (e.g., “hop”).
+    2. The command-mapping module looks up the token in the synonym table.
+    3. “hop” is mapped to canonical command Jump.
+    4. If confidence is high, API issues Jump to the game.
+    5. Provide visual confirmation and log synonym used and mapping confidence.
+
+Alternate flows / exceptions:
+    1. Unknown synonym: present developer UI option to register this phrase as a synonym, or prompt the player: “Did you mean JUMP?”
+    2. Multiple possible canonical matches: prompt for confirmation or use highest confidence mapping.
+    3. Developer disabled synonym mapping: treat unknown words as unrecognized and prompt to repeat or register command.
+
+Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
 ### Use Case 6 - Support Commmon Game Inputs
 
