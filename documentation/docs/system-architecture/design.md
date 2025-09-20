@@ -24,4 +24,4 @@ Entity-relation diagram.
 
 Table design.
 
-A check list for architecture design is attached here [architecture\_design\_checklist.pdf](https://templeu.instructure.com/courses/106563/files/16928870/download?wrap=1 "architecture_design_checklist.pdf")  and should be used as a guidance.
+A check list for architecture design is attached here [architecture_design_checklist.pdf](https://templeu.instructure.com/courses/106563/files/16928870/download?wrap=1 'architecture_design_checklist.pdf')  and should be used as a guidance.
