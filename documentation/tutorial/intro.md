@@ -15,9 +15,11 @@ If you haven't set up the template yet, here's how to get started:
 You have several options to get the template:
 
 #### Option A: GitHub Classroom (For CIS 4398 and 3296 Students)
+
 If you're working on a class assignment, use the GitHub Classroom link provided by your instructor. This will automatically create your repository with the correct permissions and settings.
 
 #### Option B: Use as Template (For Personal Projects)
+
 1. Go to the [template repository](https://github.com/ApplebaumIan/tu-cis-4398-docs-template)
 2. Click the green **"Use this template"** button
 3. Select **"Create a new repository"**
@@ -25,6 +27,7 @@ If you're working on a class assignment, use the GitHub Classroom link provided 
 5. Click **"Create repository from template"**
 
 #### Option C: Quick Start with npx
+
 Create a new project quickly using npx:
 
 ```bash
@@ -78,6 +81,7 @@ Only you can see your Codespace and it's preview URL. To share your work, push c
 If you prefer working locally on your machine:
 
 #### Prerequisites
+
 - [Node.js](https://nodejs.org/en/download/) version 16 or above
 - [Git](https://git-scm.com/downloads) for version control
 

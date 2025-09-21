@@ -21,9 +21,8 @@ sidebar_position: 2
 6. The transcribed text is matched against a user-defined dictionary of game commands.
 
 7. The system returns a JSON response containing:
+   - The chosen game command
 
-    - The chosen game command
-
-    - A confidence level score
+   - A confidence level score
 
 8. The game uses this command to control the character or determine the next move.

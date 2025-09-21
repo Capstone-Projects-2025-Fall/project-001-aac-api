@@ -3,13 +3,14 @@ sidebar_position: 3
 ---
 
 # CalculatorModel.java
+
 (generated using [Javadoc to Markdown](https://delight-im.github.io/Javadoc-to-Markdown/))
 
 ## `public class CalculatorModel`
 
 This is the model of this MVC implementation of a calculator. It performs the functions of the calculator and keeps track of what the user has entered.
 
-* **Author:** Tom Bylander
+- **Author:** Tom Bylander
 
 ## `private double displayValue`
 
@@ -41,7 +42,7 @@ Initializes the instance variables.
 
 ## `public String getValue()`
 
-* **Returns:** the String value of what was just calculated
+- **Returns:** the String value of what was just calculated
 
   or what the user is entering
 
@@ -49,13 +50,13 @@ Initializes the instance variables.
 
 Updates the values maintained by the calculator based on the button that the user has just clicked.
 
-* **Parameters:** `text` — is the name of the button that the user has just clicked
+- **Parameters:** `text` — is the name of the button that the user has just clicked
 
 ## `public double operationAdd(double rhs, double lhs)`
 
 Operation to add two numbers. <pre> operationAdd(3,2); // should equal 5.0 </pre>
 
-* **Parameters:**
-  * `rhs` — `double` representing the right hand side of the operator
-  * `lhs` — `double` representing the left hand side of the operator
-* **Returns:** `double`
+- **Parameters:**
+  - `rhs` — `double` representing the right hand side of the operator
+  - `lhs` — `double` representing the left hand side of the operator
+- **Returns:** `double`

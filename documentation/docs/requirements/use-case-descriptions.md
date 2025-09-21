@@ -130,7 +130,7 @@ Suzy wants to play an AAC game she used last semester. The developer added a sma
 
 ### Use Case 8 - Register New Commands
 
-Steven will also have the ability to register new commands through the API.  This will allow the API to remain flexible to any future games that require more complex commands that are not currently supported.
+Steven will also have the ability to register new commands through the API. This will allow the API to remain flexible to any future games that require more complex commands that are not currently supported.
 
 ### Use Case 9 - Toggle Input History
 
