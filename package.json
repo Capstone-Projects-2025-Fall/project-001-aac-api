@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
-    "format": "prettier --write '**/*.{ts,js,json}'",
+    "format": "prettier --write '**/*.{ts,js,json,md}'",
     "test": "jest"
   },
   "repository": {
