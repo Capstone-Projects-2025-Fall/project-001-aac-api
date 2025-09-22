@@ -12,14 +12,14 @@ sidebar_position: 4
 - The API is able to interpret synonyms of commands as valid inputs.
 - The API should allow game developers to update a list of known game commands.
 - Users will be able to view a toggleable command history, recording all commands voiced by users during the game.
-- Developers will be able to view the confidence levels of voice input conversions
+- Developers will be able to view the confidence levels of voice input conversions.
 - Developers will have the option to assign new commands in the API library.
 
 ## Nonfunctional Requirements
 
 - The API must have a low latency, maximizing game feedback and improving user experience.
 - The API will show a quality indicator to help the user determine their voice’s volume and quality when they are speaking.
-- The API will feature command indicators in the form of visual cues, which caretakers will be able to toggle to increase/reduce in game visual stimuli.  
 - The API must parse voice input from filler/noncommand voice input.
 - The API must distinguish between multiple voice inputs.
 - The API must filter out background noise.
+- The API will feature command indicators in the form of visual cues, which caretakers will be able to toggle to increase/reduce in game visual stimuli.

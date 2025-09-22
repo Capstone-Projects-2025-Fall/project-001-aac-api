@@ -9,6 +9,7 @@ This guide explains how to set the `PROJECT_NAME` and `ORG_NAME` environment var
 ## Why These Variables Are Needed
 
 The contributors component uses these environment variables to:
+
 - Generate the correct GitHub repository URL
 - Display contributor avatars from contrib.rocks
 - Link to your project's contributors page
@@ -180,6 +181,7 @@ yarn start
 ### For GitHub Actions (Production)
 
 The deployment workflow automatically sets these variables using:
+
 - `ORG_NAME`: Extracted from `GITHUB_REPOSITORY` (the part before the `/`)
 - `PROJECT_NAME`: Extracted from `GITHUB_REPOSITORY` (the part after the `/`)
 
@@ -206,6 +208,7 @@ If you see "Contributors Not Available":
 ## Example
 
 For the repository `https://github.com/facebook/docusaurus`:
+
 - `ORG_NAME` should be `facebook`
 - `PROJECT_NAME` should be `docusaurus`
 

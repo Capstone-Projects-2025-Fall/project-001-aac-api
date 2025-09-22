@@ -19,6 +19,7 @@ Your documentation site is configured for **zero-configuration deployment**:
 ### Viewing your deployed site
 
 Your site is automatically available at:
+
 ```
 https://YOUR-USERNAME.github.io/YOUR-REPOSITORY-NAME/
 ```
@@ -33,6 +34,7 @@ You can watch the deployment process:
 4. Click on any run to see detailed logs
 
 The deployment workflow (`deploy.yml`) handles:
+
 - Installing dependencies with `yarn install`
 - Building the site for production
 - Deploying to GitHub Pages using the GitHub Actions bot

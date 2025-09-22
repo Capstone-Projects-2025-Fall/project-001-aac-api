@@ -1,43 +1,35 @@
 <div align="center">
 
-# Project Name
-[![Report Issue on Jira](https://img.shields.io/badge/Report%20Issues-Jira-0052CC?style=flat&logo=jira-software)](https://temple-cis-projects-in-cs.atlassian.net/jira/software/c/projects/DT/issues)
-[![Deploy Docs](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml)
-[![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://applebaumian.github.io/tu-cis-4398-docs-template/)
+# AACcommodate API
 
+[![Report Issue on Jira](https://img.shields.io/badge/Report%20Issues-Jira-0052CC?style=flat&logo=jira-software)](https://temple-cis-projects-in-cs.atlassian.net/jira/software/c/projects/AAC/issues?jql=project%20%3D%20%22AAC%22%20ORDER%20BY%20created%20DESC)
+[![Deploy Docs](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/actions/workflows/deploy.yml)
+[![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://capstone-projects-2025-fall.github.io/project-001-aac-api/docs/requirements/system-overview)
 
 </div>
 
-
-## Keywords
-
-Section #, as well as any words that quickly give your peers insights into the application like programming language, development platform, type of application, etc.
-
 ## Project Abstract
 
-This document proposes a novel application of a text message (SMS or Email) read-out and hands-free call interacted between an Android Smartphone and an infotainment platform (headunit) in a car environment. When a phone receives an SMS or Email, the text message is transferred from the phone to the headunit through a Bluetooth connection. On the headunit, user can control which and when the received SMS or E-mail to be read out through the in-vehicle audio system. The user may press one button on the headunit to activate the hands-free feature to call back the SMS sender.
+This application programming interface (API) supports AAC games. The API allows users to play AAC games like StoryQuest through external AAC board interaction, rather than relying on an embedded AAC board in the game. Users can relay game inputs by either speaking verbally or speaking through the board. The API will enable audio-controlled games, which will promote social and communication skills in children who use AAC devices by enabling AAC users to play games alongside non-AAC users.
 
 ## High Level Requirement
 
-Describe the requirements – i.e., what the product does and how it does it from a user point of view – at a high level.
+The API must convert voice input into game action and be able to define game commands. Users can play previous AAC games using our API. The API must be able to interpret synonyms of commands as valid inputs. The API should allow game developers to update a list of known game commands.
 
 ## Conceptual Design
 
-Describe the initial design concept: Hardware/software architecture, programming language, operating system, etc.
+The proposed solution is a client side Typescript API designed for integration into new or existing web based games for Augmentative and Alternative Communication (AAC) user's. The API leverages standard browser technologies to ensure wide compatibility with most machines. The core audio processing pipeline uses Web Speech API for speech to text. Web Audio API and RNNoise will be used to clean the audio. This process isolates the users AAC device from ambient sound and other voices. The API is structured for reusability. A game developer integrates the library by initializing with a config object. THe object serves as a developer defined dictionary, mapping voice commands (eg "jump") to specific callback functions within the games existing code.
 
 ## Background
 
-The background will contain a more detailed description of the product and a comparison to existing similar projects/products. A literature search should be conducted and the results listed. Proper citation of sources is required. If there are similar open-source products, you should state whether existing source will be used and to what extent. If there are similar closed-source/proprietary products, you should state how the proposed product will be similar and different.
-
-## Required Resources
-
-Discuss what you need to develop this project. This includes background information you will need to acquire, hardware resources, and software resources. If these are not part of the standard Computer Science Department lab resources, these must be identified early and discussed with the instructor.
+Augmentative and Alternate Communication (AAC) devices provide essential communication capabilities for individuals with significant speech impairments resulting from conditions such as Autism Spectrum Disorder, Cerebral Palsy, or ALS. While effective for structured expression, these devices often present challenges in the fast paced, interactive context of video games. This technological gap can lead to frustrating user experience and social exclusion for AAC users. Current solutions for this issue generally look like this. Involving in game, simulated AAC boards, which require users to learn a new, game specific interface rather than using their own familiar device. This project addresses these limitations by developing a reusable software tool, a developer focused API, rather than a single, standalone game. The goal is to provide a solution that game developers can integrate into any new or exisiting web based application. This approach improves upon the current model by allowing direct input from the users personal devices.
 
 ## Collaborators
 
 <div align="center">
 
-[//]: # (Replace with your collaborators)
-[Ian Tyler Applebaum](https://github.com/ApplebaumIan) • [Kyle Dragon Lee](https://github.com/leekd99) • [Tam Trang](https://github.com/HolyGodEze) • [Michael Colbert](https://github.com/colbert95) • [Jessica Hutchison](https://github.com/jesshutchison) • [Gino Russo](https://github.com/Russo903) • [Hena Patel](https://github.com/Hena3124) 
+[//]: # 'Replace with your collaborators'
+
+[Ian Tyler Applebaum](https://github.com/ApplebaumIan) • [Kyle Dragon Lee](https://github.com/leekd99) • [Tam Trang](https://github.com/HolyGodEze) • [Michael Colbert](https://github.com/colbert95) • [Jessica Hutchison](https://github.com/jesshutchison) • [Gino Russo](https://github.com/Russo903) • [Hena Patel](https://github.com/Hena3124)
 
 </div>

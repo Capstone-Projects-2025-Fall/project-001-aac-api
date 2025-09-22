@@ -11,13 +11,15 @@
 const logo = 'https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg';
 
 const main_template_jira_scripts = () => {
-  if (process.env.ORG_NAME === 'ApplebaumIan'){
-    return [    'https://temple-cis-projects-in-cs.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/azc3hx/b/8/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=50af7ec2',
-      'https://temple-cis-projects-in-cs.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/azc3hx/b/8/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=160e88a6',]
+  if (process.env.ORG_NAME === 'ApplebaumIan') {
+    return [
+      'https://temple-cis-projects-in-cs.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/azc3hx/b/8/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=50af7ec2',
+      'https://temple-cis-projects-in-cs.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/azc3hx/b/8/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=160e88a6',
+    ];
   } else {
-    return []
+    return [];
   }
-}
+};
 
 // Fallback value if PROJECT_NAME is not defined:
 const rawProjectName = process.env.PROJECT_NAME || 'docs-dev-mode';
@@ -26,14 +28,11 @@ const rawProjectName = process.env.PROJECT_NAME || 'docs-dev-mode';
 const title = rawProjectName
   .replaceAll('-', ' ')
   .split(' ')
-  .map(word => {
+  .map((word) => {
     // Make sure the word has at least one character
-    return word.length > 0
-      ? word[0].toUpperCase() + word.substring(1)
-      : '';
+    return word.length > 0 ? word[0].toUpperCase() + word.substring(1) : '';
   })
   .join(' ');
-
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -41,8 +40,8 @@ const config = {
   title: title,
   tagline: 'Owls are cool',
   /*Unless you move this website to a seperate repo don't change url and baseurl.*/
-  url: 'https://'+process.env.ORG_NAME+'.github.io/',
-  baseUrl: '/'+process.env.PROJECT_NAME+'/',
+  url: 'https://' + process.env.ORG_NAME + '.github.io/',
+  baseUrl: '/' + process.env.PROJECT_NAME + '/',
   trailingSlash: false,
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
@@ -63,7 +62,7 @@ const config = {
   markdown: {
     mermaid: true,
   },
-  themes: ['@docusaurus/theme-live-codeblock','@docusaurus/theme-mermaid'],
+  themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
   presets: [
     [
       'classic',
@@ -77,9 +76,12 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/'+process.env.ORG_NAME+'/'+process.env.PROJECT_NAME+'/edit/main/documentation/',
+            'https://github.com/' +
+            process.env.ORG_NAME +
+            '/' +
+            process.env.PROJECT_NAME +
+            '/edit/main/documentation/',
           // remarkPlugins: [require('mdx-mermaid')],
-
         },
         // tutorials: {
         //   sidebarPath: require.resolve('./tutorialSidebars.js'),
@@ -116,14 +118,18 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      ...(process.env.NODE_ENV === 'development' ? {announcementBar : {
-        id: 'dev_mode',
-        content:
-            'You are currently working on a local development version of your docs. This is <b>NOT</b> the live site.',
-        backgroundColor: '#ffca00',
-        textColor: '#091E42',
-        isCloseable: false,
-      }} : {}),
+      ...(process.env.NODE_ENV === 'development'
+        ? {
+            announcementBar: {
+              id: 'dev_mode',
+              content:
+                'You are currently working on a local development version of your docs. This is <b>NOT</b> the live site.',
+              backgroundColor: '#ffca00',
+              textColor: '#091E42',
+              isCloseable: false,
+            },
+          }
+        : {}),
       navbar: {
         /*TODO: Change to your project's title*/
         title: title,
@@ -137,14 +143,15 @@ const config = {
             docId: 'intro',
             position: 'left',
             label: 'Documentation',
-          },{
+          },
+          {
             to: '/tutorial/Intro',
             label: 'Docusaurus Tutorial',
             position: 'left',
             activeBaseRegex: `/tutorial/`,
           },
           {
-            href: 'https://github.com/'+process.env.ORG_NAME+'/'+process.env.PROJECT_NAME,
+            href: 'https://github.com/' + process.env.ORG_NAME + '/' + process.env.PROJECT_NAME,
             label: 'GitHub',
             position: 'right',
           },
@@ -187,7 +194,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/'+process.env.ORG_NAME+'/'+process.env.PROJECT_NAME,
+                href: 'https://github.com/' + process.env.ORG_NAME + '/' + process.env.PROJECT_NAME,
               },
             ],
           },
@@ -205,14 +212,13 @@ const config = {
         // see: https://www.npmjs.com/package/medium-zoom#options
         options: {
           margin: 24,
-          zIndex:100,
+          zIndex: 100,
           background: 'white',
           // scrollOffset: 10,
           // container: '#zoom-container',
           // template: '#zoom-template',
         },
       },
-
     }),
   plugins: [
     [
@@ -226,18 +232,17 @@ const config = {
       },
     ],
     [
-      "docusaurus2-dotenv-2",
+      'docusaurus2-dotenv-2',
       {
         systemvars: true,
       },
     ],
     'plugin-image-zoom',
-
-
   ],
-  scripts:['https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js',
-      ...main_template_jira_scripts()
+  scripts: [
+    'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+    ...main_template_jira_scripts(),
   ],
 };
-console.log(config.scripts)
+console.log(config.scripts);
 module.exports = config;
