@@ -5,24 +5,21 @@ sidebar_position: 2
 # System Block Diagram
 
 ![System Block Diagram](/img/AAC_API_diagram.png)
+**Figure 1** High level design of AACommodate API 
 
 ## Description
 
-1. The AAC user presses the button for “run” on their device.
+### AudioHandler
 
-2. The AAC device vocalizes the word “run.”
+AudioHandler is responsible for managing microphone permissions and ensuring that the application has the necessary access to capture audio. It filters out background noise to improve the clarity of the input, processes the audio signals from the microphone, and converts the captured speech into text for further use by the system.
 
-3. The microphone captures this speech input using the Web Audio API.
+### Developer Tools
 
-4. An audio processing API cleans the captured audio to improve quality and raise the confidence level for recognition.
+Developer Tools allow game developers to add custom game commands and define synonyms that map to these commands, providing flexibility in how players can interact with the game and ensuring a more intuitive user experience.
 
-5. The processed audio is sent to the Web Speech API, which transcribes it into text.
+### Command Converter
+Command Converter acts as an intermediary between the audio input system and the game logic. It receives transcribed text from the AudioHandler and executes the callback function specified by the game developer, allowing custom game commands to be triggered based on user speech.
 
-6. The transcribed text is matched against a user-defined dictionary of game commands.
-
-7. The system returns a JSON response containing:
-   - The chosen game command
-
-   - A confidence level score
-
-8. The game uses this command to control the character or determine the next move.
+### Accessibility Tools
+Accessibility tools will be provided to allow the caretaker to manually control the amount of visual stimulation displayed on the screen. This includes elements such as command history and any other potentially visually overstimulating content.
+	
