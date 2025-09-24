@@ -1,51 +1,56 @@
 export class AudioInputHandler {
     private stream: MediaStream | null = null;
-    private onStreamReady: (stream: MediaStream) => void;
+    private ctx: AudioContext | null = null;
+    private processor: ScriptProcessorNode | null = null;
     public isListening: boolean = false;
 
-    constructor(onStreamReady: (stream: MediaStream) => void) {
-        this.onStreamReady = onStreamReady;
+    private onAudioChunk: (chunk: Float32Array) => void;
 
-        // add a way to handle immediately if users device does
-        // not have a microphone
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-            console.error("Device does no have microphone permissions...")
-        }
+    constructor(onAudioChunk: (chunk: Float32Array) => void) {
+        this.onAudioChunk = onAudioChunk;
     }
 
     public async startListening(): Promise<void> {
-        //return early if already listening and called
+        //bail if mic already running
         if (this.isListening) {
             console.log("already listening...");
             return;
         }
 
         try {
-            // call the line that will prompt user for mic access
-            // set equal to object variable so we use the stream outside this function as well
-            // eg stopListening
-            const audioStream = await navigator.mediaDevices.getUserMedia({audio: true})
-            this.stream = audioStream;
-            this.isListening = true;
-            this.onStreamReady(this.stream);
+            // this line asks for user perms and starts rec
+            this.stream = await navigator.mediaDevices.getUserMedia({audio: true})
+            this.ctx = new AudioContext();
+            const source = this.ctx.createMediaStreamSource(this.stream);
+            this.processor = this.ctx.createScriptProcessor(4096, 1, 1);
 
+            //connect audio graph nodes together
+            source.connect(this.processor);
+            this.processor.connect(this.ctx.destination) // connecting to speaker even though we are not outputting audio because apparently it might crash if not?
+
+            //onaudioprocess that auto exexcutes when buffer full, e is the event data itself
+            this.processor.onaudioprocess = (e) => {
+                const input = e.inputBuffer.getChannelData(0); // this returns a Float32Array
+                this.onAudioChunk(new Float32Array(input));
+            }
+
+            this.isListening = true;
             console.log("Microphone is listening...")
         } catch (err) {
-            console.error("You may have blocked microphone permissions... please try again");
+            console.error("You may have denied microphone permissions... please try again");
         }
     }
 
     public stopListening(): void {
-        // release the stream, set stream to null, set isListening to false
-        if (!this.stream) return;
+        // if never started, bail immediately
+        if (!this.isListening) return;
 
-        this.stream.getTracks().forEach((track) => track.stop());
+        this.processor?.disconnect();
+        this.ctx?.close();
+
+        this.stream?.getTracks().forEach((track) => track.stop());
         this.isListening = false;
-        this.stream = null;
+
         console.log("Stopped listening...")
     }
 }
-
-//navigator is a global object in web browsers that provides info about the browser itself and the environment
-// its running in. it acts an entry poitn to varius web APIs. Allowing your code to access device hardware like
-// the microphone or check the usrs location
