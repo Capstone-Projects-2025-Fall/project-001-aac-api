@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test SpeechConverter</title>
+</head>
+<body>
+  <script type="module" >
+  import { SpeechConverter } from './dist/SpeechConverter.js';
+
+(async () => {
+  const converter = new SpeechConverter();
+  await converter.init();
+
+  // fake audio for now
+  const dummy = new Float32Array(16000 * 1); // 1 second of silence
+  const result = await converter.convertAudio(dummy);
+  console.log("Transcript:", result);
+})();
+
+
+  </script>
+</body>
+</html>
