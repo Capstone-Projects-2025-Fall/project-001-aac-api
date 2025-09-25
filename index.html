@@ -5,20 +5,36 @@
   <title>Test SpeechConverter</title>
 </head>
 <body>
-  <script type="module" >
-  import { SpeechConverter } from './dist/SpeechConverter.js';
+  <button id="playBtn">Play & Transcribe</button>
+<script type="module">
+import { SpeechConverter } from './dist/SpeechConverter.js';
 
-(async () => {
-  const converter = new SpeechConverter();
-  await converter.init();
+async function loadWavAsFloat32(url) {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioCtx = new AudioContext();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    return { audioCtx, audioBuffer };
+}
 
-  // fake audio for now
-  const dummy = new Float32Array(16000 * 1); // 1 second of silence
-  const result = await converter.convertAudio(dummy);
-  console.log("Transcript:", result);
-})();
+document.getElementById('playBtn').addEventListener('click', async () => {
+    const converter = new SpeechConverter();
+    await converter.init();
 
+    const { audioCtx, audioBuffer } = await loadWavAsFloat32('./Recording.wav');
 
-  </script>
+    // Play audio
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioCtx.destination);
+    source.start();
+
+    // Convert to Float32Array for Whisper
+    const float32Audio = audioBuffer.getChannelData(0);
+    const transcript = await converter.convertAudio(float32Audio);
+    console.log('Transcript:', transcript);
+});
+</script>
+
 </body>
 </html>

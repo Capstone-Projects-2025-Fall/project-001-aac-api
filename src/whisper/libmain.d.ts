@@ -26,6 +26,13 @@ export interface WhisperModule {
     canRead: boolean,
     canWrite: boolean
   ): void;
+
+    FS_createPath (
+    parent: string,
+    name: string,
+    canRead: boolean,
+    canWrite: boolean
+  ) : void;
 }
 
 // Declare the module factory function as default export
