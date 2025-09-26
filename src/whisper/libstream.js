@@ -214,10 +214,10 @@ async function Module(moduleArg = {}) {
     if (Module['wasmMemory']) {
       wasmMemory = Module['wasmMemory'];
     } else {
-      var INITIAL_MEMORY = Module['INITIAL_MEMORY'] || 536870912;
+      var INITIAL_MEMORY = Module['INITIAL_MEMORY'] || 1073741824;
       wasmMemory = new WebAssembly.Memory({
         initial: INITIAL_MEMORY / 65536,
-        maximum: 32e3,
+        maximum: 32768,
         shared: true,
       });
     }
@@ -265,9 +265,9 @@ async function Module(moduleArg = {}) {
   var wasmBinaryFile;
   function findWasmBinary() {
     if (Module['locateFile']) {
-      return locateFile('libmain.wasm');
+      return locateFile('libstream.wasm');
     }
-    return new URL('libmain.wasm', import.meta.url).href;
+    return new URL('libstream.wasm', import.meta.url).href;
   }
   function getBinarySync(file) {
     if (file == wasmBinaryFile && wasmBinary) {
@@ -365,6 +365,23 @@ async function Module(moduleArg = {}) {
   };
   var onPreRuns = [];
   var addOnPreRun = (cb) => onPreRuns.push(cb);
+  var runDependencies = 0;
+  var dependenciesFulfilled = null;
+  var removeRunDependency = (id) => {
+    runDependencies--;
+    Module['monitorRunDependencies']?.(runDependencies);
+    if (runDependencies == 0) {
+      if (dependenciesFulfilled) {
+        var callback = dependenciesFulfilled;
+        dependenciesFulfilled = null;
+        callback();
+      }
+    }
+  };
+  var addRunDependency = (id) => {
+    runDependencies++;
+    Module['monitorRunDependencies']?.(runDependencies);
+  };
   var spawnThread = (threadParams) => {
     var worker = PThread.getNewWorker();
     if (!worker) {
@@ -448,7 +465,18 @@ async function Module(moduleArg = {}) {
         PThread.initMainThread();
       }
     },
-    initMainThread() {},
+    initMainThread() {
+      var pthreadPoolSize = 8;
+      while (pthreadPoolSize--) {
+        PThread.allocateUnusedWorker();
+      }
+      addOnPreRun(async () => {
+        var pthreadPoolReady = PThread.loadWasmModuleToAllWorkers();
+        addRunDependency('loading-workers');
+        await pthreadPoolReady;
+        removeRunDependency('loading-workers');
+      });
+    },
     terminateAllThreads: () => {
       for (var worker of PThread.runningWorkers) {
         terminateWorker(worker);
@@ -495,6 +523,9 @@ async function Module(moduleArg = {}) {
             callUserCallback(() => cleanupThread(d.thread));
           } else if (cmd === 'loaded') {
             worker.loaded = true;
+            if (ENVIRONMENT_IS_NODE && !worker.pthread_ptr) {
+              worker.unref();
+            }
             onFinishedLoading(worker);
           } else if (d.target === 'setimmediate') {
             worker.postMessage(d);
@@ -524,6 +555,13 @@ async function Module(moduleArg = {}) {
         }
         worker.postMessage({ cmd: 'load', handlers, wasmMemory, wasmModule });
       }),
+    async loadWasmModuleToAllWorkers() {
+      if (ENVIRONMENT_IS_PTHREAD) {
+        return;
+      }
+      let pthreadPoolReady = Promise.all(PThread.unusedWorkers.map(PThread.loadWasmModuleToWorker));
+      return pthreadPoolReady;
+    },
     allocateUnusedWorker() {
       var worker;
       if (Module['mainScriptUrlOrBlob']) {
@@ -537,7 +575,7 @@ async function Module(moduleArg = {}) {
           name: 'em-pthread',
         });
       } else
-        worker = new Worker(new URL('libmain.js', import.meta.url), {
+        worker = new Worker(new URL('libstream.js', import.meta.url), {
           type: 'module',
           workerData: 'em-pthread',
           name: 'em-pthread',
@@ -1352,23 +1390,6 @@ async function Module(moduleArg = {}) {
   };
   var FS_createDataFile = (...args) => FS.createDataFile(...args);
   var getUniqueRunDependency = (id) => id;
-  var runDependencies = 0;
-  var dependenciesFulfilled = null;
-  var removeRunDependency = (id) => {
-    runDependencies--;
-    Module['monitorRunDependencies']?.(runDependencies);
-    if (runDependencies == 0) {
-      if (dependenciesFulfilled) {
-        var callback = dependenciesFulfilled;
-        dependenciesFulfilled = null;
-        callback();
-      }
-    }
-  };
-  var addRunDependency = (id) => {
-    runDependencies++;
-    Module['monitorRunDependencies']?.(runDependencies);
-  };
   var preloadPlugins = [];
   var FS_handledByPreloadPlugin = async (byteArray, fullname) => {
     if (typeof Browser != 'undefined') Browser.init();
@@ -4024,7 +4045,7 @@ async function Module(moduleArg = {}) {
     runtimeKeepalivePush();
     throw 'unwind';
   };
-  var getHeapMax = () => 2097152e3;
+  var getHeapMax = () => 2147483648;
   var _emscripten_get_heap_max = () => getHeapMax();
   var _emscripten_num_logical_cores = () =>
     ENVIRONMENT_IS_NODE ? require('os').cpus().length : navigator['hardwareConcurrency'];
@@ -4318,8 +4339,8 @@ async function Module(moduleArg = {}) {
   var ___getTypeName,
     __embind_initialize_bindings,
     _pthread_self,
-    _free,
     _malloc,
+    _free,
     __emscripten_tls_init,
     __emscripten_thread_init,
     __emscripten_thread_crashed,
@@ -4335,8 +4356,8 @@ async function Module(moduleArg = {}) {
     ___getTypeName = wasmExports['V'];
     __embind_initialize_bindings = wasmExports['W'];
     _pthread_self = wasmExports['Y'];
-    _free = wasmExports['Z'];
-    _malloc = wasmExports['_'];
+    _malloc = wasmExports['Z'];
+    _free = wasmExports['_'];
     __emscripten_tls_init = wasmExports['$'];
     __emscripten_thread_init = wasmExports['aa'];
     __emscripten_thread_crashed = wasmExports['ba'];
@@ -4362,8 +4383,8 @@ async function Module(moduleArg = {}) {
       S: __embind_register_bool,
       Q: __embind_register_emval,
       t: __embind_register_float,
-      d: __embind_register_function,
-      f: __embind_register_integer,
+      g: __embind_register_function,
+      e: __embind_register_integer,
       c: __embind_register_memory_view,
       R: __embind_register_std_string,
       n: __embind_register_std_wstring,
@@ -4375,7 +4396,7 @@ async function Module(moduleArg = {}) {
       F: __emscripten_thread_mailbox_await,
       N: __emscripten_thread_set_strongref,
       k: __emval_create_invoker,
-      e: __emval_decref,
+      d: __emval_decref,
       v: __emval_get_module_property,
       l: __emval_get_property,
       j: __emval_incref,
@@ -4387,7 +4408,7 @@ async function Module(moduleArg = {}) {
       p: _emscripten_check_blocking_allowed,
       M: _emscripten_exit_with_live_runtime,
       z: _emscripten_get_heap_max,
-      g: _emscripten_get_now,
+      f: _emscripten_get_now,
       A: _emscripten_num_logical_cores,
       x: _emscripten_resize_heap,
       H: _environ_get,
