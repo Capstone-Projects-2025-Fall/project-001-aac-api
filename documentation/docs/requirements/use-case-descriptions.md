@@ -120,22 +120,92 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
-### Use Case 6 - Support Commmon Game Inputs
+### Use Case 6 - Support Commmon Game Inputs (Incomplete)
 
-Steven, a game developer, uses the API toolkit to set up the basic commands the game will understand, like Start Game, Move Left, Move Right, Jump, Pause, and Shield. They tell the API what each command means and connect those commands to the game’s actions. When a player speaks, the API listens, figures out the right command, and sends it back to the game in a clear format.
+Actor: Steven (developer)
+
+Triggering Event: Steven uses the API toolkit to set up the basic commands the game will understand.
+
+Preconditions: Game API has empty command library.
+
+Normal flow:
+    1. Steven, a game developer, uses the API toolkit, like Start Game, Move Left, Move Right, Jump, Pause, and Shield. 
+    2. They tell the API what each command means and connect those commands to the game’s actions. When a player speaks, the API listens, figures out the right command, and sends it back to the game in a clear format.
+
+Postconditions: System contains common commands in a command library.
 
 ### Use Case 7 - Previous Game Integration
 
-Suzy wants to play an AAC game she used last semester. The developer added a small connector that uses the API’s standard commands, so Suzy’s voice inputs still work in the old game without needing to rewrite its code.
+Actor: Steven (developer)
+
+Triggering Event: Suzy wants to play an AAC game she used last semester. 
+
+Preconditions: System supports current AAC games.
+
+Normal flow:
+    1. The developer adds a small connector that uses the API’s standard commands.
+    2. Suzy’s voice inputs still work in the old game without needing to rewrite the code.
+
+Alternate flows / exceptions:
+    1. The old game is set up in a way that is not compatible with the API.
+    2. The old game's code needs to be directly modified.
+
+Postconditions: Suzy is able to play the old AAC games using the API.
 
 ### Use Case 8 - Register New Commands
 
-Steven will also have the ability to register new commands through the API. This will allow the API to remain flexible to any future games that require more complex commands that are not currently supported.
+Actor: Steven (developer)
+
+Triggering Event: Steven adds new commands to command library through the API to support new game.
+
+Preconditions: System command library has common commands in command library.
+
+Normal flow:
+    1. System has the ability to register new commands through the API.
+    2. Steven enters new commands in command library using the API toolkit.
+    3. This will allow the API to remain flexible to any future games that require more complex commands that are not currently supported.
+
+Alternate flows / exceptions:
+    1. The system command log already contains all the needed commands for the game.
+
+Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
 ### Use Case 9 - Toggle Input History
 
-Steven will want the ability to toggle the game command history. Especially after he has registered a new command, he will have confidence that it was registered correctly and working once he is able to see it in the command history.
+Actor: Steven (developer); Stan (player)
+
+Triggering Event: Stan is overstimulated by the AAC game.
+
+Preconditions: AAC game is running API and game command history is visible to players.
+
+Normal flow: 
+    1. Stan's caretaker uses the API window and goes to settings.
+    2. The system has toggleable settings for input history.
+    3. The caretaker toggles off the input history.
+    4. Stan receives reduced visual stimuli and can comfortably enjoy playing the AAC game.
+
+Alternate flows / exceptions:
+    1. Steven has registered a new command and uses the command history to troubleshoot the new command. 
+    2. He has confidence that it was registered correctly and working once he is able to see it in the command history.
+
+Postconditions: AAC game is playable without a visible command history.
 
 ### Use Case 10 - Confidence Level of Interpreted Game Input
 
-Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. This allows him to have control over which commands are recognized as valid game inputs, ensuring that only reliable commands can affect the gameplay.
+Actor: Steven (developer):
+
+Triggering Event: Steven is experimenting with API speech input.
+
+Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
+
+Normal flow:
+    1. Steven speaks game commands into the microphone.
+    2. The game command is interpreted and inputed to the game.
+    3. Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. 
+    4. This allows him to have control over which commands are recognized as valid game inputs. ensuring that only reliable commands can affect the gameplay.
+
+Alternate flows / exceptions:
+    1. The game incorrectly interprets the voice input.
+    2. Steven adjusts the code accordingly.
+
+Postconditions: Game accurately interprets gameplay commands.
