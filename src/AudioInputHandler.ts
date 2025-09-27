@@ -9,7 +9,9 @@ export class AudioInputHandler {
     constructor(onAudioChunk: (chunk: Float32Array) => void) {
         this.onAudioChunk = onAudioChunk;
     }
-
+    public getCtx(){
+        return this.ctx;
+    }
     public async startListening(): Promise<void> {
         //bail if mic already running
         if (this.isListening) {
@@ -35,9 +37,9 @@ export class AudioInputHandler {
             }
 
             this.isListening = true;
-            console.log("Microphone is listening...")
+            console.log("Microphone is listening...");
         } catch (err) {
-            console.error("You may have denied microphone permissions... please try again");
+            console.error("You may have denied microphone permissions... please try again", err);
         }
     }
 
@@ -51,6 +53,6 @@ export class AudioInputHandler {
         this.stream?.getTracks().forEach((track) => track.stop());
         this.isListening = false;
 
-        console.log("Stopped listening...")
+        console.log("Stopped listening...");
     }
 }

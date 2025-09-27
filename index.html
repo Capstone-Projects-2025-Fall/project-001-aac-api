@@ -2,36 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Whisper Test</title>
+  <title>processChunk Test</title>
 </head>
 <body>
-  <h1>Whisper Test</h1>
+  <h1>processChunk Test</h1>
+  <button id="testBtn">Run Test</button>
+  <pre id="output"></pre>
+
   <script type="module">
+    // Import resample from wave-resampler (assumes you installed it via npm and use a bundler like Vite/Webpack)
+    import { resampler } from '/node_modules/wave-resampler/dist/wave-resampler.js';
 
-import createWhisperModule from "./dist/whisper/libstream.js";
+    // Minimal JS version of SpeechConverter
+    class SpeechConverter {
+      processChunk(chunk) {
+        console.log("chunk before:", chunk);
+        const newSamples = resample(chunk, 48000, 16000);
+        console.log("After sampling:", newSamples);
+        const output = document.getElementById("output");
+        output.textContent += `Before: ${chunk}\nAfter: ${newSamples}\n\n`;
+      }
+    }
 
-async function main() {
-  // create the module
-  const whisper = await createWhisperModule();
+    const converter = new SpeechConverter();
+    const testBtn = document.getElementById("testBtn");
 
-  // initialize with model path + language
-  whisper.init("models/ggml-tiny.en.bin", "en");
-  console.log("Whisper initialized");
-
-  // check status
-  console.log("Status:", whisper.get_status());
-
-  // fake audio input
-  const fakeAudio = new Float32Array([0, 0.1, -0.1, 0.2, -0.2]);
-  whisper.set_audio(0, fakeAudio);
-
-  // get transcription
-  console.log("Transcribed text:", whisper.get_transcribed());
-}
-
-main().catch(console.error);
-
-
+    testBtn.addEventListener("click", () => {
+      // Example fake audio chunk
+      const fakeChunk = new Float32Array([0, 0.1, -0.1, 0.2, -0.2]);
+      converter.processChunk(fakeChunk);
+    });
   </script>
 </body>
 </html>

@@ -46,4 +46,5 @@ export interface WhisperModule {
  * Factory function to create the module.
  * Returns a Promise that resolves to the fully initialized WhisperModule.
  */
-export default function createWhisperModule(): Promise<WhisperModule>;
+declare function createWhisperModule(): Promise<WhisperModule>;
+export default createWhisperModule;
