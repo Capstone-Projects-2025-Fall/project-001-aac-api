@@ -17,6 +17,11 @@ export class AudioInputHandler {
             return;
         }
 
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error("This device does not support microphone input.")
+            return;
+        }
+
         try {
             // this line asks for user perms and starts rec
             this.stream = await navigator.mediaDevices.getUserMedia({audio: true})
@@ -36,8 +41,16 @@ export class AudioInputHandler {
 
             this.isListening = true;
             console.log("Microphone is listening...")
-        } catch (err) {
-            console.error("You may have denied microphone permissions... please try again");
+        } catch (err: any) {
+            //updating so we dont have generic message and we know why the catch is hitting
+            if (err.name === "NotAllowedError"){
+                console.error("You may have denied microphone permissions... please try again");
+            } else if (err.name === "NotFoundError") {
+                console.error("No microphone was found on this device")
+            } else {
+                console.error("Error accessing Mic: " + err)
+            }
+
         }
     }
 
