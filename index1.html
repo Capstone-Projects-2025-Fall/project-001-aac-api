@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>History Popup Test</title>
+</head>
+<body>
+  <h1>History Popup Demo</h1>
+  <button id="openPopup">Open History Popup</button>
+  <button id="addCommand">Add Command</button>
+
+  <script type="module">
+    import { showHistoryPopup } from "./src/showHistoryPopup.js";
+    import { commandHistory } from "./src/commandHistory.js";
+
+    document.getElementById("openPopup").onclick = () => {
+      showHistoryPopup();
+    };
+
+    document.getElementById("addCommand").onclick = () => {
+      const cmd = "Command " + (commandHistory.size() + 1);
+      commandHistory.add(cmd);
+      console.log("Added:", cmd);
+    };
+  </script>
+</body>
+</html>

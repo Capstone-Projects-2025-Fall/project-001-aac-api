@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whisper Live Log</title>
+</head>
+<body>
+  <h1>Whisper Live Transcription Log</h1>
+
+  <button id="initBtn">Init Whisper</button>
+  <button id="startBtn">Start Listening</button>
+  <button id="stopBtn">Stop Listening</button>
+
+  <pre id="transcriptionLog" style="max-height: 2000px; overflow-y: scroll;"></pre>
+
+  <script type="module">
+    import { SpeechConverter } from './src/SpeechConverter.js';
+
+    const sc = new SpeechConverter();
+    const logEl = document.getElementById("transcriptionLog");
+    let poller = null;
+    let lastText = ""; // last transcription
+
+    document.getElementById("initBtn").onclick = async () => {
+      try {
+        await sc.init('/models/ggml-tiny.en.bin', 'en'); 
+        logEl.textContent += "[System] Whisper initialized.\n";
+      } catch (e) {
+        logEl.textContent += "[Error] Init failed: " + e + "\n";
+      }
+    };
+
+    document.getElementById("startBtn").onclick = async () => {
+      try {
+        sc.startListening();
+        logEl.textContent += "[System] Started listening...\n";
+
+        // start polling
+        poller = setInterval(() => {
+          try {
+            const text = sc.getTranscribed();
+            if (text && text !== lastText) {
+              const newText = text.replace(lastText, "");
+              if (newText.trim().length > 0) {
+                logEl.textContent += newText + "\n";
+                logEl.scrollTop = logEl.scrollHeight;
+              }
+              lastText = text;
+            }
+          } catch (e) {
+            console.warn("Transcription not ready yet:", e);
+          }
+        }, 500);
+
+      } catch (err) {
+        logEl.textContent += "[Error] Start listening failed: " + err + "\n";
+      }
+    };
+
+    document.getElementById("stopBtn").onclick = () => {
+      sc.audioHandler?.stopListening();
+      if (poller) {
+        clearInterval(poller);
+        poller = null;
+      }
+      logEl.textContent += "[System] Stopped listening.\n";
+    };
+  </script>
+</body>
+</html>

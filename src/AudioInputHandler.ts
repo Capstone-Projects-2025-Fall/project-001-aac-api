@@ -9,7 +9,9 @@ export class AudioInputHandler {
     constructor(onAudioChunk: (chunk: Float32Array) => void) {
         this.onAudioChunk = onAudioChunk;
     }
-
+    public getCtx(){
+        return this.ctx;
+    }
     public async startListening(): Promise<void> {
         //bail if mic already running
         if (this.isListening) {
@@ -22,7 +24,8 @@ export class AudioInputHandler {
             this.stream = await navigator.mediaDevices.getUserMedia({audio: true})
             this.ctx = new AudioContext();
             const source = this.ctx.createMediaStreamSource(this.stream);
-            this.processor = this.ctx.createScriptProcessor(4096, 1, 1);
+            this.processor = this.ctx.createScriptProcessor(8192, 1, 1);
+            
 
             //connect audio graph nodes together
             source.connect(this.processor);
@@ -31,13 +34,15 @@ export class AudioInputHandler {
             //onaudioprocess that auto exexcutes when buffer full, e is the event data itself
             this.processor.onaudioprocess = (e) => {
                 const input = e.inputBuffer.getChannelData(0); // this returns a Float32Array
+               
+                
                 this.onAudioChunk(new Float32Array(input));
             }
 
             this.isListening = true;
-            console.log("Microphone is listening...")
+            console.log("Microphone is listening...");
         } catch (err) {
-            console.error("You may have denied microphone permissions... please try again");
+            console.error("You may have denied microphone permissions... please try again", err);
         }
     }
 
