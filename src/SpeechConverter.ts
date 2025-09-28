@@ -20,22 +20,24 @@ export class SpeechConverter{
         //  
     }
 
+
+    //loads the model into a virtual filesystem that emscript provides for the wasm file
 private async loadModelToFS(modelPath: string) {
     if (!this.whisper) throw new Error("Whisper module not initialized");
-    console.log("inside loadModel");
+    
 
     const res = await fetch(modelPath);
     if (!res.ok) throw new Error(`Failed to fetch model: ${res.status}`);
     const buffer = await res.arrayBuffer();
     const uint8 = new Uint8Array(buffer);
 
-    console.log("First 8 bytes of model:", uint8.slice(0, 8));
+    
 
 
     // Make a directory and write file into MEMFS
     this.whisper.FS_createPath("/", "models", true, true);
     this.whisper.FS_createDataFile("/models", "whisper-model.bin", uint8, true, true);
-    console.log("at end of loadModel");
+    
 }
 
 
@@ -44,16 +46,7 @@ private async loadModelToFS(modelPath: string) {
 
     //load path into virtual filesystem
     await this.loadModelToFS(modelPath);
-    //
-    const result = this.whisper.init("/models/whisper-model.bin",lang);
-    console.log(Object.keys(this.whisper));
-    //debugging to see if it initializes
-    if(result === 0){
-        throw new Error(`Did not initialize whisper ${result}`);
-    }else{
-        console.log("whisper initialized: ",this.whisper);
-    }
-
+    this.whisper.init("/models/whisper-model.bin",lang);
   }
 
   startPolling(interval: number = 1000){
@@ -80,12 +73,12 @@ private async loadModelToFS(modelPath: string) {
     if(!this.whisper) throw new Error("Call init() first");
 
       const inputSampleRate = this.audioHandler?.getCtx()?.sampleRate || 44100;
-  const targetSampleRate = 16000;
-  const bufferSeconds = 2;
-  const oneBlockSamples = inputSampleRate * bufferSeconds;
+      const targetSampleRate = 16000;
+      const bufferSeconds = 2;
+      const oneBlockSamples = inputSampleRate * bufferSeconds;
 
-  let buffer: Float32Array[] = [];
-  let bufferLength = 0;
+      let buffer: Float32Array[] = [];
+      let bufferLength = 0;
 
   const downsample = (input: Float32Array, inputRate: number, outputRate: number) => {
     if (inputRate === outputRate) return input;
@@ -171,8 +164,9 @@ private async loadModelToFS(modelPath: string) {
     let status = this.whisper?.get_status();
     console.log(status);
     let text = this.whisper.get_transcribed();
+
     if(text && text.length >0){
-    return this.whisper.get_transcribed();
+        return this.whisper.get_transcribed();
     }else{
         return "did not get transcription: "+status;
     }

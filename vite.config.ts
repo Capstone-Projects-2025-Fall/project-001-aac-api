@@ -1,15 +1,15 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: ".",          // your project root
+  root: '.', // your project root
   build: {
-    outDir: "dist",   // output folder
+    outDir: 'dist', // output folder
   },
   server: {
     headers: {
-        "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp",
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     },
-    open: true,       // automatically open browser
+    open: true, // automatically open browser
   },
 });
