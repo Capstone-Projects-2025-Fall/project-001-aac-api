@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+
     "lib": ["ES2020", "DOM"]
   },
   "include": ["src/**/*", "src/whisper"],

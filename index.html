@@ -2,36 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>processChunk Test</title>
+  <title>Whisper Live Log</title>
 </head>
 <body>
-  <h1>processChunk Test</h1>
-  <button id="testBtn">Run Test</button>
-  <pre id="output"></pre>
+  <h1>Whisper Live Transcription Log</h1>
+
+  <button id="initBtn">Init Whisper</button>
+  <button id="startBtn">Start Listening</button>
+  <button id="stopBtn">Stop Listening</button>
+
+  <pre id="transcriptionLog" style="max-height: 2000px; overflow-y: scroll;"></pre>
 
   <script type="module">
-    // Import resample from wave-resampler (assumes you installed it via npm and use a bundler like Vite/Webpack)
-    import { resampler } from '/node_modules/wave-resampler/dist/wave-resampler.js';
+    import { SpeechConverter } from './src/SpeechConverter.js';
 
-    // Minimal JS version of SpeechConverter
-    class SpeechConverter {
-      processChunk(chunk) {
-        console.log("chunk before:", chunk);
-        const newSamples = resample(chunk, 48000, 16000);
-        console.log("After sampling:", newSamples);
-        const output = document.getElementById("output");
-        output.textContent += `Before: ${chunk}\nAfter: ${newSamples}\n\n`;
+    const sc = new SpeechConverter();
+    const logEl = document.getElementById("transcriptionLog");
+    let pollingId = null;
+    let lastTextIndex = 0;
+    let lastText = ""; // last transcription
+
+    document.getElementById("initBtn").onclick = async () => {
+      try {
+        await sc.init('/models/ggml-tiny.en.bin', 'en'); 
+        logEl.textContent += "[System] Whisper initialized.\n";
+      } catch (e) {
+        logEl.textContent += "[Error] Init failed: " + e + "\n";
       }
+    };
+
+    document.getElementById("startBtn").onclick = async () => {
+      try {
+        sc.startListening();
+        logEl.textContent += "[System] Started listening...\n";
+
+        // start polling every 2 seconds for transcriptions
+      if (!pollingId) {
+        pollingId = window.setInterval(() => {
+          const transcripts = sc.getTranscribed();
+          while (lastTextIndex < transcripts.length) {
+            logEl.textContent += transcripts[lastTextIndex] + "\n";
+            lastTextIndex++;
+          }
+        }, 2000);
+      }
+
+      } catch (err) {
+        logEl.textContent += "[Error] Start listening failed: " + err + "\n";
+      }
+    };
+
+    document.getElementById("stopBtn").onclick = async () => {
+        try{
+          sc.stopListening();
+        }
+        catch(err){
+          logEl.textContent += "[Error] Stop listening failed: " + err + "\n";
+        }
+      
+
+
     }
 
-    const converter = new SpeechConverter();
-    const testBtn = document.getElementById("testBtn");
-
-    testBtn.addEventListener("click", () => {
-      // Example fake audio chunk
-      const fakeChunk = new Float32Array([0, 0.1, -0.1, 0.2, -0.2]);
-      converter.processChunk(fakeChunk);
-    });
   </script>
 </body>
 </html>
