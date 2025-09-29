@@ -36,10 +36,10 @@
         sc.startListening();
         logEl.textContent += "[System] Started listening...\n";
 
-        // start polling every 2 seconds
+        // start polling every 2 seconds for transcriptions
       if (!pollingId) {
         pollingId = window.setInterval(() => {
-          const transcripts = sc.getTranscribed(); // your SpeechConverter should have this
+          const transcripts = sc.getTranscribed();
           while (lastTextIndex < transcripts.length) {
             logEl.textContent += transcripts[lastTextIndex] + "\n";
             lastTextIndex++;

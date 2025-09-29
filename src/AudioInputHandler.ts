@@ -17,6 +17,7 @@ export class AudioInputHandler {
     //bail if mic already running
     if (this.isListening) {
       console.log('already listening...');
+    }
     
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -55,7 +56,7 @@ export class AudioInputHandler {
             }
 
         }
-    }}
+    }
 
   public stopListening(): void {
     // if never started, bail immediately
