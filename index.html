@@ -18,7 +18,8 @@
 
     const sc = new SpeechConverter();
     const logEl = document.getElementById("transcriptionLog");
-    let poller = null;
+    let pollingId = null;
+    let lastTextIndex = 0;
     let lastText = ""; // last transcription
 
     document.getElementById("initBtn").onclick = async () => {
@@ -35,36 +36,34 @@
         sc.startListening();
         logEl.textContent += "[System] Started listening...\n";
 
-        // start polling
-        poller = setInterval(() => {
-          try {
-            const text = sc.getTranscribed();
-            if (text && text !== lastText) {
-              const newText = text.replace(lastText, "");
-              if (newText.trim().length > 0) {
-                logEl.textContent += newText + "\n";
-                logEl.scrollTop = logEl.scrollHeight;
-              }
-              lastText = text;
-            }
-          } catch (e) {
-            console.warn("Transcription not ready yet:", e);
+        // start polling every 2 seconds
+      if (!pollingId) {
+        pollingId = window.setInterval(() => {
+          const transcripts = sc.getTranscribed(); // your SpeechConverter should have this
+          while (lastTextIndex < transcripts.length) {
+            logEl.textContent += transcripts[lastTextIndex] + "\n";
+            lastTextIndex++;
           }
-        }, 500);
+        }, 2000);
+      }
 
       } catch (err) {
         logEl.textContent += "[Error] Start listening failed: " + err + "\n";
       }
     };
 
-    document.getElementById("stopBtn").onclick = () => {
-      sc.audioHandler?.stopListening();
-      if (poller) {
-        clearInterval(poller);
-        poller = null;
-      }
-      logEl.textContent += "[System] Stopped listening.\n";
-    };
+    document.getElementById("stopBtn").onclick = async () => {
+        try{
+          sc.stopListening();
+        }
+        catch(err){
+          logEl.textContent += "[Error] Stop listening failed: " + err + "\n";
+        }
+      
+
+
+    }
+
   </script>
 </body>
 </html>

@@ -9,8 +9,9 @@ export class AudioInputHandler {
   constructor(onAudioChunk: (chunk: Float32Array) => void) {
     this.onAudioChunk = onAudioChunk;
   }
-  public getCtx() {
-    return this.ctx;
+  //needed for downsampling
+  public getSampleRate() {
+    return this.ctx?.sampleRate;
   }
   public async startListening(): Promise<void> {
     //bail if mic already running
