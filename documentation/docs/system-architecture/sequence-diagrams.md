@@ -170,7 +170,7 @@ Alternate flows / exceptions:
 
 Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
-![](/img/Use_Case_8)
+![](/img/Use_Case_8.png)
 ### Use Case 9 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
@@ -191,7 +191,7 @@ Alternate flows / exceptions:
 
 Postconditions: AAC game is playable without a visible command history.
 
-![](/img/Use_Case_9)
+![](/img/Use_Case_9.png)
 
 ### Use Case 10 - Confidence Level of Interpreted Game Input
 
@@ -213,4 +213,4 @@ Alternate flows / exceptions:
 
 Postconditions: Gam e accurately interprets gameplay commands.
 
-![](/img/Use_Case_10)
+![](/img/Use_Case_10.png)
