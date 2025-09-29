@@ -17,8 +17,12 @@ export class AudioInputHandler {
     //bail if mic already running
     if (this.isListening) {
       console.log('already listening...');
-      return;
-    }
+    
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error("This device does not support microphone input.")
+        return;
+        }
 
     try {
       // this line asks for user perms and starts rec
@@ -38,12 +42,20 @@ export class AudioInputHandler {
         this.onAudioChunk(new Float32Array(input));
       };
 
-      this.isListening = true;
-      console.log('Microphone is listening...');
-    } catch (err) {
-      console.error('You may have denied microphone permissions... please try again', err);
-    }
-  }
+            this.isListening = true;
+            console.log("Microphone is listening...")
+        } catch (err: any) {
+            //updating so we dont have generic message and we know why the catch is hitting
+            if (err.name === "NotAllowedError"){
+                console.error("You may have denied microphone permissions... please try again");
+            } else if (err.name === "NotFoundError") {
+                console.error("No microphone was found on this device");
+            } else {
+                console.error("Error accessing Mic: " + err);
+            }
+
+        }
+    }}
 
   public stopListening(): void {
     // if never started, bail immediately
