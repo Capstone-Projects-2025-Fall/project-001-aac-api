@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whisper Live Log</title>
+</head>
+<body>
+  <h1>Whisper Live Transcription Log</h1>
+
+  <button id="initBtn">Init Whisper</button>
+  <button id="startBtn">Start Listening</button>
+  <button id="stopBtn">Stop Listening</button>
+
+  <pre id="transcriptionLog" style="max-height: 2000px; overflow-y: scroll;"></pre>
+
+  <script type="module">
+    import { SpeechConverter } from './src/SpeechConverter.js';
+
+    const sc = new SpeechConverter();
+    const logEl = document.getElementById("transcriptionLog");
+    let pollingId = null;
+    let lastTextIndex = 0;
+    let lastText = ""; // last transcription
+
+    document.getElementById("initBtn").onclick = async () => {
+      try {
+        await sc.init('/models/ggml-tiny.en.bin', 'en'); 
+        logEl.textContent += "[System] Whisper initialized.\n";
+      } catch (e) {
+        logEl.textContent += "[Error] Init failed: " + e + "\n";
+      }
+    };
+
+    document.getElementById("startBtn").onclick = async () => {
+      try {
+        sc.startListening();
+        logEl.textContent += "[System] Started listening...\n";
+
+        // start polling every 2 seconds for transcriptions
+      if (!pollingId) {
+        pollingId = window.setInterval(() => {
+          const transcripts = sc.getTranscribed();
+          while (lastTextIndex < transcripts.length) {
+            logEl.textContent += transcripts[lastTextIndex] + "\n";
+            lastTextIndex++;
+          }
+        }, 2000);
+      }
+
+      } catch (err) {
+        logEl.textContent += "[Error] Start listening failed: " + err + "\n";
+      }
+    };
+
+    document.getElementById("stopBtn").onclick = async () => {
+        try{
+          sc.stopListening();
+        }
+        catch(err){
+          logEl.textContent += "[Error] Stop listening failed: " + err + "\n";
+        }
+      
+
+
+    }
+
+  </script>
+</body>
+</html>
