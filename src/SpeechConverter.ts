@@ -79,7 +79,7 @@ private async loadModelToFS(modelPath: string) {
   }
 
 
-//help
+
 private combineChunks(buffer: Float32Array[], oneBlockSamples: number): Float32Array{
 
   const combined = new Float32Array(oneBlockSamples);
