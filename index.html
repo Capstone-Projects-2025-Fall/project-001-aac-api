@@ -24,7 +24,9 @@
 
     document.getElementById("initBtn").onclick = async () => {
       try {
-        await sc.init('/models/ggml-tiny.en.bin', 'en'); 
+        let htmlLink = 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin'
+        let localPath = '/models/ggml-tiny.en.bin'
+        await sc.init(htmlLink, 'en'); 
         logEl.textContent += "[System] Whisper initialized.\n";
       } catch (e) {
         logEl.textContent += "[Error] Init failed: " + e + "\n";

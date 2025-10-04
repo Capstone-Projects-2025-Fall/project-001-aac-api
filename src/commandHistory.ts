@@ -1,48 +1,90 @@
-export type Command = string;
+/**
+ * CommandHistory keeps track of a chronological log of commands.
+ * 
+ * This class allows you to:
+ * - Add new commands to the history (if logging is enabled).
+ * - Retrieve all commands or a slice of commands.
+ * - Query the total number of commands logged.
+ * - Enable or disable logging.
+ * - Clear the entire history.
+ * 
+ * Commands are stored in memory in the order they were added. 
+ * Slices and retrievals return copies of the array to prevent external mutation.
+ * There is no built-in limit on how many commands are stored.
+ */
 
-class CommandHistory {
-  // All commands in order — can grow without a cap.
-  private history: Command[] = [];
+export class CommandHistory {
+  /**All commands in order — can grow without a cap. */ 
+  private history: string[] = [];
 
-  //If false, ignore new commands
+  /**  If false, ignore new commands */
   private enabled = true;
 
-  //Turn logging on/off.
-  toggle(enable: boolean) {
+  /**
+   * 
+   * @param enable Turn logging on/off.
+   * @returns {void}
+   */
+  public toggle(enable: boolean):void {
     this.enabled = enable;
   }
 
-  // Add new commands here
-  add(command: Command) {
+  /**
+   * Adds a new command to the Command History Log if Logging has been turned on
+   * 
+   * @param command Adds a new command to the array
+   * @returns {void}
+   */
+  public add(command: string):void{
     if (!this.enabled) return;
     this.history.push(command);
   }
 
-  //Snapshot of everything
-  getAll(): Command[] {
+
+  /**
+   * Returns all logged Commands
+   * 
+   * @returns {string[]} returns a copy of the history that is immutable
+   */
+  public getAll(): string[] {
     return [...this.history];
   }
 
-  // total count
-  size(): number {
+  /**
+   * Returns a number of commands that have been logged
+   * 
+   * @returns { number } The number of commands that have been logged
+   */
+  public getSize(): number {
     return this.history.length;
   }
 
   // Efficient slice for big lists: returns history[start, end)
   // the display show only the latest 200 in the UI, but stores everything in memory. If we decide the we need storage we will then implement it
 
-  getSlice(start: number, end?: number): Command[] {
+  /**
+   * Returns a portion of the command history as a new array.
+   * 
+   * 
+   * @param {number}start Starting position of commands you want to have returned
+   * @param {number} end Ending position of the commands you want to have returned
+   * @returns {string[]} If the starting slice is larger then the end it will return an empty array otherwise it returns a list of the commands from the starting index to the ending index
+   */
+  public getSlice(start: number, end?: number): string[] {
     const s = Math.max(0, start);
     const e = Math.min(this.history.length, end ?? this.history.length);
     if (s >= e) return [];
     return this.history.slice(s, e);
   }
 
-  /** Remove everything. */
-  clear() {
+  /**
+   * Clears all history 
+   * 
+   * @returns {void}
+   */
+  public clear():void {
     this.history = [];
   }
 }
 
-export const commandHistory = new CommandHistory();
-export type { Command as CommandHistoryItem };
+

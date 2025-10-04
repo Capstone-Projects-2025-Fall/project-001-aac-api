@@ -1,0 +1,15 @@
+{
+  "entryPoints": ["src/**/*.ts"],       // include all TypeScript files
+  "out": "docs",                        // output folder
+  "plugin": ["typedoc-plugin-markdown"],
+
+  "exclude": ["**/dist/**", "**/node_modules/**", "**/documentation/**"],
+  "excludePrivate": false,
+  "excludeExternals": true,
+
+  "hideBreadcrumbs": true,
+  "hidePageTitle": true,
+  "readme": "none",
+  
+  
+}

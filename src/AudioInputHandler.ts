@@ -1,18 +1,59 @@
-export class AudioInputHandler {
-  private stream: MediaStream | null = null;
-  private ctx: AudioContext | null = null;
-  private processor: ScriptProcessorNode | null = null;
-  public isListening: boolean = false;
 
+
+/**
+ * 
+ * AudioInputHandler is a microphone input handler that:
+ * Captures audio from the user’s microphone.
+ * Processes audio in chunks (Float32Array).
+ * Sends those chunks to a callback function for further processing.
+ * It also provides start/stop control and exposes the audio sample rate.
+ */
+
+export class AudioInputHandler {
+
+  /** Media stream from users microphone */
+  private stream: MediaStream | null = null;
+  /** Used for processing the audio */
+  private ctx: AudioContext | null = null;
+  /** Used to buffer audio data*/
+  private processor: ScriptProcessorNode | null = null;
+  /** Flag that checks if startListening has already been called */
+  public isListening: boolean = false;
+  /** Callback function that receives each audio chunk captured from the microphone. */
   private onAudioChunk: (chunk: Float32Array) => void;
 
+
+  /**
+ * Creates a new AudioInputHandler.
+ *
+ * @param onAudioChunk - A callback function that is called whenever
+ *                        an audio chunk is captured. Receives a Float32Array
+ *                        containing the audio samples.
+ */
   constructor(onAudioChunk: (chunk: Float32Array) => void) {
     this.onAudioChunk = onAudioChunk;
   }
-  //needed for downsampling
+
+
+  /**
+ * Returns the sample rate of the audio context.
+ *
+ * @returns The sample rate in Hz, or `undefined` if the audio context is not initialized.
+ */
   public getSampleRate() {
-    return this.ctx?.sampleRate;
+    return this.ctx?.sampleRate ?? 0;
   }
+
+  /**
+ * Starts capturing audio from the user's microphone.
+ *
+ * - Prompts the user for microphone permissions.
+ * - Creates an AudioContext and a ScriptProcessorNode to process audio in chunks.
+ * - Calls the `onAudioChunk` callback with a Float32Array for each audio buffer.
+ * - Handles errors such as permission denial or missing microphone hardware.
+ *
+ * @returns A Promise that resolves when listening has started.
+ */
   public async startListening(): Promise<void> {
     //bail if mic already running
     if (this.isListening) {
@@ -58,6 +99,15 @@ export class AudioInputHandler {
         }
     }
 
+
+    /**
+ * Stops capturing audio from the microphone and cleans up resources.
+ *
+ * - Disconnects the ScriptProcessorNode from the audio graph.
+ * - Closes the AudioContext.
+ * - Stops all tracks of the MediaStream.
+ * - Updates the `isListening` flag to `false`.
+ */
   public stopListening(): void {
     // if never started, bail immediately
     if (!this.isListening) return;
