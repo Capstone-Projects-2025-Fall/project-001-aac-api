@@ -1,0 +1,47 @@
+sequenceDiagram
+    actor Suzy
+    participant Game
+    participant System
+    participant ASR
+    participant API
+    participant FillerFilter
+    
+    Suzy->>System: Speak command "uh jump now"
+    activate System
+    System->>ASR: Send audio for transcription
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+    
+    System->>FillerFilter: Process text "uh jump now"
+    activate FillerFilter
+    Note right of FillerFilter: Remove filler words<br/>"uh" and "now"
+    FillerFilter-->>System: Return filtered text "jump"
+    deactivate FillerFilter
+    
+    System->>System: Tokenize and map to command
+    Note right of System: Maps to Jump command
+    
+    alt High confidence mapping
+        System->>API: Send Jump command
+        activate API
+        API->>Game: Execute Jump action
+        activate Game
+        Game-->>Suzy: Show visual feedback + animation
+        deactivate Game
+        API->>System: Log command
+        deactivate API
+    else Filter removes all words
+        System-->>Suzy: "Please repeat command"
+    else Multiple possible commands
+        System-->>Suzy: "Did you mean JUMP?"
+        alt User confirms
+            Suzy->>System: Confirm command
+            System->>API: Send Jump command
+            API->>Game: Execute Jump action
+            Game-->>Suzy: Show visual feedback
+        end
+    else Low confidence
+        System-->>Suzy: "Please repeat command"
+    end
+    deactivate System
