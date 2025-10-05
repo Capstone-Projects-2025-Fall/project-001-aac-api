@@ -29,6 +29,10 @@ Alternate flows / exceptions:
 
 Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 
+```mermaid
+{% include UserFlow1SequenceDiagram.mmd %}
+```
+
 ### Use Case 2 - Filter Out Filler Words
 
 Actor: Suzy (player)
@@ -52,6 +56,10 @@ Alternate flows / exceptions:
 
 Postconditions: Jump action executed (or user prompted to repeat); command history updated.
 
+```mermaid
+{% include UserFlow2SequenceDiagram.mmd %}
+```
+
 ### Use Case 3 - Speaker Seperation
 
 Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
@@ -74,6 +82,10 @@ Alternate flows / exceptions:
 3. Overlapping identical words from multiple speakers: use confidence + enrolled preference; if unresolved, request confirmation.
 
 Postconditions: Game paused (if confirmed); system records speaker attribution and confidence.
+
+```mermaid
+{% include UserFlow3SequenceDiagram.mmd %}
+```
 
 ### Use Case 4 - Background Noise Filtering
 
