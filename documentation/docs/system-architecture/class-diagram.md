@@ -30,8 +30,34 @@ classDiagram
         +stopListening(): void
     }
 
-    class SpeechToText {
-        
+    class SpeechConverter {
+        -whisper: WhisperModule
+        -audioHandler: AudioHandler
+        -transcribedText: CommandHistory
+        -loadModelToFS(modelPath:string):Promise<string>
+        -downSample(input:Float32Array, inputRate: number, outputRate:number):Float32Array
+        -combineChunks(buffer: Float32Array[], blockSize: number):Float32Array
+        +SpeechConverter()
+        +init(modelPath:string, lang:string):void
+        +startListening():void
+        +stopListening():void
+        +setAudio(index: number, audio: Float32Array):number
+        +getTranscribed():void
+        +getStatus():string
+
+    }
+    class CommandHistory{
+        -history: string[]
+        -enabled: boolean
+        -CommandHistory()
+        +getInstance():CommandHistory
+        +toggle(enable:boolean):void
+        +add(command:string):void
+        +getAll():string[]
+        +getSize():number
+        +getSlice(start: number, end:number):string[]
+
+
     }
 
     class CommandMapper {
@@ -43,10 +69,13 @@ classDiagram
     }
 
     AACVoiceApi *-- AudioHandlerInput : contains
-    AACVoiceApi *-- SpeechToText : contains
+    AACVoiceApi *-- SpeechConverter : contains
     AACVoiceApi *-- CommandMapper : contains
     index        <--  AACVoiceApi
     AudioHandlerInput *-- SpeechSeperation : contains
+    SpeechConverter *-- CommandHistory: contains
+    AACVoiceApi <-- CommandHistory: contains
+    SpeechConverter <-- AudioHandlerInput: contains
 ```
 **Figure 2** Class Architecture of our Api
 
