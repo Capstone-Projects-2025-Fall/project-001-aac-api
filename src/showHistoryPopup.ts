@@ -1,10 +1,16 @@
-import { commandHistory } from './commandHistory';
+import { CommandHistory }from './CommandHistory';
+
+
+/** gets an instance of the Command History */
+const commandHistory = CommandHistory.getInstance();
 
 /**
  * Opens a modal that shows the latest commands and auto-refreshes every second.
  * Storage is unbounded; UI renders only a window (latest PAGE items) for speed.
+ * 
+ * @returns {void}
  */
-export function showHistoryPopup() {
+export function showHistoryPopup():void{
   if (document.getElementById('aac-history-overlay')) return;
 
   // --- overlay & dialog ---
@@ -79,7 +85,7 @@ export function showHistoryPopup() {
 
   // --- windowed rendering state ---
   const PAGE = 200; // how many latest items to show in the UI
-  let total = commandHistory.size();
+  let total = commandHistory.getSize();
   let windowEnd = total; // exclusive index
   let windowStart = Math.max(0, windowEnd - PAGE);
   let followTail = true; // always show the newest PAGE items
@@ -108,7 +114,7 @@ export function showHistoryPopup() {
 
   // --- AUTO-REFRESH EVERY SECOND ---
   const timerId = window.setInterval(() => {
-    const newTotal = commandHistory.size();
+    const newTotal = commandHistory.getSize();
     if (newTotal !== total) {
       total = newTotal;
       if (followTail) {
@@ -121,7 +127,7 @@ export function showHistoryPopup() {
 
   // --- controls ---
   goLatestBtn.onclick = () => {
-    total = commandHistory.size();
+    total = commandHistory.getSize();
     windowEnd = total;
     windowStart = Math.max(0, windowEnd - PAGE);
     followTail = true;

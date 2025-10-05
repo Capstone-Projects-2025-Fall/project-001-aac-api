@@ -10,7 +10,8 @@
     "preview": "vite-build",
     "lint": "eslint 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "format": "prettier --write '**/*.{ts,js,json}'",
-    "test": "vitest"
+    "test": "vitest",
+    "docs": "typedoc --out doc"
   },
   "repository": {
     "type": "git",
@@ -34,8 +35,10 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.4.0",
     "jiti": "^2.5.1",
-    "prettier": "^3.6.2", 
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.28.13",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.7",
     "vitest": "^3.2.4"

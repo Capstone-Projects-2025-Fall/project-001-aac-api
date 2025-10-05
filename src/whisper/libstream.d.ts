@@ -53,23 +53,10 @@ export interface WhisperModule {
   FS_preloadFile(localPath: string, url: string, onload?: () => void, onerror?: () => void): void;
 
   FS_unlink(path: string): void;
+
+  
   FS_createPath(parent: string, path: string, canRead?: boolean, canWrite?: boolean): string;
-
-  // Runtime dependency management
-  addRunDependency(id: string): void;
-  removeRunDependency(id: string): void;
-
-  // Memory access (useful for debugging)
-  HEAPU8: Uint8Array;
-
-  // Call C functions directly (advanced usage)
-  //ccall(funcName: string, returnType: string, argTypes: string[], args: any[]): any;
-  //cwrap(funcName: string, returnType: string, argTypes: string[]): Function;
-
-  // Emscripten runtime
-  calledRun: boolean;
-  print: (text: string) => void;
-  printErr: (text: string) => void;
+ 
 }
 
 /**
