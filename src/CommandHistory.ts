@@ -22,7 +22,7 @@ export class CommandHistory {
 
   /** The single global instance of CommandHistory */
   private static instance: CommandHistory;
-  
+
   /** Private constructor prevents direct instantiation */
   private constructor() {}
 
@@ -37,9 +37,6 @@ export class CommandHistory {
     }
     return CommandHistory.instance;
   }
-
-
-
 
 
   /**
