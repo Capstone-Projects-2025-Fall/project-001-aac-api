@@ -1,0 +1,61 @@
+sequenceDiagram
+    actor Suzy
+    actor Parent
+    participant Game
+    participant System
+    participant SpeakerSeparation
+    participant ASR
+    participant API
+    
+    Note over Suzy,Parent: Both speaking simultaneously
+    par Suzy speaks command
+        Suzy->>System: Speak "pause game"
+    and Parent speaks
+        Parent->>System: Speaking other words
+    end
+    
+    activate System
+    System->>SpeakerSeparation: Process mixed audio
+    activate SpeakerSeparation
+    Note right of SpeakerSeparation: Compare with enrolled<br/>player voice profile
+    SpeakerSeparation-->>System: Return isolated player audio
+    deactivate SpeakerSeparation
+    
+    System->>ASR: Transcribe isolated audio
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+    
+    System->>System: Normalize and map to command
+    Note right of System: Maps to PauseGame command
+    
+    alt High confidence & clear speaker separation
+        System->>API: Send PauseGame command
+        activate API
+        API->>Game: Execute pause action
+        activate Game
+        Game-->>Suzy: Show UI confirmation
+        deactivate Game
+        API->>System: Log command with speaker attribution
+        deactivate API
+    else No enrolled profile
+        System-->>Suzy: "Please enroll voice profile"
+    else Uncertain speaker separation
+        System-->>Suzy: "Did you say 'pause'?"
+        alt User confirms
+            Suzy->>System: Confirm command
+            System->>API: Send PauseGame command
+            API->>Game: Execute pause action
+            Game-->>Suzy: Show UI confirmation
+        end
+    else Overlapping identical words
+        System->>System: Check confidence & enrolled preference
+        alt Can resolve with confidence
+            System->>API: Send command with high confidence
+            API->>Game: Execute action
+            Game-->>Suzy: Show UI confirmation
+        else Cannot resolve
+            System-->>Suzy: Request confirmation
+        end
+    end
+    deactivate System
