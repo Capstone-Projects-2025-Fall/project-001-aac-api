@@ -2,7 +2,7 @@
 
 ***
 
-Defined in: [AudioInputHandler.ts:12](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L12)
+Defined in: [AudioInputHandler.ts:12](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L12)
 
 AudioInputHandler is a microphone input handler that:
 Captures audio from the user’s microphone.
@@ -16,7 +16,7 @@ It also provides start/stop control and exposes the audio sample rate.
 
 > **new AudioInputHandler**(`onAudioChunk`): `AudioInputHandler`
 
-Defined in: [AudioInputHandler.ts:33](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L33)
+Defined in: [AudioInputHandler.ts:33](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L33)
 
 Creates a new AudioInputHandler.
 
@@ -40,7 +40,7 @@ A callback function that is called whenever
 
 > `private` **ctx**: `null` \| `AudioContext` = `null`
 
-Defined in: [AudioInputHandler.ts:17](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L17)
+Defined in: [AudioInputHandler.ts:17](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L17)
 
 Used for processing the audio
 
@@ -50,7 +50,7 @@ Used for processing the audio
 
 > **isListening**: `boolean` = `false`
 
-Defined in: [AudioInputHandler.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L21)
+Defined in: [AudioInputHandler.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L21)
 
 Flag that checks if startListening has already been called
 
@@ -60,7 +60,7 @@ Flag that checks if startListening has already been called
 
 > `private` **onAudioChunk**: (`chunk`) => `void`
 
-Defined in: [AudioInputHandler.ts:23](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L23)
+Defined in: [AudioInputHandler.ts:23](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L23)
 
 Callback function that receives each audio chunk captured from the microphone.
 
@@ -80,7 +80,7 @@ Callback function that receives each audio chunk captured from the microphone.
 
 > `private` **processor**: `null` \| `ScriptProcessorNode` = `null`
 
-Defined in: [AudioInputHandler.ts:19](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L19)
+Defined in: [AudioInputHandler.ts:19](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L19)
 
 Used to buffer audio data
 
@@ -90,7 +90,7 @@ Used to buffer audio data
 
 > `private` **stream**: `null` \| `MediaStream` = `null`
 
-Defined in: [AudioInputHandler.ts:15](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L15)
+Defined in: [AudioInputHandler.ts:15](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L15)
 
 Media stream from users microphone
 
@@ -100,7 +100,7 @@ Media stream from users microphone
 
 > **getSampleRate**(): `number`
 
-Defined in: [AudioInputHandler.ts:43](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L43)
+Defined in: [AudioInputHandler.ts:43](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L43)
 
 Returns the sample rate of the audio context.
 
@@ -116,7 +116,7 @@ The sample rate in Hz, or `undefined` if the audio context is not initialized.
 
 > **startListening**(): `Promise`\<`void`\>
 
-Defined in: [AudioInputHandler.ts:57](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L57)
+Defined in: [AudioInputHandler.ts:57](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L57)
 
 Starts capturing audio from the user's microphone.
 
@@ -137,7 +137,7 @@ A Promise that resolves when listening has started.
 
 > **stopListening**(): `void`
 
-Defined in: [AudioInputHandler.ts:111](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/AudioInputHandler.ts#L111)
+Defined in: [AudioInputHandler.ts:111](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/AudioInputHandler.ts#L111)
 
 Stops capturing audio from the microphone and cleans up resources.
 

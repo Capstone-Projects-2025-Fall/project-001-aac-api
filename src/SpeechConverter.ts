@@ -1,5 +1,6 @@
 import createWhisperModule, { WhisperModule } from "./whisper/libstream";
 import { AudioInputHandler } from "./AudioInputHandler";
+import { CommandHistory } from "./CommandHistory";
 
 
 
@@ -15,10 +16,10 @@ export class SpeechConverter{
   /** Used to capture microphone input */
   private audioHandler: AudioInputHandler | null = null;
 /** Stores all transcribed text segments captured from audio. */
-  private transcribedText: string[] = [];
+  private transcribedText: CommandHistory| null = null;
 
   constructor(){
-        //  
+        this.transcribedText = CommandHistory.getInstance();  
     }
 
 
@@ -240,15 +241,13 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
  * @returns {string[]} - An array containing all transcribed text segments so far.
  * @throws {Error} Throws if the Whisper module has not been initialized.
  */
-  public getTranscribed(): string []{
+  public getTranscribed():void{
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
     }
     
-    this.transcribedText.push(this.whisper.get_transcribed());
+    this.transcribedText?.add(this.whisper.get_transcribed());
 
-    
-    return this.transcribedText;
     
     
   }

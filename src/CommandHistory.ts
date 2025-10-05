@@ -20,6 +20,28 @@ export class CommandHistory {
   /**  If false, ignore new commands */
   private enabled = true;
 
+  /** The single global instance of CommandHistory */
+  private static instance: CommandHistory;
+  
+  /** Private constructor prevents direct instantiation */
+  private constructor() {}
+
+  /**
+   * Returns the singleton instance of CommandHistory.
+   * 
+   * @returns {CommandHistory} The single shared instance.
+   */
+  public static getInstance(): CommandHistory {
+    if (!CommandHistory.instance) {
+      CommandHistory.instance = new CommandHistory();
+    }
+    return CommandHistory.instance;
+  }
+
+
+
+
+
   /**
    * 
    * @param enable Turn logging on/off.

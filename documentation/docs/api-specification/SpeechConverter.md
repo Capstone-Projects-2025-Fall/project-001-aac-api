@@ -2,7 +2,7 @@
 
 ***
 
-Defined in: [SpeechConverter.ts:12](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L12)
+Defined in: [SpeechConverter.ts:13](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L13)
 
 SpeechConverter handles real-time speech-to-text conversion using the Whisper model.
 It manages audio input, preprocessing, and transcription directly in the browser.
@@ -13,7 +13,7 @@ It manages audio input, preprocessing, and transcription directly in the browser
 
 > **new SpeechConverter**(): `SpeechConverter`
 
-Defined in: [SpeechConverter.ts:20](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L20)
+Defined in: [SpeechConverter.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L21)
 
 #### Returns
 
@@ -25,7 +25,7 @@ Defined in: [SpeechConverter.ts:20](https://github.com/Capstone-Projects-2025-Fa
 
 > `private` **audioHandler**: `null` \| [`AudioInputHandler`](../../AudioInputHandler/classes/AudioInputHandler.md) = `null`
 
-Defined in: [SpeechConverter.ts:16](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L16)
+Defined in: [SpeechConverter.ts:17](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L17)
 
 Used to capture microphone input
 
@@ -33,9 +33,9 @@ Used to capture microphone input
 
 ### transcribedText
 
-> `private` **transcribedText**: `string`[] = `[]`
+> `private` **transcribedText**: `null` \| [`CommandHistory`](../../CommandHistory/classes/CommandHistory.md) = `null`
 
-Defined in: [SpeechConverter.ts:18](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L18)
+Defined in: [SpeechConverter.ts:19](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L19)
 
 Stores all transcribed text segments captured from audio.
 
@@ -45,7 +45,7 @@ Stores all transcribed text segments captured from audio.
 
 > `private` **whisper**: `null` \| [`WhisperModule`](../../whisper/libstream/interfaces/WhisperModule.md) = `null`
 
-Defined in: [SpeechConverter.ts:14](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L14)
+Defined in: [SpeechConverter.ts:15](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L15)
 
 Reference to the WhisperModule instance for transcribing data
 
@@ -55,7 +55,7 @@ Reference to the WhisperModule instance for transcribing data
 
 > `private` **combineChunks**(`buffer`, `blockSize`): `Float32Array`
 
-Defined in: [SpeechConverter.ts:121](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L121)
+Defined in: [SpeechConverter.ts:122](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L122)
 
 Combines multiple smaller Float32Array chunks into a single fixed-size block.
 If the combined length is less than oneBlockSamples, it fills up using chunks
@@ -87,7 +87,7 @@ Returns a single Array of size block size
 
 > `private` **downSample**(`input`, `inputRate`, `outputRate`): `Float32Array`
 
-Defined in: [SpeechConverter.ts:83](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L83)
+Defined in: [SpeechConverter.ts:84](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L84)
 
 Takes an input Float32Array and downsamples the data to the given output rate provided
 
@@ -123,7 +123,7 @@ The down sampled data in a Float32Array object
 
 > **getStatus**(): `string`
 
-Defined in: [SpeechConverter.ts:263](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L263)
+Defined in: [SpeechConverter.ts:262](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L262)
 
 Retrieves the current status of the Whisper model.
 
@@ -140,9 +140,9 @@ otherwise returns the status string provided by the Whisper backend.
 
 ### getTranscribed()
 
-> **getTranscribed**(): `string`[]
+> **getTranscribed**(): `void`
 
-Defined in: [SpeechConverter.ts:243](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L243)
+Defined in: [SpeechConverter.ts:244](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L244)
 
 Retrieves the latest transcription result from the Whisper model and stores it.
 
@@ -152,7 +152,7 @@ the accumulated transcription history.
 
 #### Returns
 
-`string`[]
+`void`
 
 - An array containing all transcribed text segments so far.
 
@@ -166,7 +166,7 @@ Throws if the Whisper module has not been initialized.
 
 > **init**(`modelPath`, `lang`): `Promise`\<`void`\>
 
-Defined in: [SpeechConverter.ts:67](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L67)
+Defined in: [SpeechConverter.ts:68](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L68)
 
 Initializes the Whisper module with the specified model and language.
 
@@ -201,7 +201,7 @@ Language code (e.g., 'en') to configure the model.
 
 > `private` **loadModelToFS**(`modelPath`): `Promise`\<`string`\>
 
-Defined in: [SpeechConverter.ts:36](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L36)
+Defined in: [SpeechConverter.ts:37](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L37)
 
 Loads a Whisper model from a given path (local or remote) into the in-memory file system.
 
@@ -232,7 +232,7 @@ Throws if the Whisper module is not initialized or fetch fails.
 
 > `private` **setAudio**(`index`, `audio`): `number`
 
-Defined in: [SpeechConverter.ts:225](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L225)
+Defined in: [SpeechConverter.ts:226](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L226)
 
 Sets the audio data at a given index for the Whisper model.
 
@@ -269,7 +269,7 @@ Throws if the Whisper module has not been initialized.
 
 > **startListening**(): `void`
 
-Defined in: [SpeechConverter.ts:159](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L159)
+Defined in: [SpeechConverter.ts:160](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L160)
 
 Starts listening to the user's microphone input, collects audio chunks,
 and feeds them into the Whisper model for transcription in real time.
@@ -292,7 +292,7 @@ Throws if `init()` was not called before invoking this method.
 
 > **stopListening**(): `void`
 
-Defined in: [SpeechConverter.ts:205](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/f278ef579dff54588e73872b6aab3afbbcf8bd88/src/SpeechConverter.ts#L205)
+Defined in: [SpeechConverter.ts:206](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/bc21471f230194581e4f0db915456df0e64b2367/src/SpeechConverter.ts#L206)
 
 Stops the audio input stream and halts the real-time transcription process.
 

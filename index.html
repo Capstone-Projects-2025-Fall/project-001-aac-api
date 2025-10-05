@@ -10,11 +10,16 @@
   <button id="initBtn">Init Whisper</button>
   <button id="startBtn">Start Listening</button>
   <button id="stopBtn">Stop Listening</button>
+  <button id="popUp">Show PopUp</button>
 
   <pre id="transcriptionLog" style="max-height: 2000px; overflow-y: scroll;"></pre>
 
   <script type="module">
     import { SpeechConverter } from './src/SpeechConverter.js';
+    import {showHistoryPopup } from './src/showHistoryPopup.js';
+    
+
+    document.getElementById("popUp").onclick = () => showHistoryPopup();
 
     const sc = new SpeechConverter();
     const logEl = document.getElementById("transcriptionLog");
@@ -24,8 +29,8 @@
 
     document.getElementById("initBtn").onclick = async () => {
       try {
-        let htmlLink = 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin'
-        let localPath = '/models/ggml-tiny.en.bin'
+        let htmlLink = 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin';
+        let localPath = '/models/ggml-tiny.en.bin';
         await sc.init(htmlLink, 'en'); 
         logEl.textContent += "[System] Whisper initialized.\n";
       } catch (e) {
@@ -41,12 +46,8 @@
         // start polling every 2 seconds for transcriptions
       if (!pollingId) {
         pollingId = window.setInterval(() => {
-          const transcripts = sc.getTranscribed();
-          while (lastTextIndex < transcripts.length) {
-            logEl.textContent += transcripts[lastTextIndex] + "\n";
-            lastTextIndex++;
-          }
-        }, 2000);
+          sc.getTranscribed();
+        }, 1000);
       }
 
       } catch (err) {
