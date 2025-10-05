@@ -107,4 +107,4 @@ describe('CommandHistory Test', () => {
     });
 
 
-    });
+});
