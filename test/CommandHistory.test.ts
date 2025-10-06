@@ -16,7 +16,7 @@ describe('CommandHistory Test', () => {
 
     it('should only ever be once instance', () => {
         const instance1 = CommandHistory.getInstance();
-        const instance2 = CommandHistory.getInstance()
+        const instance2 = CommandHistory.getInstance();
 
         expect(instance1).toBe(instance2);
     });
