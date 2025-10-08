@@ -1,11 +1,17 @@
 import {beforeEach, describe, it, expect, vi } from 'vitest';
+import { AudioInputHandlerMock } from '../src/__mocks__/AudioInputHandler';
 
 vi.mock('../src/whisper/libstream');
 vi.mock("../src/CommandHistory");
+vi.mock("../src/AudioInputHandler", () => ({
+    AudioInputHandler: AudioInputHandlerMock
+}));
+
+
 
 import createWhisperModule from '../src/whisper/libstream';
-import {SpeechConverter} from "../src/SpeechConverter"
 import { WhisperModuleInstance } from '../src/whisper/__mocks__/libstream';
+import {SpeechConverter} from "../src/SpeechConverter";
 
 
 describe("SpeechConverter", () => {
@@ -17,7 +23,7 @@ describe("SpeechConverter", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         
-            // Mock fetch globally for loading model files
+        // Mock fetch globally for loading model files
         globalThis.fetch = vi.fn(async () => ({
             ok: true,
             arrayBuffer: async () => new ArrayBuffer(8),
@@ -76,6 +82,30 @@ describe("SpeechConverter", () => {
         const result = (converter as any).downSample(buffer, highSample, outPutSample);
 
         expect(result).toBe(buffer);
+    });
+    it("initialize and calls StartListening()", async () => {
+
+        //spy on private methods to make sure they get called
+        const spyCombineChunks = vi.spyOn(converter as any, 'combineChunks');
+        const spyDownSample = vi.spyOn(converter as any, 'downSample');
+
+        //initialize whisper
+        await converter.init("/fake/path/model.bin", "en");
+        expect(createWhisperModule).toHaveBeenCalled();
+
+        converter.startListening();
+        expect(AudioInputHandlerMock).toHaveBeenCalled();
+
+        //makes sure the instance started listening and not just that the constructor ran
+        const instance = AudioInputHandlerMock.mock.results[0].value;
+        expect(instance.startListening).toHaveBeenCalled();
+
+        //makes sure core methods were called
+        expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
+        expect(spyCombineChunks).toHaveBeenCalled();
+        expect(spyDownSample).toHaveBeenCalled();
+
+
     });
     
 
