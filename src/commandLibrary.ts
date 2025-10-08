@@ -3,11 +3,11 @@ interface GameCommand {
     /*name of the command*/
     name: string;
     /*callback function to execute the command*/
-    function: () => void;
+    cbfunction: () => void;
     /*description of the command*/
     description: string;
     /*icon representing the command*/
-    icon: void;
+    // icon; commented out for now, dunno how we're doing this
     /*whether the command is active or not*/
     active: boolean;
 }
