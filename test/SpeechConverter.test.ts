@@ -122,6 +122,10 @@ describe("SpeechConverter", () => {
 
 
     });
+    it("throws error on getTranscribedText() is called without initializing", () => {
+        expect(() => converter.getTranscribed()).toThrow("Call init() first");
+
+    });
     it("throws error when startListening() is called without initializing", () =>{
         expect(() => converter.startListening()).toThrow("Call init() first");
     });
