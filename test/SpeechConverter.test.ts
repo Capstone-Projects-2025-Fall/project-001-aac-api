@@ -17,9 +17,10 @@ describe("SpeechConverter", () => {
 
     
     let converter: SpeechConverter;
-    
 
-    beforeEach(() => {
+
+
+    beforeEach(async () => {
         vi.clearAllMocks();
         
         // Mock fetch globally for loading model files
@@ -31,18 +32,18 @@ describe("SpeechConverter", () => {
         converter = new SpeechConverter();
         
     });
-    it("initializes Whisper module and loads model", async () => {
+    it("initializes Whisper module and loads model", async () => {  
         await converter.init("/fake/path/model.bin", "en");
 
         // // Check createWhisperModule called
         const mockedWhisper = vi.mocked(createWhisperModule);
         expect(mockedWhisper).toHaveBeenCalled();
 
-        const WhisperModuleInstance = await mockedWhisper.mock.results[0].value;
+        const whisperInstance = await mockedWhisper.mock.results[0].value;
 
         // Check FS_createPath and FS_createDataFile called
-        expect(WhisperModuleInstance.FS_createPath).toHaveBeenCalledWith("/", "models", true, true);
-        expect(WhisperModuleInstance.FS_createDataFile).toHaveBeenCalledWith(
+        expect(whisperInstance.FS_createPath).toHaveBeenCalledWith("/", "models", true, true);
+        expect(whisperInstance.FS_createDataFile).toHaveBeenCalledWith(
         "/models",
         "whisper-model.bin",
         expect.any(Uint8Array),
@@ -85,9 +86,6 @@ describe("SpeechConverter", () => {
     });
     it("initialize and calls StartListening()", async () => {
 
-        
-        
-
         //initialize whisper
         await converter.init("/fake/path/model.bin", "en");
         const mockedWhisper = vi.mocked(createWhisperModule);
@@ -96,6 +94,7 @@ describe("SpeechConverter", () => {
         //spy on private methods to make sure they get called
         const spyCombineChunks = vi.spyOn(converter as any, 'combineChunks');
         const spyDownSample = vi.spyOn(converter as any, 'downSample');
+        const spySetAudio = vi.spyOn((converter as any), 'setAudio');
 
         const WhisperModuleInstance = await mockedWhisper.mock.results[0].value;
 
@@ -107,6 +106,7 @@ describe("SpeechConverter", () => {
         expect(instance.startListening).toHaveBeenCalled();
 
         //makes sure core methods were called within start listening
+        expect(spySetAudio).toHaveBeenCalled()
         expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
         expect(spyCombineChunks).toHaveBeenCalled();
         expect(spyDownSample).toHaveBeenCalled();
@@ -128,33 +128,39 @@ describe("SpeechConverter", () => {
     it("throws error when stopListening() is called without initializing", () =>{
         expect(() => converter.stopListening()).toThrow("Call init() first");
     });
-    it("successfully calls stopListening()", async () => {
+    it("stopListening() stops the audio input handler", async () => {
 
-                //initialize whisper
+        //initialize whisper
         await converter.init("/fake/path/model.bin", "en");
-        const mockedWhisper = vi.mocked(createWhisperModule);
-        expect(mockedWhisper).toHaveBeenCalled();
-
-        //spy on private methods to make sure they get called
-        const spyCombineChunks = vi.spyOn(converter as any, 'combineChunks');
-        const spyDownSample = vi.spyOn(converter as any, 'downSample');
-
-        const WhisperModuleInstance = await mockedWhisper.mock.results[0].value;
 
         converter.startListening();
         expect(AudioInputHandlerMock).toHaveBeenCalled();
 
         //makes sure the instance started listening and not just that the constructor ran
         const instance = AudioInputHandlerMock.mock.results[0].value;
-        expect(instance.startListening).toHaveBeenCalled();
-
-        //makes sure core methods were called within start listening
-        expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
-        expect(spyCombineChunks).toHaveBeenCalled();
-        expect(spyDownSample).toHaveBeenCalled();
 
         converter.stopListening();
-        expect(instance.stopListening).toBeCalled();
+        expect(instance.stopListening).toHaveBeenCalled();
+
+    });
+    it("calls setAudio successfully", async () => {
+
+        const index = 1;
+        const data = new Float32Array([0.1,0.2,0.3]);
+
+        //initialize whisper
+        await converter.init("/fake/path/model.bin", "en");
+        const mockedWhisper = vi.mocked(createWhisperModule);
+        const WhisperModuleInstance = await mockedWhisper.mock.results[0].value;
+        
+
+        const result = (converter as any).setAudio(index, data);
+        expect(result).toEqual(1);
+        expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
+
+    });
+    it("calls setAudio without initializing", () => {
+        expect(() => (converter as any).setAudio(1, new Float32Array())).toThrow("Whisper module not initialized. Call init() first.");
 
     });
 

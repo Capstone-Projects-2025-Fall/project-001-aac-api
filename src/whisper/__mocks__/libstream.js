@@ -5,7 +5,7 @@ export const mockWhisperInstance = {
     FS_createPath:vi.fn(),
     FS_createDataFile: vi.fn(),
     init:vi.fn(),
-    set_audio: vi.fn(),
+    set_audio: vi.fn().mockReturnValue(1),
     get_transcribed: vi.fn().mockReturnValue("mock transcript"),
     get_status: vi.fn().mockReturnValue("ready"),
 };
