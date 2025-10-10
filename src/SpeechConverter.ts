@@ -86,8 +86,8 @@ private async loadModelToFS(modelPath: string):Promise<string> {
       return input;
     }
 
-    const ratio = inputRate / outputRate;
-    const newLength = Math.floor(input.length / ratio);
+    const ratio = inputRate / outputRate;//3
+    const newLength = Math.floor(input.length / ratio);//3
     const result = new Float32Array(newLength);
     let offsetResult = 0;
     let offsetInput = 0;
@@ -188,7 +188,7 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
         const downsampled = this.downSample(combined, inputSampleRate, targetSampleRate);
     
         
-        this.whisper?.set_audio(1, downsampled);
+        this.setAudio(1, downsampled);
     }
     });
 
@@ -223,7 +223,7 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
  * @returns {number} - The status code or result returned by the Whisper backend.
  * @throws {Error} Throws if the Whisper module has not been initialized.
  */
-  private setAudio(index: number, audio: Float32Array | number[]): number {
+  private setAudio(index: number, audio: Float32Array): number {
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
     }

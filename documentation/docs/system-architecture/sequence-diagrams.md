@@ -30,7 +30,51 @@ Alternate flows / exceptions:
 Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 
 ```mermaid
-{% include UserFlow1SequenceDiagram.mmd %}
+sequenceDiagram
+    actor Suzy
+    participant Game
+    participant System
+    participant ASR
+    participant API
+    
+    Suzy->>Game: Tap microphone icon
+    activate Game
+    Game->>System: Check microphone status
+    activate System
+    System-->>Game: Microphone ready
+    deactivate System
+
+    Game->>System: Begin listening
+    activate System
+    Note right of System: Records audio input
+    System->>ASR: Send audio for transcription
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+
+    System->>System: Normalize and match to command set
+    Note right of System: Maps to StartGame command
+    
+    alt High confidence
+        System->>API: Send StartGame command
+        activate API
+        API->>Game: Execute StartGame
+        Game->>Game: Change to playing state
+        Game-->>Suzy: Show visual confirmation
+        API->>System: Log command in history
+        deactivate API
+    else Low confidence
+        System-->>Suzy: "Could you say that again?"
+        opt Still low after retry
+            System-->>Suzy: "Try again later"
+            System-->>Game: Fallback to manual control
+        end
+    else Network error
+        System-->>Suzy: "Unable to process voice now"
+        System-->>Game: Fallback to manual start
+    end
+    deactivate System
+    deactivate Game
 ```
 
 ### Use Case 2 - Filter Out Filler Words
@@ -57,7 +101,53 @@ Alternate flows / exceptions:
 Postconditions: Jump action executed (or user prompted to repeat); command history updated.
 
 ```mermaid
-{% include UserFlow2SequenceDiagram.mmd %}
+sequenceDiagram
+    actor Suzy
+    participant Game
+    participant System
+    participant ASR
+    participant API
+    participant FillerFilter
+    
+    Suzy->>System: Speak command "uh jump now"
+    activate System
+    System->>ASR: Send audio for transcription
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+    
+    System->>FillerFilter: Process text "uh jump now"
+    activate FillerFilter
+    Note right of FillerFilter: Remove filler words<br/>"uh" and "now"
+    FillerFilter-->>System: Return filtered text "jump"
+    deactivate FillerFilter
+    
+    System->>System: Tokenize and map to command
+    Note right of System: Maps to Jump command
+    
+    alt High confidence mapping
+        System->>API: Send Jump command
+        activate API
+        API->>Game: Execute Jump action
+        activate Game
+        Game-->>Suzy: Show visual feedback + animation
+        deactivate Game
+        API->>System: Log command
+        deactivate API
+    else Filter removes all words
+        System-->>Suzy: "Please repeat command"
+    else Multiple possible commands
+        System-->>Suzy: "Did you mean JUMP?"
+        alt User confirms
+            Suzy->>System: Confirm command
+            System->>API: Send Jump command
+            API->>Game: Execute Jump action
+            Game-->>Suzy: Show visual feedback
+        end
+    else Low confidence
+        System-->>Suzy: "Please repeat command"
+    end
+    deactivate System
 ```
 
 ### Use Case 3 - Speaker Seperation
@@ -84,7 +174,67 @@ Alternate flows / exceptions:
 Postconditions: Game paused (if confirmed); system records speaker attribution and confidence.
 
 ```mermaid
-{% include UserFlow3SequenceDiagram.mmd %}
+sequenceDiagram
+    actor Suzy
+    actor Parent
+    participant Game
+    participant System
+    participant SpeakerSeparation
+    participant ASR
+    participant API
+    
+    Note over Suzy,Parent: Both speaking simultaneously
+    par Suzy speaks command
+        Suzy->>System: Speak "pause game"
+    and Parent speaks
+        Parent->>System: Speaking other words
+    end
+    
+    activate System
+    System->>SpeakerSeparation: Process mixed audio
+    activate SpeakerSeparation
+    Note right of SpeakerSeparation: Compare with enrolled<br/>player voice profile
+    SpeakerSeparation-->>System: Return isolated player audio
+    deactivate SpeakerSeparation
+    
+    System->>ASR: Transcribe isolated audio
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+    
+    System->>System: Normalize and map to command
+    Note right of System: Maps to PauseGame command
+    
+    alt High confidence & clear speaker separation
+        System->>API: Send PauseGame command
+        activate API
+        API->>Game: Execute pause action
+        activate Game
+        Game-->>Suzy: Show UI confirmation
+        deactivate Game
+        API->>System: Log command with speaker attribution
+        deactivate API
+    else No enrolled profile
+        System-->>Suzy: "Please enroll voice profile"
+    else Uncertain speaker separation
+        System-->>Suzy: "Did you say 'pause'?"
+        alt User confirms
+            Suzy->>System: Confirm command
+            System->>API: Send PauseGame command
+            API->>Game: Execute pause action
+            Game-->>Suzy: Show UI confirmation
+        end
+    else Overlapping identical words
+        System->>System: Check confidence & enrolled preference
+        alt Can resolve with confidence
+            System->>API: Send command with high confidence
+            API->>Game: Execute action
+            Game-->>Suzy: Show UI confirmation
+        else Cannot resolve
+            System-->>Suzy: Request confirmation
+        end
+    end
+    deactivate System
 ```
 
 ### Use Case 4 - Background Noise Filtering
@@ -110,6 +260,61 @@ Alternate flows / exceptions:
 
 Postconditions: Movement executed (or prompt shown); noise metrics recorded for debugging.
 
+```mermaid
+sequenceDiagram
+    actor Suzy
+    participant Game
+    participant System
+    participant NoiseFilter
+    participant ASR
+    participant API
+    
+    Note over Suzy,System: Noisy environment (e.g., TV playing)
+    Suzy->>System: Speak command "left"
+    activate System
+    
+    System->>NoiseFilter: Process noisy audio
+    activate NoiseFilter
+    Note right of NoiseFilter: Apply noise suppression/<br/>filtering
+    NoiseFilter-->>System: Return cleaned audio
+    deactivate NoiseFilter
+    
+    System->>ASR: Transcribe cleaned audio
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+    
+    System->>System: Match to command
+    Note right of System: Maps to MoveLeft command
+    
+    alt High confidence
+        System->>API: Send MoveLeft command
+        activate API
+        API->>Game: Execute move action
+        activate Game
+        Game-->>Suzy: Show visual confirmation
+        deactivate Game
+        API->>System: Log command with noise metrics
+        deactivate API
+    else Noise overwhelms voice
+        System-->>Suzy: "Can't hear you"
+        Note right of System: Record noise level metrics
+        opt Adaptive response
+            System-->>Suzy: "Try push-to-talk mode"
+            System->>System: Switch to push-to-talk
+        end
+    else Low confidence due to noise
+        System-->>Suzy: "Please repeat command"
+        opt After multiple failures
+            System-->>Suzy: "Move closer to mic"
+        end
+    end
+    
+    System->>System: Record environment metadata
+    Note right of System: Log noise levels for debugging
+    deactivate System
+```
+
 ### Use Case 5 - Interpret Synonyms of Commands
 
 Actor: Suzy (player); Developer (configures mapping)
@@ -132,6 +337,64 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
+```mermaid
+sequenceDiagram
+    actor Suzy
+    actor Steven
+    participant Game
+    participant System
+    participant ASR
+    participant SynonymMapper
+    participant API
+    
+    Note over Steven: Previously configured<br/>synonym mappings
+    
+    Suzy->>System: Speak command "hop"
+    activate System
+    System->>ASR: Process audio
+    activate ASR
+    ASR-->>System: Return transcribed text
+    deactivate ASR
+    
+    System->>SynonymMapper: Look up "hop" in synonym table
+    activate SynonymMapper
+    SynonymMapper-->>System: Map to "Jump" command
+    deactivate SynonymMapper
+    
+    alt High confidence mapping
+        System->>API: Send Jump command
+        activate API
+        API->>Game: Execute Jump action
+        activate Game
+        Game-->>Suzy: Show visual confirmation
+        deactivate Game
+        API->>System: Log command with synonym info
+        deactivate API
+    else Unknown synonym
+        System-->>Suzy: "Did you mean JUMP?"
+        Suzy->>System: Confirm command
+        System->>API: Send Jump command
+        API->>Game: Execute Jump action
+        Game-->>Suzy: Show visual feedback
+    
+    else Multiple possible matches
+        System->>System: Check confidence scores
+        alt High confidence match exists
+            System->>API: Send highest confidence command
+            API->>Game: Execute action
+            Game-->>Suzy: Show visual feedback
+        else No clear match
+            System-->>Suzy: Request command confirmation
+        end
+    else Synonym mapping disabled
+        System-->>Suzy: "Command not recognized"
+        System-->>Steven: Option to enable synonym mapping
+    end
+    
+    System->>System: Log synonym usage and confidence
+    deactivate System
+```
+
 ### Use Case 6 - Support Commmon Game Inputs (Incomplete)
 
 Actor: Steven (developer)
@@ -145,6 +408,63 @@ Normal flow:
 2. They tell the API what each command means and connect those commands to the game’s actions. When a player speaks, the API listens, figures out the right command, and sends it back to the game in a clear format.
 
 Postconditions: System contains common commands in a command library.
+
+```mermaid
+sequenceDiagram
+    actor Steven
+    participant APIToolkit
+    participant CommandLibrary
+    participant System
+    
+    Steven->>APIToolkit: Open API toolkit
+    activate APIToolkit
+        
+    par Add Movement Commands
+        Steven->>APIToolkit: Add "Move Left" command
+        APIToolkit->>CommandLibrary: Register command
+        Steven->>APIToolkit: Add "Move Right" command
+        APIToolkit->>CommandLibrary: Register command
+    and Add Action Commands
+        Steven->>APIToolkit: Add "Jump" command
+        APIToolkit->>CommandLibrary: Register command
+        Steven->>APIToolkit: Add "Shield" command
+        APIToolkit->>CommandLibrary: Register command
+    and Add Game Control Commands
+        Steven->>APIToolkit: Add "Start Game" command
+        APIToolkit->>CommandLibrary: Register command
+        Steven->>APIToolkit: Add "Pause" command
+        APIToolkit->>CommandLibrary: Register command
+    end
+    
+    Steven->>APIToolkit: Map commands to game actions
+    APIToolkit->>CommandLibrary: Store command mappings
+    activate CommandLibrary
+
+    CommandLibrary-->>APIToolkit: Confirm successful registration
+    deactivate CommandLibrary
+    
+    Steven->>APIToolkit: Test command recognition
+    activate APIToolkit
+    APIToolkit->>System: Turn on microphone
+    activate System
+    System-->>APIToolkit: Microphone ready
+    deactivate System
+    APIToolkit-->>Steven: Ready to listen for commands
+    Steven->>System: Speak "Move Left"
+    activate System
+    System->>System: Process audio input
+    Note over System, CommandLibrary: Handled by API (see Use Case 1)
+    System-->>CommandLibrary: Transcribed command
+    deactivate System
+    activate CommandLibrary
+    CommandLibrary->>CommandLibrary: Match text to command
+    CommandLibrary-->>APIToolkit: Command recognized
+    deactivate CommandLibrary
+    APIToolkit-->>Steven: Command recognized: Move Left
+    deactivate APIToolkit
+    APIToolkit-->>Steven: Setup complete
+    deactivate APIToolkit
+```
 
 ### Use Case 7 - Previous Game Integration
 
