@@ -1,4 +1,4 @@
-## Testing
+# Testing
 
 ### Our testing framework: Vitest
 Vitest is a modern, fast, and feature rich testing
@@ -20,7 +20,7 @@ environment.
     of choice is also vite). 
 ---
 #### Suitability for AACommodate  
-Given that AACommodate is a client side library with complex internal
+- Given that AACommodate is a client side library with complex internal
 logic and dependencies on browser specific functions, Vitest is an ideal choice.
 Powerful mocking, Typescript support, and Vite bundling are the primary reason 
 for its suitability. This ensure AACommodate can be a dependable tool for developers.
@@ -30,7 +30,7 @@ for its suitability. This ensure AACommodate can be a dependable tool for develo
 *This is auto generated on every pull request against main with passing test in our Github actions CI/CD Pipeline*
 
 <iframe
-    src="/coverage/index.html"
+    src="/project-001-aac-api/coverage/index.html"
     style={{
     width: '100%',
     height: '800px',
