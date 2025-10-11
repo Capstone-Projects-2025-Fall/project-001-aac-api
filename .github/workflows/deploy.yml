@@ -17,6 +17,22 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate coverage
+        run: |
+          npx vitest run --coverage
+          mkdir -p documentation/static/coverage
+          cp -r coverage/* documentation/static/coverage/
+
       - name: Install
         run: cd documentation && yarn install
 
