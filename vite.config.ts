@@ -27,7 +27,6 @@ test: {
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/*.ts', 'src/*.js'],
-      reportsDirectory: './documentation/static/coverage',
     }
   },
   resolve: {
