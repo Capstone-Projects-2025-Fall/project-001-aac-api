@@ -17,6 +17,7 @@ export class SpeechConverter{
   private audioHandler: AudioInputHandler | null = null;
 /** Stores all transcribed text segments captured from audio. */
   private transcribedText: CommandHistory| null = null;
+  private transcriptionInterval?: ReturnType<typeof setInterval>;
 
   constructor(){
         this.transcribedText = CommandHistory.getInstance();  
@@ -192,10 +193,17 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
     
         
         this.setAudio(1, downsampled);
+
+        
     }
     });
 
     this.audioHandler.startListening();
+
+  // Poll transcription every 200ms
+  this.transcriptionInterval = setInterval(() => {
+    this.getTranscribed();
+  }, 200);
   }
 
   /**
@@ -244,14 +252,16 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
  * @returns {string[]} - An array containing all transcribed text segments so far.
  * @throws {Error} Throws if the Whisper module has not been initialized.
  */
-  public getTranscribed():void{
+  public getTranscribed():string{
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
     }
-    
-    this.transcribedText?.add(this.whisper.get_transcribed());
-
-    
+    //only adds text to commandHistory if its not null or blank.
+    const text = this.whisper.get_transcribed();
+    if (text && text.trim()) {
+      this.transcribedText?.add(text);
+    }
+    return text;
     
   }
 /**
