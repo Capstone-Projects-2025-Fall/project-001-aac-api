@@ -1,7 +1,8 @@
-//export { commandHistory } from './commandHistory.js';
-//export { showHistoryPopup } from './showHistoryPopup.js';
-//export type { Command } from './commandHistory.js';
-export { SpeechConverter } from './SpeechConverter';
+export { CommandLibrary } from "./commandLibrary";
+export { AACVoiceAPI } from "./AACVoiceAPI";
+
+
+
 
 
 /**
@@ -14,16 +15,15 @@ export { SpeechConverter } from './SpeechConverter';
  *
  * @example
  * ```ts
- * import { Engine, add, Logger } from 'AACommodate API';
+ * import { CommandLibrary, AACVoiceAPI } from 'AACommodate API';
  *
- * const engine = new Engine();
- * console.log(add(2, 3));
+ * const voice = new AACVoiceAPI();
+ * const library = CommandLibrary.geInstatnce();
+ * 
+ * library.add("left");
+ * voice.initiate("url", "en")
  * ```
  */
 
 
-
-export function add(a: number, b: number): number {//here for demonstration purposes
-  return a + b;
-}
 
