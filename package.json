@@ -1,13 +1,14 @@
 {
-  "name": "project-001-aac-api",
-  "version": "1.0.0",
-  "description": "<div align=\"center\">",
-  "main": "dist/index.js",
+  "name": "aac-voice-api",
+  "version": "0.0.10",
+  "description": "Games where augmentative and alternative communication (AAC) devices are used as controllers for the game is promising for increasing social inclusion of children who use these devices, such as minimally verbal autistic children. We want to build out an API which supports audio-controlled games where the output from an AAC device is automatically converted into game actions.",
+  "main": "dist/AACommodateAPI.js",
+  "module": "dist/AACommodateAPI.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite-build",
+    "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
+    "preview": "vite preview",
     "lint": "eslint 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "format": "prettier --write '**/*.{ts,js,json}'",
     "test": "vitest",
@@ -19,8 +20,18 @@
     "type": "git",
     "url": "git+https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api.git"
   },
-  "keywords": [],
-  "author": "",
+  "files": [
+    "dist/"
+  ],
+  "keywords": [
+    "aac",
+    "voice-recognition",
+    "game-api",
+    "speech-to-text",
+    "accessibility",
+    "whisper"
+  ],
+  "author": "Michael Colbert, Gino Russo, Jess Hutchison, Hena Patel, Tam Trang",
   "license": "ISC",
   "type": "module",
   "bugs": {
@@ -44,6 +55,7 @@
     "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.7",
+    "vite-plugin-static-copy": "^3.1.3",
     "vitest": "^3.2.4"
   }
 }

@@ -50,7 +50,7 @@ private async loadModelToFS(modelPath: string):Promise<string> {
     // Make a directory and write file into MEMFS
     this.whisper.FS_createPath("/", "models", true, true);
     this.whisper.FS_createDataFile(folder, internalPath, uint8, true, true);
-    return folder+"/"+internalPath;
+    return `${folder}/${internalPath}`;
 }
 
 /**
@@ -66,6 +66,9 @@ private async loadModelToFS(modelPath: string):Promise<string> {
  * @returns {Promise<void>} - Resolves when the Whisper module is fully initialized.
  */
   async init(modelPath: string, lang: string) {
+
+
+
     this.whisper = await createWhisperModule();
 
     //load path into virtual filesystem

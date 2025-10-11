@@ -1,21 +1,37 @@
 import { defineConfig } from 'vitest/config';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   root: '.',
   build: {
     outDir: 'dist',
-    target: 'esnext', // <-- Add this to support top-level await
+    target: 'esnext',
     minify: true,
     lib: {
       entry: './src/index.ts',
       formats: ['es'],
-      fileName: 'AACommodateAPI', // Optional: cleaner output name
-      
+      fileName: 'AACommodateAPI',
     },
     rollupOptions: {
-      external: ['module', 'worker_threads'],
+      external: [
+        'module',
+        'worker_threads',
+        /.*\/whisper\/libstream\.js$/, // Mark libstream as external
+        './whisper/libstream.js' // Also add direct path
+      ],
     },
+    copyPublicDir: false,
   },
+  plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'src/whisper/*',
+          dest: 'whisper'
+        }
+      ]
+    })
+  ],
   worker: {
     format: 'es',
   },
@@ -28,14 +44,11 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'node', // or 'jsdom' if you need browser APIs
+    environment: 'node',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/*.ts', 'src/*.js'],
-    }
-  },
-  resolve: {
-    alias: {},
+    },
   },
 });
