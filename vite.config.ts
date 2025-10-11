@@ -4,13 +4,20 @@ export default defineConfig({
   root: '.',
   build: {
     outDir: 'dist',
+    target: 'esnext', // <-- Add this to support top-level await
+    minify: false,
     lib: {
-      entry: './src/index.ts', // your package entry
-      formats: ['es'],         // <-- use ES modules
+      entry: './src/index.ts',
+      formats: ['es'],
+      fileName: 'AACommodateAPI', // Optional: cleaner output name
+      
     },
     rollupOptions: {
-      external: ['module', 'worker_threads'], // Node built-ins
+      external: ['module', 'worker_threads'],
     },
+  },
+  worker: {
+    format: 'es',
   },
   server: {
     headers: {
@@ -19,14 +26,11 @@ export default defineConfig({
     },
     open: true,
   },
-
-test: {
+  test: {
     globals: true,
-    environment: 'node', // or 'jsdom' if you need browser APIs
+    environment: 'node',
   },
   resolve: {
-    alias: {
-      // This helps Vitest resolve your TypeScript paths correctly
-    },
+    alias: {},
   },
 });

@@ -1,7 +1,7 @@
 //export { commandHistory } from './commandHistory.js';
 //export { showHistoryPopup } from './showHistoryPopup.js';
 //export type { Command } from './commandHistory.js';
-//export { SpeechConverter } from './SpeechConverter';
+export { SpeechConverter } from './SpeechConverter';
 
 
 /**
