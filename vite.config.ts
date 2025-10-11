@@ -5,7 +5,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     target: 'esnext', // <-- Add this to support top-level await
-    minify: false,
+    minify: true,
     lib: {
       entry: './src/index.ts',
       formats: ['es'],
