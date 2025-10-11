@@ -23,6 +23,11 @@ export default defineConfig({
 test: {
     globals: true,
     environment: 'node', // or 'jsdom' if you need browser APIs
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['src/*.ts', 'src/*.js'],
+    }
   },
   resolve: {
     alias: {

@@ -12,7 +12,8 @@
     "format": "prettier --write '**/*.{ts,js,json}'",
     "test": "vitest",
     "docs": "typedoc --out doc",
-    "ci": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
