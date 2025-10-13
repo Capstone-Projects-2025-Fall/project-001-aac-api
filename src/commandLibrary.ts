@@ -1,5 +1,5 @@
 /*Object representing game command with its associated properties.*/
-interface GameCommand {
+export interface GameCommand {
     /*name of the command*/
     name: string;
     /*callback function to execute the command*/
@@ -38,7 +38,7 @@ export class CommandLibrary {
     }
 
     private normalize(name: string): string {
-    return name.toLowerCase().trim();
+        return name.toLowerCase().trim();
     }
 
     /** Add a command (returns false if name already exists) */
