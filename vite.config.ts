@@ -1,16 +1,39 @@
 import { defineConfig } from 'vitest/config';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   root: '.',
   build: {
     outDir: 'dist',
+    target: 'esnext',
+    minify: true,
     lib: {
-      entry: './src/index.ts', // your package entry
-      formats: ['es'],         // <-- use ES modules
+      entry: './src/index.ts',
+      formats: ['es'],
+      fileName: 'AACommodateAPI',
     },
     rollupOptions: {
-      external: ['module', 'worker_threads'], // Node built-ins
+      external: [
+        'module',
+        'worker_threads',
+        /.*\/whisper\/libstream\.js$/, // Mark libstream as external
+        './whisper/libstream.js' // Also add direct path
+      ],
     },
+    copyPublicDir: false,
+  },
+  plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'src/whisper/*',
+          dest: 'whisper'
+        }
+      ]
+    })
+  ],
+  worker: {
+    format: 'es',
   },
   server: {
     headers: {
@@ -19,14 +42,13 @@ export default defineConfig({
     },
     open: true,
   },
-
-test: {
+  test: {
     globals: true,
-    environment: 'node', // or 'jsdom' if you need browser APIs
-  },
-  resolve: {
-    alias: {
-      // This helps Vitest resolve your TypeScript paths correctly
+    environment: 'node',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['src/*.ts', 'src/*.js'],
     },
   },
 });

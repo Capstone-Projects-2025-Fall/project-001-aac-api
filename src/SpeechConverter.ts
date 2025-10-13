@@ -17,6 +17,7 @@ export class SpeechConverter{
   private audioHandler: AudioInputHandler | null = null;
 /** Stores all transcribed text segments captured from audio. */
   private transcribedText: CommandHistory| null = null;
+  private transcriptionInterval?: ReturnType<typeof setInterval>;
 
   constructor(){
         this.transcribedText = CommandHistory.getInstance();  
@@ -50,7 +51,7 @@ private async loadModelToFS(modelPath: string):Promise<string> {
     // Make a directory and write file into MEMFS
     this.whisper.FS_createPath("/", "models", true, true);
     this.whisper.FS_createDataFile(folder, internalPath, uint8, true, true);
-    return folder+"/"+internalPath;
+    return `${folder}/${internalPath}`;
 }
 
 /**
@@ -66,6 +67,9 @@ private async loadModelToFS(modelPath: string):Promise<string> {
  * @returns {Promise<void>} - Resolves when the Whisper module is fully initialized.
  */
   async init(modelPath: string, lang: string) {
+
+
+
     this.whisper = await createWhisperModule();
 
     //load path into virtual filesystem
@@ -189,10 +193,17 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
     
         
         this.setAudio(1, downsampled);
+
+        
     }
     });
 
     this.audioHandler.startListening();
+
+  // Poll transcription every 200ms
+  this.transcriptionInterval = setInterval(() => {
+    this.getTranscribed();
+  }, 200);
   }
 
   /**
@@ -241,14 +252,16 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
  * @returns {string[]} - An array containing all transcribed text segments so far.
  * @throws {Error} Throws if the Whisper module has not been initialized.
  */
-  public getTranscribed():void{
+  public getTranscribed():string{
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
     }
-    
-    this.transcribedText?.add(this.whisper.get_transcribed());
-
-    
+    //only adds text to commandHistory if its not null or blank.
+    const text = this.whisper.get_transcribed();
+    if (text && text.trim()) {
+      this.transcribedText?.add(text);
+    }
+    return text;
     
   }
 /**
