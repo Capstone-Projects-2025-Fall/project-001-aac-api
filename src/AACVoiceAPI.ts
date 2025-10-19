@@ -1,6 +1,8 @@
 
+import { CommandLibrary } from "./commandLibrary";
 import { showHistoryPopup } from "./showHistoryPopup";
 import { SpeechConverter } from "./SpeechConverter";
+import { GameCommand } from "./commandLibrary";
 
 /**
  * AACVoiceAPI is a facade class that provides a simplified interface
@@ -16,10 +18,11 @@ import { SpeechConverter } from "./SpeechConverter";
 export class AACVoiceAPI{
 
     private converter: SpeechConverter | null = null;
-
+    private commands: CommandLibrary | null = null;
 
     constructor(){
-        this.converter = new SpeechConverter();    
+        this.converter = new SpeechConverter();  
+        this.commands = new CommandLibrary();  
     }
 
     /**
@@ -59,6 +62,21 @@ export class AACVoiceAPI{
      */
     public displayCommandHistory():void{
         showHistoryPopup(); 
+    }
+    public addCommand(command: GameCommand): boolean {
+        return this.commands?.add(command) || false;
+    }
+    public removeCommand(name: string): boolean {
+        return this.commands?.remove(name) || false;
+    }
+    public isRegistered(name: string): boolean {
+        return this.commands?.has(name) || false;
+    }
+    public getCommands():GameCommand[] | undefined{
+        return this.commands?.list() || undefined
+    }
+    public clearCommands(): void {
+        this.commands?.clear();
     }
 
     
