@@ -502,6 +502,31 @@ Alternate flows / exceptions:
 
 Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
+```mermaid
+sequenceDiagram
+    actor Steven
+    participant AAC Voice API
+    participant Command Library
+    Note over Command Library: Assume the system command library has common commands in command library by initialization
+
+    Steven ->> AAC Voice API: Enters a new command
+    activate AAC Voice API
+    AAC Voice API ->> Command Library: Checks if command exists
+    activate Command Library
+    
+    alt Command exists
+        Command Library -->> AAC Voice API: Send message back
+        deactivate Command Library
+        AAC Voice API -->> Steven: Notify command exists
+    else Command doesn't exist
+        AAC Voice API ->> Command Library: Add new command
+        activate Command Library
+        Command Library -->> AAC Voice API: Notify confirmation
+        deactivate Command Library
+        AAC Voice API -->> Steven: Confirms success of adding command
+        deactivate AAC Voice API
+    end
+```
 ### Use Case 9 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
