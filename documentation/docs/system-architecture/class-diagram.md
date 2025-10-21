@@ -14,33 +14,117 @@ classDiagram
     }
 
     class AACVoiceApi {
-        +AACVoiceApi.startListening()
-        +AACVoiceApi.initalize(voiceCommands: Object)
+        - converter: SpeechConverter
+        
+        + initiate(url: String, language: String) : void
+        + start() : void
+        + stop() : void
+        + displayCommandHistory() : void
     }
 
-    class AudioHandlerInput {
-        -stream: MediaStream
-        -ctx: AudioContext
-        -processor: ScriptProcessorNode
-        +isListening: boolean
-        -onAudioChunk: (chunk: Float32Array) => void
-        +constructor(onAudioChunk)
-        +onAudioChunk() 
-        +startListening(): Promise<void>
-        +stopListening(): void
+    class AudioInputHandler {
+        - stream: MediaStream
+        - ctx: AudioContext
+        - processor: ScriptProcessorNode
+        + isListening: Boolean
+        
+        + onAudioChunk(chunk: Float32Array): void
+        + getSampleRate(): number
+        + startListening(): Promise<void>
+        + stopListening(): void
+        
     }
-
+    
+    class CommandHistory {
+        - history: string[]
+        - enabled: Boolean
+        - instance: CommandHistory$ 
+        
+        + getInstance(): CommandHistory$
+        + toggle(enable: Boolean): void
+        + add(command: string): void
+        + getAll(): string[]
+        + getSize(): number
+        + getSlice(start: number, end: number): string[]
+        + clear(): void
+    }
+    
+    class GameCommand {
+     <<interface>>
+     + name: string
+     + description: string
+     + active: Boolean
+     
+     + action(): void
+    }
+    
+    class commandLibrary {
+        - commandMap: Map<string, GameCommand>
+        - instance: CommandLibrary$
+        
+        + getInstance(): CommandLibrary$
+        - normalize(name: string): string
+        + add(command: GameCommand): Boolean
+        + remove(name: string): Boolean
+        + has(name: string): Boolean
+        + get(name: string): Boolean
+        + list(): GameCommand[]
+        + clear(): void
+    }
+    commandLibrary ..|> GameCommand
+    
+    class CommandMapping {
+        - library: CommandLibrary
+        
+        - normalize(name: string): string
+        + addCommand(name: string, action(): void, options(description: string, active: Boolean)): Boolean
+        + removeCommand(name: string): Boolean
+        + getAllCommands(): string[]
+        + hasCommand(name: string): Boolean
+        + getCommand(name: string): GameCommand | undefined
+        + clearAllCommands(): void
+    }
+    
+    class showHistoryPopup {
+        - commandHistory: CommandHistory
+        
+        + showHistoryPopup(): void
+    }
+    
+    class SpeechConverter {
+        - whisper: WhisperModule | null
+        - audioHandler: AudioInputHandler | null
+        - transcribedText: CommandHistory | null
+        - transcriptionInterval: ReturnType<setInterval>
+        
+        - loadModelToFS(modelPath: string): Promise<string>
+        + init(modelPath: string, lang: string): Promise<void>
+        - downSample(input: Float32Array, inputRate: number, outputRate: number): Float32Array
+        - combineChunks(buffer: Float32Array[], blockSize: number): Float32Array
+        + startListening(): void
+        + stopListening(): void
+        - setAudio(index: number, audio: Float32Array): number
+        + getTranscribed(): string
+        + getStatus(): string
+        + createWhisperModule(): Promise<WhisperModule>
+    }
+    
     class SpeechToText {
         
     }
-
+    Note top of SpeechToText: This class is currently empty. Future methods and/or data members will be added here.
+    
     class CommandMapper {
        
     }
+    Note top of CommandMapper: This class is currently empty. Future methods and/or data members will be added here.
+
 
     class SpeechSeperation {
        
     }
+    Note top of SpeechSeparation: This class is currently empty. Future methods and/or data members will be added here.
+
 
     AACVoiceApi *-- AudioHandlerInput : contains
     AACVoiceApi *-- SpeechToText : contains
