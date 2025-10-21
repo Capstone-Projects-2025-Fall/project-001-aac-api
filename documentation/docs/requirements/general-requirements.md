@@ -19,7 +19,10 @@ Typescript
 
 ### Testing and Debugging Tools
 - Jest
+- Vitest
 
 ### Hardware Required
-- Microphone
+- A device required to test out our API, preferably desktop/laptop computers.
+- A stable internet connection to maintain communication with our API.
+- Desktop/laptop computers must have a microphone/built-in microphone to effectively test communication from our API. 
 
