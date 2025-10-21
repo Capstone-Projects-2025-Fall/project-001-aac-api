@@ -5,7 +5,7 @@ title: Class Diagram
 # Class Diagram
 
 This diagram illustrates the core architecture of AAC Voice API, showing the relationships between main classes
-and their responsibilites 
+and their responsibilities 
 ```mermaid
 classDiagram
     class index {
@@ -145,10 +145,10 @@ classDiagram
 
 ### AACVoiceApi
 The main entry point for the API. This will be a facade and the only class that a developer will have to initialize.
-Initializes voice command recognition and manages the lifeycle of voice listening sessions.
+Initializes voice command recognition and manages the lifecycle of voice listening sessions.
 
 ### AudioHandlerInput
-Handles raw audio stream processing from the users microphone. Manages Web Audio API components and converts audio into processable chunks.
+Handles raw audio stream processing from the user's microphone. Manages Web Audio API components and converts audio into processable chunks.
 
 ### SpeechToText
 Consumes (from AudioHandlerInput) and converts audio chunks into text transcriptions for command recognition.
@@ -156,7 +156,7 @@ Consumes (from AudioHandlerInput) and converts audio chunks into text transcript
 ### CommandMapper
 Maps recognized speech text to configured voice commands and triggers the appropriate functions
 
-### SpeechSeperation (Still in Discussion)
+### SpeechSeparation (Still in Discussion)
 Processes audio to separate speech from background noise, improving recognition accuracy
 
 ### Key Relationships 
