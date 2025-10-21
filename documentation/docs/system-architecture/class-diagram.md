@@ -134,21 +134,41 @@ classDiagram
     AACVoiceApi ..> showHistoryPopup
     AACVoiceApi ..> SpeechConverter
     CommandMapping ..> commandLibrary
-    AACVoiceApi *-- AudioHandlerInput : contains
     AACVoiceApi *-- SpeechToText : contains
     AACVoiceApi *-- CommandMapper : contains
     index ..> AACVoiceApi
     index ..> commandLibrary
-    AudioHandlerInput *-- SpeechSeparation : contains
+    AudioInputHandler *-- SpeechSeparation : contains
 ```
 **Figure 2** Class Architecture of our Api
+
+### index
+This is the main entry point for npm package `'aac-voice-api'`.
+It exports the core classes, functions, and types that
+make up the public API of the library.
 
 ### AACVoiceApi
 The main entry point for the API. This will be a facade and the only class that a developer will have to initialize.
 Initializes voice command recognition and manages the lifecycle of voice listening sessions.
 
-### AudioHandlerInput
+### SpeechConverter
+Handles real-time speech-to-text conversion using the Whisper model.
+It manages audio input, preprocessing, and transcription directly in the browser.
+
+### CommandHistory
+Keeps track of a chronological log of commands.
+
+### commandLibrary
+Contains a HashMap that:
+- Can be called by CommandMapper.
+- Maps a String command to the corresponding GameCommand.
+
+### AudioInputHandler
 Handles raw audio stream processing from the user's microphone. Manages Web Audio API components and converts audio into processable chunks.
+
+### showHistoryPopup
+Opens a modal that shows the latest commands and auto-refreshes every second.
+Storage is unbounded; UI renders only a window (latest PAGE items) for speed.
 
 ### SpeechToText
 Consumes (from AudioHandlerInput) and converts audio chunks into text transcriptions for command recognition.
