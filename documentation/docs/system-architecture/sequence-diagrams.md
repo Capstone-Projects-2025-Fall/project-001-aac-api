@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Use-case descriptions
+# Sequence Diagrams
 
 ### Use Case 1 - Voice Recognition
 
