@@ -13,7 +13,7 @@ Typescript
 - Node.js
 - npm
 
-### Project Mangement
+### Project Management
 - Jira
 - Discord
 

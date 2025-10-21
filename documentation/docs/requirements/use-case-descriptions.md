@@ -52,7 +52,7 @@ Alternate flows / exceptions:
 
 Postconditions: Jump action executed (or user prompted to repeat); command history updated.
 
-### Use Case 3 - Speaker Seperation
+### Use Case 3 - Speaker Separation
 
 Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
 
@@ -120,7 +120,7 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
-### Use Case 6 - Support Commmon Game Inputs (Incomplete)
+### Use Case 6 - Support Common Game Inputs (Incomplete)
 
 Actor: Steven (developer)
 
@@ -200,7 +200,7 @@ Preconditions: Game is in a state that accepts gameplay commands; microphone is 
 
 Normal flow:
     1. Steven speaks game commands into the microphone.
-    2. The game command is interpreted and inputed to the game.
+    2. The game command is interpreted and inputted to the game.
     3. Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. 
     4. This allows him to have control over which commands are recognized as valid game inputs. ensuring that only reliable commands can affect the gameplay.
 
