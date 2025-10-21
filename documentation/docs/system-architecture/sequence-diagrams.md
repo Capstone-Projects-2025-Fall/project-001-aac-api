@@ -506,23 +506,23 @@ Postconditions: All commands for the AAC game are entered in the command library
 sequenceDiagram
     actor Steven
     participant AAC Voice API
-    participant Command Library
-    Note over Command Library: Assume the system command library has common commands in command library by initialization
+    participant CommandLibrary
+    Note over CommandLibrary: Assume the system command library has common commands in command library by initialization
 
     Steven ->> AAC Voice API: Enters a new command
     activate AAC Voice API
-    AAC Voice API ->> Command Library: Checks if command exists
-    activate Command Library
+    AAC Voice API ->> CommandLibrary: Checks if command exists
+    activate CommandLibrary
     
     alt Command exists
-        Command Library -->> AAC Voice API: Send message back
-        deactivate Command Library
+        CommandLibrary -->> AAC Voice API: Send message back
+        deactivate CommandLibrary
         AAC Voice API -->> Steven: Notify command exists
     else Command doesn't exist
-        AAC Voice API ->> Command Library: Add new command
-        activate Command Library
-        Command Library -->> AAC Voice API: Notify confirmation
-        deactivate Command Library
+        AAC Voice API ->> CommandLibrary: Add new command
+        activate CommandLibrary
+        CommandLibrary -->> AAC Voice API: Notify confirmation
+        deactivate CommandLibrary
         AAC Voice API -->> Steven: Confirms success of adding command
         deactivate AAC Voice API
     end
@@ -594,5 +594,30 @@ Alternate flows / exceptions:
 1. The game incorrectly interprets the voice input.
 2. Steven adjusts the code accordingly.
 
-Postconditions: Gam e accurately interprets gameplay commands.
+Postconditions: Game accurately interprets gameplay commands.
 
+```mermaid
+sequenceDiagram
+    actor Steven
+    participant GameSystem
+    
+    Note over Steven: Steven is experimenting with API speech input
+    Note over GameSystem: Game accepts gameplay commands, microphone is active
+    
+    Steven ->> GameSystem: Speak game commands into microphone
+    activate GameSystem
+    GameSystem ->> GameSystem: Interpret and input command into game
+    GameSystem -->> Steven: Return confidence level
+    deactivate GameSystem
+    
+    Note over Steven: Control over which commands are valid inputs, ensuring reliable commands affect gameplay
+    Note over GameSystem: Game accurately interprets game commands
+    
+    opt Incorrect voice input
+        activate GameSystem
+        GameSystem -->> Steven: Incorrectly interpreted voice input
+        Steven ->> GameSystem: Adjusts code accordingly
+        deactivate GameSystem
+    end
+
+```
