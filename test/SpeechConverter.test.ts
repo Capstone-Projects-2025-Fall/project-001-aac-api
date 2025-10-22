@@ -6,11 +6,13 @@ vi.mock("../src/CommandHistory");
 vi.mock("../src/AudioInputHandler", () => ({
     AudioInputHandler: AudioInputHandlerMock
 }));
+vi.mock("../src/CommandConverter");
 
 
 
 import createWhisperModule from '../src/whisper/libstream';
 import {SpeechConverter} from "../src/SpeechConverter";
+import { mockCommandConverter } from '../src/CommandConverter';
 
 
 describe("SpeechConverter", () => {
@@ -106,7 +108,7 @@ describe("SpeechConverter", () => {
         expect(instance.startListening).toHaveBeenCalled();
 
         //makes sure core methods were called within start listening
-        expect(spySetAudio).toHaveBeenCalled()
+        expect(spySetAudio).toHaveBeenCalled();
         expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
         expect(spyCombineChunks).toHaveBeenCalled();
         expect(spyDownSample).toHaveBeenCalled();
@@ -132,7 +134,7 @@ describe("SpeechConverter", () => {
     it("throws error when stopListening() is called without initializing", () =>{
         expect(() => converter.stopListening()).toThrow("Call init() first");
     });
-    it("stopListening() stops the audio input handler", async () => {
+    it("StopListening() stops the audio input handler", async () => {
 
         //initialize whisper
         await converter.init("/fake/path/model.bin", "en");
@@ -147,7 +149,7 @@ describe("SpeechConverter", () => {
         expect(instance.stopListening).toHaveBeenCalled();
 
     });
-    it("calls setAudio successfully", async () => {
+    it("Calls setAudio successfully", async () => {
 
         const index = 1;
         const data = new Float32Array([0.1,0.2,0.3]);
@@ -163,12 +165,46 @@ describe("SpeechConverter", () => {
         expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
 
     });
-    it("calls setAudio without initializing", () => {
+    it("Calls setAudio without initializing", () => {
         expect(() => (converter as any).setAudio(1, new Float32Array())).toThrow("Whisper module not initialized. Call init() first.");
 
     });
+    it("Logs transcribed text", () => {
+        const text = "logged text";
+        (converter as any).logText(text);
+        const logs = (converter as any).getLoggedText();
+        expect(logs[logs.length-1]?.transcribedText).toContain(text);
 
+    });
+    it("Does not log blank audio", () =>{
+        const text = "[BLANK_AUDIO]";
+        (converter as any).logText(text);
+        expect((converter as any).getLoggedText()).toEqual([]);
+    });
+    it("Processes valid transcribed text", () => {
+        const text = "run";
+        (converter as any).processText(text);
 
+        expect(mockCommandConverter.processTranscription).toHaveBeenCalledWith(text);
+    });
+    it("ProcessText called with null value", () => {
+
+        const text = null;
+        (converter as any).processText(text);
+        expect(mockCommandConverter.processTranscription).not.toHaveBeenCalledWith(text);
+    });
+    it("ProcessText called with [BLANK_AUDIO]", () => {
+
+        const text = "[BLANK_AUIDIO]";
+        (converter as any).processText(text);
+        expect(mockCommandConverter.processTranscription).toHaveBeenCalledWith(text);
+    });
+    it("ProcessText called with spaces only", () => {
+
+        const text = " ";
+        (converter as any).processText(text);
+        expect(mockCommandConverter.processTranscription).not.toHaveBeenCalledWith(text);
+    });
 
     
 
