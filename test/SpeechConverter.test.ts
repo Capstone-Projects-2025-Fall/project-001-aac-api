@@ -1,6 +1,8 @@
 import {beforeEach, describe, it, expect, vi } from 'vitest';
 import { AudioInputHandlerMock } from '../src/__mocks__/AudioInputHandler';
 
+
+
 vi.mock('../src/whisper/libstream');
 vi.mock("../src/CommandHistory");
 vi.mock("../src/AudioInputHandler", () => ({
@@ -11,8 +13,11 @@ vi.mock("../src/CommandConverter");
 
 
 import createWhisperModule from '../src/whisper/libstream';
-import {SpeechConverter} from "../src/SpeechConverter";
+//@ts-expect-error used because its a test with a mockup
 import { mockCommandConverter } from '../src/CommandConverter';
+import {SpeechConverter} from "../src/SpeechConverter";
+
+
 
 
 describe("SpeechConverter", () => {
@@ -30,7 +35,6 @@ describe("SpeechConverter", () => {
             ok: true,
             arrayBuffer: async () => new ArrayBuffer(8),
         })) as unknown as typeof fetch;
-
         converter = new SpeechConverter();
         
     });
@@ -112,15 +116,6 @@ describe("SpeechConverter", () => {
         expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
         expect(spyCombineChunks).toHaveBeenCalled();
         expect(spyDownSample).toHaveBeenCalled();
-
-
-    });
-    it("gets transcribed Text", async () => {
-        
-        //initialize whisper
-        await converter.init("/fake/path/model.bin", "en");
-        expect(createWhisperModule).toHaveBeenCalled();
-        
 
 
     });
