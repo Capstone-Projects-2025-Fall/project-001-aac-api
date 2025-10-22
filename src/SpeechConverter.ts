@@ -1,6 +1,6 @@
 import createWhisperModule, { WhisperModule } from "./whisper/libstream";
 import { AudioInputHandler } from "./AudioInputHandler";
-import { CommandHistory } from "./CommandHistory";
+import { CommandConverter } from "./CommandConverter";
 
 
 
@@ -15,12 +15,12 @@ export class SpeechConverter{
   private whisper:WhisperModule | null = null;
   /** Used to capture microphone input */
   private audioHandler: AudioInputHandler | null = null;
-/** Stores all transcribed text segments captured from audio. */
-  private transcribedText: CommandHistory| null = null;
+  /** Processes transcribed text and matches commands */
+  private commandConverter: CommandConverter | null = null;
   private transcriptionInterval?: ReturnType<typeof setInterval>;
 
   constructor(){
-        this.transcribedText = CommandHistory.getInstance();  
+        this.commandConverter = CommandConverter.getInstance();  
     }
 
 
@@ -243,23 +243,23 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
 
 
 /**
- * Retrieves the latest transcription result from the Whisper model and stores it.
+ * Retrieves the latest transcription result from the Whisper model and processes it.
  * 
  * This method calls the underlying Whisper API to obtain the most recently
- * transcribed text, appends it to the internal transcript list, and returns
- * the accumulated transcription history.
+ * transcribed text and passes it to the CommandConverter for processing and
+ * command matching.
  * 
- * @returns {string[]} - An array containing all transcribed text segments so far.
+ * @returns {string} - The transcribed text from the current audio chunk.
  * @throws {Error} Throws if the Whisper module has not been initialized.
  */
   public getTranscribed():string{
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
     }
-    //only adds text to commandHistory if its not null or blank.
+    //only passes text to commandConverter if its not null or blank.
     const text = this.whisper.get_transcribed();
     if (text && text.trim()) {
-      this.transcribedText?.add(text);
+      this.commandConverter?.processTranscription(text);
     }
     return text;
     

@@ -17,6 +17,7 @@
   <script type="module">
     import { SpeechConverter } from './src/SpeechConverter.js';
     import {showHistoryPopup } from './src/showHistoryPopup.js';
+    import { CommandMapping } from './src/commandMapping.js';
     
 
     document.getElementById("popUp").onclick = () => showHistoryPopup();
@@ -26,6 +27,42 @@
     let pollingId = null;
     let lastTextIndex = 0;
     let lastText = ""; // last transcription
+
+    // Initialize command mapping and add test commands 
+    const commandMapper = new CommandMapping();
+    
+    commandMapper.addCommand(
+      'clear',
+      () => {
+        document.body.style.backgroundColor = 'white';
+      },
+      {
+        description: 'Clears the background color',
+        active: true
+      }
+    );
+
+    commandMapper.addCommand(
+      'red',
+      () => {
+        document.body.style.backgroundColor = 'red';
+      },
+      {
+        description: 'Changes the background color to red',
+        active: true
+      }
+    );
+
+    commandMapper.addCommand(
+      'green',
+      () => {
+        document.body.style.backgroundColor = 'green';
+      },
+      {
+        description: 'Changes the background color to green',
+        active: true
+      }
+    );
 
     document.getElementById("initBtn").onclick = async () => {
       try {
