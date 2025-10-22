@@ -1,4 +1,4 @@
-import { CommandHistory }from './CommandHistory';
+import { CommandHistory, CommandLogEntry } from './CommandHistory';
 
 
 /** gets an instance of the Command History */
@@ -94,8 +94,18 @@ export function showHistoryPopup():void{
     const items = commandHistory.getSlice(windowStart, windowEnd);
     list.innerHTML = '';
     for (let i = 0; i < items.length; i++) {
+      const entry = items[i];
       const li = document.createElement('li');
-      li.textContent = items[i];
+      
+      // Format the command log entry with timestamp, command name, and status
+      const time = entry.timestamp.toLocaleTimeString();
+      
+      li.innerHTML = `
+        <span style="color: #6b7280; font-size: 0.9em;">${time}</span>
+        <span style="font-weight: 600; margin: 0 8px;">${entry.commandName}</span>
+        <span style="font-weight: normal;">${entry.status}</span>
+      `;
+      
       Object.assign(li.style, {
         padding: '10px 12px',
         margin: '6px 0',

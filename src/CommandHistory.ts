@@ -1,4 +1,16 @@
 /**
+ * Represents a single entry in the command log.
+ */
+export interface CommandLogEntry {
+  /** When the command was matched */
+  timestamp: Date;
+  /** The name of the matched command */
+  commandName: string;
+  /** Whether the callback executed successfully */
+  status: 'success' | 'failed';
+}
+
+/**
  * CommandHistory keeps track of a chronological log of commands.
  * 
  * This class allows you to:
@@ -15,7 +27,7 @@
 
 export class CommandHistory {
   /**All commands in order — can grow without a cap. */ 
-  private history: string[] = [];
+  private history: CommandLogEntry[] = [];
 
   /**  If false, ignore new commands */
   private enabled = true;
@@ -49,12 +61,21 @@ export class CommandHistory {
   }
 
   /**
+   * Returns whether logging is currently enabled.
+   * 
+   * @returns {boolean} True if logging is enabled, false otherwise
+   */
+  public isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  /**
    * Adds a new command to the Command History Log if Logging has been turned on
    * 
-   * @param command Adds a new command to the array
+   * @param command Adds a new command entry to the array
    * @returns {void}
    */
-  public add(command: string):void{
+  public add(command: CommandLogEntry):void{
     if (!this.enabled) return;
     this.history.push(command);
   }
@@ -63,9 +84,9 @@ export class CommandHistory {
   /**
    * Returns all logged Commands
    * 
-   * @returns {string[]} returns a copy of the history that is immutable
+   * @returns {CommandLogEntry[]} returns a copy of the history that is immutable
    */
-  public getAll(): string[] {
+  public getAll(): CommandLogEntry[] {
     return [...this.history];
   }
 
@@ -87,9 +108,9 @@ export class CommandHistory {
    * 
    * @param {number}start Starting position of commands you want to have returned
    * @param {number} end Ending position of the commands you want to have returned
-   * @returns {string[]} If the starting slice is larger then the end it will return an empty array otherwise it returns a list of the commands from the starting index to the ending index
+   * @returns {CommandLogEntry[]} If the starting slice is larger then the end it will return an empty array otherwise it returns a list of the commands from the starting index to the ending index
    */
-  public getSlice(start: number, end?: number): string[] {
+  public getSlice(start: number, end?: number): CommandLogEntry[] {
     const s = Math.max(0, start);
     const e = Math.min(this.history.length, end ?? this.history.length);
     if (s >= e) return [];

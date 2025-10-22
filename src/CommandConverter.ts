@@ -1,4 +1,5 @@
 import { CommandLibrary, GameCommand } from './commandLibrary';
+import { CommandHistory, CommandLogEntry } from './CommandHistory';
 
 /**
  * CommandConverter processes transcribed text in real-time, tokenizes it,
@@ -8,7 +9,7 @@ import { CommandLibrary, GameCommand } from './commandLibrary';
  * - Tokenizes incoming transcription text into individual words
  * - Normalizes and cleans tokens (lowercase, trim, remove punctuation)
  * - Checks each token against the CommandLibrary
- * - Stores matched commands in a command log with timestamps
+ * - Sends matched commands to CommandHistory with timestamps
  * - Automatically executes matched commands
  * - Invokes callback when commands are matched
  */
@@ -16,11 +17,8 @@ export class CommandConverter {
   /** Reference to the CommandLibrary for looking up commands */
   private library: CommandLibrary;
 
-  /** Log of matched commands with timestamps */
-  private commandLog: CommandLogEntry[] = [];
-
-  /** Whether logging is enabled */
-  private enabled = true;
+  /** Reference to CommandHistory for logging matched commands */
+  private commandHistory: CommandHistory;
 
   /** Callback function invoked when commands are matched */
   private onCommandMatched?: (commands: GameCommand[], transcription: string) => void;
@@ -31,6 +29,7 @@ export class CommandConverter {
   /** Private constructor prevents direct instantiation */
   private constructor() {
     this.library = CommandLibrary.getInstance();
+    this.commandHistory = CommandHistory.getInstance();
   }
 
   /**
@@ -87,7 +86,7 @@ export class CommandConverter {
    * @returns {GameCommand[]} Array of matched commands found in the transcription
    */
   public processTranscription(transcription: string): GameCommand[] {
-    if (!this.enabled || !transcription || !transcription.trim()) {
+    if (!transcription || !transcription.trim()) {
       return [];
     }
 
@@ -117,7 +116,6 @@ export class CommandConverter {
     }
 
     // Invoke callback if commands were matched 
-    // still needs to be done
     if (matchedCommands.length > 0 && this.onCommandMatched) {
       try {
         this.onCommandMatched(matchedCommands, transcription);
@@ -128,7 +126,7 @@ export class CommandConverter {
 
     return matchedCommands;
   }
-
+ 
   /**
    * Logs a matched command to the command log.
    * 
@@ -144,26 +142,6 @@ export class CommandConverter {
       status: status,
     };
 
-    this.commandLog.push(entry);
+    this.commandHistory.add(entry);
   }
-
-  /**
-   * Enables or disables logging of matched commands.
-   * 
-   * @param {boolean} enable - True to enable logging, false to disable
-   */
-  public toggleLogging(enable: boolean): void {
-    this.enabled = enable;
-  }
-}
-/**
- * Represents a single entry in the command log.
- */
-export interface CommandLogEntry {
-  /** When the command was matched */
-  timestamp: Date;
-  /** The name of the matched command */
-  commandName: string;
-  /** Whether the callback executed successfully */
-  status: 'success' | 'failed';
 }
