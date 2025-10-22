@@ -1,4 +1,4 @@
-import { CommandHistory, CommandLogEntry } from './CommandHistory';
+import { CommandHistory } from './CommandHistory';
 
 
 /** gets an instance of the Command History */
