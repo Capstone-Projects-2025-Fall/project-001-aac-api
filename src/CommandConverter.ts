@@ -81,7 +81,7 @@ export class CommandConverter {
    * 
    * For each matched command:
    * - Logs it to the command log with a timestamp
-   * - Automatically executes the command's action
+   * - Automatically executes the command's action/callback function
    * 
    * @param {string} transcription - The new transcribed text from getTranscribed()
    * @returns {GameCommand[]} Array of matched commands found in the transcription
@@ -101,15 +101,17 @@ export class CommandConverter {
         if (command && command.active) {
           matchedCommands.push(command);
           
-          // Log the matched command
-          this.logCommand(command, transcription);
-          
-          // Always execute the command
+          // Execute the command and log with status
+          let status: 'success' | 'failed' = 'success';
           try {
             command.action();
           } catch (error) {
+            status = 'failed';
             console.error(`Error executing command "${command.name}":`, error);
           }
+          
+          // Log the command with execution status
+          this.logCommand(command, transcription, status);
         }
       }
     }
@@ -133,11 +135,13 @@ export class CommandConverter {
    * @private
    * @param {GameCommand} command - The matched command
    * @param {string} originalText - The original transcription text
+   * @param {'success' | 'failed'} status - Whether the command callback executed successfully
    */
-  private logCommand(command: GameCommand, originalText: string): void {
+  private logCommand(command: GameCommand, originalText: string, status: 'success' | 'failed'): void {
     const entry: CommandLogEntry = {
       timestamp: new Date(),
       commandName: command.name,
+      status: status,
     };
 
     this.commandLog.push(entry);
@@ -151,23 +155,6 @@ export class CommandConverter {
   public toggleLogging(enable: boolean): void {
     this.enabled = enable;
   }
-
-  /**
-   * Sets a callback function to be invoked when commands are matched.
-   * The callback receives the matched commands and the original transcription.
-   * 
-   * @param {function} callback - Function to call when commands are matched
-   */
-  public setOnCommandMatched(callback: (commands: GameCommand[], transcription: string) => void): void {
-    this.onCommandMatched = callback;
-  }
-
-  /**
-   * Clears the callback function.
-   */
-  public clearOnCommandMatched(): void {
-    this.onCommandMatched = undefined;
-  }
 }
 /**
  * Represents a single entry in the command log.
@@ -177,4 +164,6 @@ export interface CommandLogEntry {
   timestamp: Date;
   /** The name of the matched command */
   commandName: string;
+  /** Whether the callback executed successfully */
+  status: 'success' | 'failed';
 }
