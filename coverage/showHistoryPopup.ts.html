@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/143</span>
+                <span class='fraction'>0/148</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/143</span>
+                <span class='fraction'>0/148</span>
             </div>
         
             
@@ -237,7 +237,17 @@
 <a name='L172'></a><a href='#L172'>172</a>
 <a name='L173'></a><a href='#L173'>173</a>
 <a name='L174'></a><a href='#L174'>174</a>
-<a name='L175'></a><a href='#L175'>175</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -335,6 +345,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -411,7 +431,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { CommandHistory }from './CommandHistory';<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { CommandHistory } from './CommandHistory';<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
 &nbsp;
 &nbsp;
 /** gets an instance of the Command History */
@@ -507,8 +527,18 @@
 <span class="cstat-no" title="statement not covered" >    const items = commandHistory.getSlice(windowStart, windowEnd);</span>
 <span class="cstat-no" title="statement not covered" >    list.innerHTML = '';</span>
 <span class="cstat-no" title="statement not covered" >    for (let i = 0; i &lt; items.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >      const entry = items[i];</span>
 <span class="cstat-no" title="statement not covered" >      const li = document.createElement('li');</span>
-<span class="cstat-no" title="statement not covered" >      li.textContent = items[i];</span>
+      
+      // Format the command log entry with timestamp, command name, and status
+<span class="cstat-no" title="statement not covered" >      const time = entry.timestamp.toLocaleTimeString();</span>
+      
+<span class="cstat-no" title="statement not covered" >      li.innerHTML = `</span>
+<span class="cstat-no" title="statement not covered" >        &lt;span style="color: #6b7280; font-size: 0.9em;"&gt;${time}&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;span style="font-weight: 600; margin: 0 8px;"&gt;${entry.commandName}&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;span style="font-weight: normal;"&gt;${entry.status}&lt;/span&gt;</span>
+      `;
+      
 <span class="cstat-no" title="statement not covered" >      Object.assign(li.style, {</span>
 <span class="cstat-no" title="statement not covered" >        padding: '10px 12px',</span>
 <span class="cstat-no" title="statement not covered" >        margin: '6px 0',</span>
@@ -592,7 +622,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-13T17:16:49.741Z
+                at 2025-10-22T11:55:40.071Z
             </div>
         <script src="prettify.js"></script>
         <script>
