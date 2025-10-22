@@ -2,7 +2,9 @@ import createWhisperModule, { WhisperModule } from "./whisper/libstream";
 import { AudioInputHandler } from "./AudioInputHandler";
 import { CommandConverter } from "./CommandConverter";
 
-
+/**
+ * An object that holds each transcribed text and a timestamp it was transcribed
+ */
 export interface transcribedLogEntry {
   timestamp: Date;
   transcribedText:string,
@@ -28,7 +30,6 @@ export class SpeechConverter{
 
   constructor(){
         this.commandConverter = CommandConverter.getInstance(); 
-        
     }
 
 
@@ -280,26 +281,34 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
  */
   private processText(text: string):void{
 
-    if(text && text.trim()){
+    if(text && text.trim() && !text.includes("[BLANK_AUDIO]")){
       this.commandConverter?.processTranscription(text);
     }
   }
 
   /**
    * Takes any recognized words from whisper and logs them into an array that contains a timestamp
-   * 
+   * Excludes the string returned from whisper [BLANK_AUDIO]
    * 
    * @param text transcribed words that have been recognized by whisper
    */
   private logText(text: string):void{
+    if(text.includes("[BLANK_AUDIO]")){ 
+      return;
+    }
       const entry: transcribedLogEntry ={
         timestamp: new Date(),
         transcribedText: text,
       };
       //adds text to log if there is any
-      if(!this.textLog) {this.textLog = [];}
+      if(!this.textLog) {this.textLog =[];}
       this.textLog.push(entry);
-      console.log(entry.timestamp + ": "+ entry.transcribedText);
+    }
+
+    //only exists for demo purposes
+    public getLoggedText():string{
+      const lastEntry = this.textLog?.[this.textLog.length - 1];
+      return `${lastEntry?.timestamp.toLocaleTimeString()}: ${lastEntry?.transcribedText}`;
     }
   
 /**
