@@ -115,6 +115,20 @@ classDiagram
     class SpeechToText {
         
     }
+    
+    class CommandConverter {
+        - library: CommandLibrary
+        - commandHistory: CommandHistory
+        - instance: CommandConverter$
+        
+        - onCommandMatched(commands: GameCommand[], transcription: string) void
+        + getInstance() CommandConverter$
+        - normalize(word: string) string
+        - tokenize(transcription: string) string[]
+        + processTranscription(transcription: string) GameCommand[]
+        - logCommand(command: GameCommand, originalText: string, status: string) void
+        
+    }
     SpeechToText: This class is currently empty. Future methods and/or data members will be added here.
     
     class CommandMapper {
@@ -134,6 +148,8 @@ classDiagram
     AACVoiceApi ..> showHistoryPopup
     AACVoiceApi ..> SpeechConverter
     CommandMapping ..> commandLibrary
+    CommandConverter ..> commandLibrary
+    CommandConverter ..> CommandHistory
     AACVoiceApi *-- SpeechToText : contains
     AACVoiceApi *-- CommandMapper : contains
     index ..> AACVoiceApi
