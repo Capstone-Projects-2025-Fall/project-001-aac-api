@@ -48,6 +48,14 @@ classDiagram
         + clear() void
     }
     
+    class CommandLogEntry {
+        <<interface>>
+        + timestamp: Date
+        + commandName: string
+        + status: string
+    }
+    CommandHistory ..|> CommandLogEntry
+    
     class GameCommand {
      <<interface>>
      + name: string
@@ -129,18 +137,18 @@ classDiagram
         - logCommand(command: GameCommand, originalText: string, status: string) void
         
     }
-    SpeechToText: This class is currently empty. Future methods and/or data members will be added here.
+    SpeechToText: This class is currently empty.
     
     class CommandMapper {
        
     }
-    CommandMapper: This class is currently empty. Future methods and/or data members will be added here.
+    CommandMapper: This class is currently empty.
 
 
     class SpeechSeparation {
        
     }
-    SpeechSeparation: This class is currently empty. Future methods and/or data members will be added here.
+    SpeechSeparation: This class is currently empty.
 
     SpeechConverter ..> AudioInputHandler
     SpeechConverter ..> CommandHistory
