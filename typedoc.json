@@ -1,15 +1,15 @@
 {
-  "entryPoints": ["src/**/*.ts"],       // include all TypeScript files
-  "out": "docs",                        // output folder
+  "entryPoints": ["src/**/*.ts"],
+  "out": "documentation/docs/API Specification/",
   "plugin": ["typedoc-plugin-markdown"],
-
-  "exclude": ["**/dist/**", "**/node_modules/**", "**/documentation/**"],
+  "exclude": ["**/dist/**", "**/node_modules/**", "**/documentation/**", "**/__mocks__/**"],
   "excludePrivate": false,
   "excludeExternals": true,
-
   "hideBreadcrumbs": true,
   "hidePageTitle": true,
   "readme": "none",
-  
-  
+  "navigationLinks": {},
+  "flattenOutputFiles": false,
+  "outputFileStrategy": "members",
+  "membersWithOwnFile": []
 }
