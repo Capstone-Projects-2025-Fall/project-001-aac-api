@@ -81,10 +81,16 @@
         logEl.textContent += "[System] Started listening...\n";
 
         // start polling every 2 seconds for transcriptions
+      let lastSeen = "";
       if (!pollingId) {
         pollingId = window.setInterval(() => {
-          sc.getTranscribed();
-        }, 1000);
+          const logs = sc.getLoggedText();
+          const latest = logs[logs.length -1];
+          if(latest && lastSeen !=latest.transcribedText){
+            logEl.textContent += `${latest.timestamp.toLocaleTimeString()} : ${latest.transcribedText}\n`;
+            lastSeen =latest.transcribedText;
+        }
+        }, 200);
       }
 
       } catch (err) {
