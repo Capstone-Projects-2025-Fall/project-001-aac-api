@@ -1,6 +1,6 @@
 {
   "entryPoints": ["src/**/*.ts"],
-  "out": "documentation/docs/API Specification/",
+  "out": "documentation/docs/api-specification/",
   "plugin": ["typedoc-plugin-markdown"],
   "exclude": ["**/dist/**", "**/node_modules/**", "**/documentation/**", "**/__mocks__/**"],
   "excludePrivate": false,
