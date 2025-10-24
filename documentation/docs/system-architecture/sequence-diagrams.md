@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Use-case descriptions
+# Sequence Diagrams
 
 ### Use Case 1 - Voice Recognition
 
@@ -466,25 +466,7 @@ sequenceDiagram
     deactivate APIToolkit
 ```
 
-### Use Case 7 - Previous Game Integration
-
-Actor: Steven (developer)
-
-Triggering Event: Suzy wants to play an AAC game she used last semester.
-
-Preconditions: System supports current AAC games.
-
-Normal flow:
-1. The developer adds a small connector that uses the API’s standard commands.
-2. Suzy’s voice inputs still work in the old game without needing to rewrite the code.
-
-Alternate flows / exceptions:
-1. The old game is set up in a way that is not compatible with the API.
-2. The old game's code needs to be directly modified.
-
-Postconditions: Suzy is able to play the old AAC games using the API.
-
-### Use Case 8 - Register New Commands
+### Use Case 7 - Register New Commands
 
 Actor: Steven (developer)
 
@@ -502,8 +484,32 @@ Alternate flows / exceptions:
 
 Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
-![](/img/Use_Case_8.png)
-### Use Case 9 - Toggle Input History
+```mermaid
+sequenceDiagram
+    actor Steven
+    participant AAC Voice API
+    participant CommandLibrary
+    Note over CommandLibrary: Assume the system command library has common commands in command library by initialization
+
+    Steven ->> AAC Voice API: Enters a new command
+    activate AAC Voice API
+    AAC Voice API ->> CommandLibrary: Checks if command exists
+    activate CommandLibrary
+    
+    alt Command exists
+        CommandLibrary -->> AAC Voice API: Send message back
+        deactivate CommandLibrary
+        AAC Voice API -->> Steven: Notify command exists
+    else Command doesn't exist
+        AAC Voice API ->> CommandLibrary: Add new command
+        activate CommandLibrary
+        CommandLibrary -->> AAC Voice API: Notify confirmation
+        deactivate CommandLibrary
+        AAC Voice API -->> Steven: Confirms success of adding command
+        deactivate AAC Voice API
+    end
+```
+### Use Case 8 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
 
@@ -523,9 +529,36 @@ Alternate flows / exceptions:
 
 Postconditions: AAC game is playable without a visible command history.
 
-![](/img/Use_Case_9.png)
+```mermaid
+sequenceDiagram
+    actor Stan
+    actor Steven
+    Note over Stan: AAC game shows command history while running, which makes Stan overstimulated
+    actor Stan's Caretaker
+    participant AAC Game
+    
+    Note over Stan's Caretaker, AAC Game: Game is running API, game command history is visible to players.
+    Stan's Caretaker ->> AAC Game: Access API window
+    activate AAC Game
+    Stan's Caretaker ->> AAC Game: Navigates to settings
+    AAC Game -->> Stan's Caretaker: Displays toggable settings for input history
+    Stan's Caretaker ->> AAC Game: Toggle off input history
+    
+    AAC Game -->> Stan: Reduced visual stimuli
+    deactivate AAC Game
+    Note over Stan: Stan can now comfortably enjoy playing the game
+    Note over Stan's Caretaker, AAC Game: AAC Game is playable without visible command history
+    
+    opt Steven troubleshoots new command registered
+        Steven ->> AAC Game: Register new command
+        activate AAC Game
+        Steven ->> AAC Game: Checks command history
+        AAC Game -->> Steven: Displays command history
+        Note over Steven, AAC Game: Confidence tha command ws registered and working correctly
+    end
+```
 
-### Use Case 10 - Confidence Level of Interpreted Game Input
+### Use Case 9 - Confidence Level of Interpreted Game Input
 
 Actor: Steven (developer):
 
@@ -543,6 +576,30 @@ Alternate flows / exceptions:
 1. The game incorrectly interprets the voice input.
 2. Steven adjusts the code accordingly.
 
-Postconditions: Gam e accurately interprets gameplay commands.
+Postconditions: Game accurately interprets gameplay commands.
 
-![](/img/Use_Case_10.png)
+```mermaid
+sequenceDiagram
+    actor Steven
+    participant GameSystem
+    
+    Note over Steven: Steven is experimenting with API speech input
+    Note over GameSystem: Game accepts gameplay commands, microphone is active
+    
+    Steven ->> GameSystem: Speak game commands into microphone
+    activate GameSystem
+    GameSystem ->> GameSystem: Interpret and input command into game
+    GameSystem -->> Steven: Return confidence level
+    deactivate GameSystem
+    
+    Note over Steven: Control over which commands are valid inputs, ensuring reliable commands affect gameplay
+    Note over GameSystem: Game accurately interprets game commands
+    
+    opt Incorrect voice input
+        activate GameSystem
+        GameSystem -->> Steven: Incorrectly interpreted voice input
+        Steven ->> GameSystem: Adjusts code accordingly
+        deactivate GameSystem
+    end
+
+```
