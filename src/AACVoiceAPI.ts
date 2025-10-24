@@ -1,8 +1,6 @@
 
-import { CommandLibrary } from "./commandLibrary";
 import { showHistoryPopup } from "./showHistoryPopup";
-import { SpeechConverter, transcribedLogEntry } from "./SpeechConverter";
-import { GameCommand } from "./commandLibrary";
+import { SpeechConverter } from "./SpeechConverter";
 import { CommandMapping } from "./commandMapping";
 
 /**
@@ -34,7 +32,6 @@ export class AACVoiceAPI{
      * @param language Language code to configure the model (e.g. 'en')
      */
     public initiate(url:string, language:string):void{
-
         this.converter?.init(url,language);
 
     }
@@ -60,10 +57,10 @@ export class AACVoiceAPI{
     /**
      * Retrieves the full transcription history from the Whisper module.
      *
-     * @returns {transcribedLogEntry[]} An array of transcription log entries,
+     * @returns {string[]} An array of transcription log entries,
      * each containing the transcribed text and its corresponding timestamp.
      */
-    public getTranscribedFull():transcribedLogEntry[]{
+    public getTranscribedFull():string[]{
         return this.converter?.getLoggedText() || [];
         
     }
