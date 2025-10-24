@@ -80,8 +80,8 @@ export class AACVoiceAPI{
      * @param {GameCommand} command - The command object containing:
      *  - `name`: The name of the command that the user needs to speak.
      *  - `action`: A callback function that executes when the command is triggered.
-     *  - `description`: A short explanation of what the command does.
-     *  - `active`: Whether the command is currently active.
+     *  - `description`: A short explanation of what the command does. 
+     *  - `active`: Whether the command is currently active. (true or false)
      * @returns true if successfully added
      */
     public addVoiceCommand(command: GameCommand): boolean {
