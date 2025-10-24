@@ -1,7 +1,7 @@
 
 import { CommandLibrary } from "./commandLibrary";
 import { showHistoryPopup } from "./showHistoryPopup";
-import { SpeechConverter } from "./SpeechConverter";
+import { SpeechConverter, transcribedLogEntry } from "./SpeechConverter";
 import { GameCommand } from "./commandLibrary";
 
 /**
@@ -38,7 +38,7 @@ export class AACVoiceAPI{
 
     }
     /**
-     * This will allow the user to start speaking into the microphone and initiate game commands
+     * Allows the user to start speaking into the microphone and initiate game commands
      * 
      */
     public start():void {
@@ -49,7 +49,7 @@ export class AACVoiceAPI{
     }
 
     /**
-     * This will stop recording of the microphone
+     * Stops all voice recording and transcription
      * 
      */
     public stop():void {
@@ -57,27 +57,71 @@ export class AACVoiceAPI{
     }
 
     /**
-     * This will display all game Commands in a toggleable modal
+     * Retrieves the full transcription history from the Whisper module.
+     *
+     * @returns {transcribedLogEntry[]} An array of transcription log entries,
+     * each containing the transcribed text and its corresponding timestamp.
+     */
+    public getTranscribedFull():transcribedLogEntry[]{
+        return this.converter?.getLoggedText() || [];
+        
+    }
+
+    /**
+     * Displays all game Commands in a toggleable modal
      * 
      */
     public displayCommandHistory():void{
         showHistoryPopup(); 
     }
-    public addCommand(command: GameCommand): boolean {
+    /**
+     * Adds a voice command to the system.
+     *
+     * @param {GameCommand} command - The command object containing:
+     *  - `name`: The name of the command that the user needs to speak.
+     *  - `action`: A callback function that executes when the command is triggered.
+     *  - `description`: A short explanation of what the command does.
+     *  - `active`: Whether the command is currently active.
+     * @returns true if successfully added
+     */
+    public addVoiceCommand(command: GameCommand): boolean {
         return this.commands?.add(command) || false;
     }
-    public removeCommand(name: string): boolean {
+
+    /**
+     * Allows user to remove a command from the system
+     * 
+     * @param name The name of the command that is to be removed from the list
+     * @returns true if successfully removed
+     */
+    public removeVoiceCommand(name: string): boolean {
         return this.commands?.remove(name) || false;
     }
+    /**
+     * Allows user to check if a game command has already been added
+     * 
+     * @param name The name of the command that is being checked
+     * @returns true if found 
+     */
     public isRegistered(name: string): boolean {
         return this.commands?.has(name) || false;
     }
+    /**
+     * Allows user to see a list of all known game commands
+     * 
+     * @returns a list of all known game commands
+     */
     public getCommands():GameCommand[] | undefined{
-        return this.commands?.list() || undefined
+        return this.commands?.list() || [];
     }
+
+    /**
+     * Allows user to remove all game commands from system
+     */
     public clearCommands(): void {
         this.commands?.clear();
     }
+
 
     
 
