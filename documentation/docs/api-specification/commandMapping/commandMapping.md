@@ -6,7 +6,7 @@
 
 ### CommandMapping
 
-Defined in: [commandMapping.ts:16](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L16)
+Defined in: [commandMapping.ts:16](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L16)
 
 CommandMapping provides a simple interface for developers to add and remove
 commands from the CommandLibrary.
@@ -26,7 +26,7 @@ Commands are stored in the CommandLibrary's HashMap.
 
 > **new CommandMapping**(): [`CommandMapping`](#commandmapping)
 
-Defined in: [commandMapping.ts:23](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L23)
+Defined in: [commandMapping.ts:23](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L23)
 
 Creates a new CommandMapping instance and connects to the CommandLibrary.
 
@@ -40,7 +40,7 @@ Creates a new CommandMapping instance and connects to the CommandLibrary.
 
 > `private` **library**: [`CommandLibrary`](../commandLibrary/commandLibrary.md#commandlibrary)
 
-Defined in: [commandMapping.ts:18](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L18)
+Defined in: [commandMapping.ts:18](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L18)
 
 Reference to the CommandLibrary singleton
 
@@ -50,7 +50,7 @@ Reference to the CommandLibrary singleton
 
 > **addCommand**(`name`, `action`, `options?`): `boolean`
 
-Defined in: [commandMapping.ts:50](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L50)
+Defined in: [commandMapping.ts:50](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L50)
 
 Creates and adds a new command to the CommandLibrary.
 
@@ -97,7 +97,7 @@ Returns true if command was added successfully, false if duplicate or invalid
 
 > **clearAllCommands**(): `void`
 
-Defined in: [commandMapping.ts:141](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L141)
+Defined in: [commandMapping.ts:141](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L141)
 
 Clears all commands from the CommandLibrary.
 
@@ -109,7 +109,7 @@ Clears all commands from the CommandLibrary.
 
 > **getAllCommands**(): `string`[]
 
-Defined in: [commandMapping.ts:112](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L112)
+Defined in: [commandMapping.ts:112](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L112)
 
 Retrieves all command names from the CommandLibrary.
 
@@ -123,7 +123,7 @@ Array of all command names
 
 > **getCommand**(`name`): `undefined` \| [`GameCommand`](../commandLibrary/commandLibrary.md#gamecommand)
 
-Defined in: [commandMapping.ts:132](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L132)
+Defined in: [commandMapping.ts:132](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L132)
 
 Retrieves a specific command from the CommandLibrary by name.
 
@@ -145,7 +145,7 @@ The GameCommand object if found, undefined otherwise
 
 > **hasCommand**(`name`): `boolean`
 
-Defined in: [commandMapping.ts:122](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L122)
+Defined in: [commandMapping.ts:122](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L122)
 
 Checks if a command exists in the CommandLibrary.
 
@@ -167,7 +167,7 @@ True if command exists, false otherwise
 
 > `private` **normalize**(`name`): `string`
 
-Defined in: [commandMapping.ts:33](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L33)
+Defined in: [commandMapping.ts:33](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L33)
 
 Normalizes a command name to lowercase and trims whitespace.
 
@@ -189,7 +189,7 @@ The normalized command name
 
 > **removeCommand**(`name`): `boolean`
 
-Defined in: [commandMapping.ts:95](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandMapping.ts#L95)
+Defined in: [commandMapping.ts:95](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandMapping.ts#L95)
 
 Removes a command from the CommandLibrary by name.
 
