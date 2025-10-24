@@ -6,7 +6,7 @@
 
 ### CommandConverter
 
-Defined in: [CommandConverter.ts:16](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L16)
+Defined in: [CommandConverter.ts:16](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L16)
 
 CommandConverter processes transcribed text in real-time, tokenizes it,
 and matches words against the CommandLibrary.
@@ -25,7 +25,7 @@ This class:
 
 > `private` **new CommandConverter**(): [`CommandConverter`](#commandconverter)
 
-Defined in: [CommandConverter.ts:30](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L30)
+Defined in: [CommandConverter.ts:30](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L30)
 
 Private constructor prevents direct instantiation
 
@@ -39,7 +39,7 @@ Private constructor prevents direct instantiation
 
 > `private` **commandHistory**: [`CommandHistory`](../CommandHistory/CommandHistory.md#commandhistory)
 
-Defined in: [CommandConverter.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L21)
+Defined in: [CommandConverter.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L21)
 
 Reference to CommandHistory for logging matched commands
 
@@ -47,7 +47,7 @@ Reference to CommandHistory for logging matched commands
 
 > `private` **library**: [`CommandLibrary`](../commandLibrary/commandLibrary.md#commandlibrary)
 
-Defined in: [CommandConverter.ts:18](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L18)
+Defined in: [CommandConverter.ts:18](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L18)
 
 Reference to the CommandLibrary for looking up commands
 
@@ -55,7 +55,7 @@ Reference to the CommandLibrary for looking up commands
 
 > `private` `optional` **onCommandMatched**: (`commands`, `transcription`) => `void`
 
-Defined in: [CommandConverter.ts:24](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L24)
+Defined in: [CommandConverter.ts:24](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L24)
 
 Callback function invoked when commands are matched
 
@@ -77,7 +77,7 @@ Callback function invoked when commands are matched
 
 > `private` `static` **instance**: [`CommandConverter`](#commandconverter)
 
-Defined in: [CommandConverter.ts:27](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L27)
+Defined in: [CommandConverter.ts:27](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L27)
 
 The single global instance of CommandConverter
 
@@ -87,7 +87,7 @@ The single global instance of CommandConverter
 
 > `private` **logCommand**(`command`, `originalText`, `status`): `void`
 
-Defined in: [CommandConverter.ts:138](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L138)
+Defined in: [CommandConverter.ts:138](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L138)
 
 Logs a matched command to the command log.
 
@@ -119,7 +119,7 @@ Whether the command callback executed successfully
 
 > `private` **normalize**(`word`): `string`
 
-Defined in: [CommandConverter.ts:55](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L55)
+Defined in: [CommandConverter.ts:55](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L55)
 
 Normalizes a word by converting to lowercase, trimming whitespace,
 and removing common punctuation marks.
@@ -142,7 +142,7 @@ The normalized word
 
 > **processTranscription**(`transcription`): [`GameCommand`](../commandLibrary/commandLibrary.md#gamecommand)[]
 
-Defined in: [CommandConverter.ts:88](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L88)
+Defined in: [CommandConverter.ts:88](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L88)
 
 Processes new transcription text by tokenizing it and checking
 each token against the CommandLibrary.
@@ -169,7 +169,7 @@ Array of matched commands found in the transcription
 
 > `private` **tokenize**(`transcription`): `string`[]
 
-Defined in: [CommandConverter.ts:70](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L70)
+Defined in: [CommandConverter.ts:70](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L70)
 
 Tokenizes a transcription string into individual words.
 Splits on whitespace and filters out empty tokens.
@@ -192,7 +192,7 @@ Array of individual word tokens
 
 > `static` **getInstance**(): [`CommandConverter`](#commandconverter)
 
-Defined in: [CommandConverter.ts:40](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/CommandConverter.ts#L40)
+Defined in: [CommandConverter.ts:40](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/CommandConverter.ts#L40)
 
 Returns the singleton instance of CommandConverter.
 

@@ -26,7 +26,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: 'src/whisper/*',
+          src:
+          ['src/whisper/**/*',
+            '!src/whisper/__mocks__/**',
+            '!src/whisper/models/**'
+          ],
           dest: 'whisper'
         }
       ]

@@ -6,7 +6,7 @@
 
 ### CommandLibrary
 
-Defined in: [commandLibrary.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L21)
+Defined in: [commandLibrary.ts:21](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L21)
 
 CommandLibrary contains a HashMap that:
 Can be called by CommandMapper.
@@ -18,7 +18,7 @@ Maps a String command to the corresponding GameCommand.
 
 > **new CommandLibrary**(): [`CommandLibrary`](#commandlibrary)
 
-Defined in: [commandLibrary.ts:26](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L26)
+Defined in: [commandLibrary.ts:26](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L26)
 
 ###### Returns
 
@@ -30,13 +30,13 @@ Defined in: [commandLibrary.ts:26](https://github.com/Capstone-Projects-2025-Fal
 
 > `private` **commandMap**: `Map`\<`string`, [`GameCommand`](#gamecommand)\>
 
-Defined in: [commandLibrary.ts:22](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L22)
+Defined in: [commandLibrary.ts:22](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L22)
 
 ##### instance
 
 > `private` `static` **instance**: [`CommandLibrary`](#commandlibrary)
 
-Defined in: [commandLibrary.ts:24](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L24)
+Defined in: [commandLibrary.ts:24](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L24)
 
 #### Methods
 
@@ -44,7 +44,7 @@ Defined in: [commandLibrary.ts:24](https://github.com/Capstone-Projects-2025-Fal
 
 > **add**(`command`): `boolean`
 
-Defined in: [commandLibrary.ts:45](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L45)
+Defined in: [commandLibrary.ts:45](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L45)
 
 Add a command (returns false if name already exists)
 
@@ -62,7 +62,7 @@ Add a command (returns false if name already exists)
 
 > **clear**(): `void`
 
-Defined in: [commandLibrary.ts:75](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L75)
+Defined in: [commandLibrary.ts:75](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L75)
 
 Clear all commands
 
@@ -74,7 +74,7 @@ Clear all commands
 
 > **get**(`name`): `undefined` \| [`GameCommand`](#gamecommand)
 
-Defined in: [commandLibrary.ts:65](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L65)
+Defined in: [commandLibrary.ts:65](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L65)
 
 Get a command by name
 
@@ -92,7 +92,7 @@ Get a command by name
 
 > **has**(`name`): `boolean`
 
-Defined in: [commandLibrary.ts:60](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L60)
+Defined in: [commandLibrary.ts:60](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L60)
 
 Check if a command exists
 
@@ -110,7 +110,7 @@ Check if a command exists
 
 > **list**(): [`GameCommand`](#gamecommand)[]
 
-Defined in: [commandLibrary.ts:70](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L70)
+Defined in: [commandLibrary.ts:70](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L70)
 
 List all commands
 
@@ -122,7 +122,7 @@ List all commands
 
 > `private` **normalize**(`name`): `string`
 
-Defined in: [commandLibrary.ts:40](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L40)
+Defined in: [commandLibrary.ts:40](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L40)
 
 ###### Parameters
 
@@ -138,7 +138,7 @@ Defined in: [commandLibrary.ts:40](https://github.com/Capstone-Projects-2025-Fal
 
 > **remove**(`name`): `boolean`
 
-Defined in: [commandLibrary.ts:55](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L55)
+Defined in: [commandLibrary.ts:55](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L55)
 
 Remove a command by name
 
@@ -156,7 +156,7 @@ Remove a command by name
 
 > `static` **getInstance**(): [`CommandLibrary`](#commandlibrary)
 
-Defined in: [commandLibrary.ts:33](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L33)
+Defined in: [commandLibrary.ts:33](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L33)
 
 ###### Returns
 
@@ -168,7 +168,7 @@ The singleton instance of CommandLibrary.
 
 ### GameCommand
 
-Defined in: [commandLibrary.ts:2](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L2)
+Defined in: [commandLibrary.ts:2](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L2)
 
 #### Properties
 
@@ -176,7 +176,7 @@ Defined in: [commandLibrary.ts:2](https://github.com/Capstone-Projects-2025-Fall
 
 > **action**: () => `void`
 
-Defined in: [commandLibrary.ts:6](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L6)
+Defined in: [commandLibrary.ts:6](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L6)
 
 ###### Returns
 
@@ -186,16 +186,16 @@ Defined in: [commandLibrary.ts:6](https://github.com/Capstone-Projects-2025-Fall
 
 > **active**: `boolean`
 
-Defined in: [commandLibrary.ts:12](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L12)
+Defined in: [commandLibrary.ts:12](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L12)
 
 ##### description
 
 > **description**: `string`
 
-Defined in: [commandLibrary.ts:8](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L8)
+Defined in: [commandLibrary.ts:8](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L8)
 
 ##### name
 
 > **name**: `string`
 
-Defined in: [commandLibrary.ts:4](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/2e181446a0955d6e69720fafcb5e1ba075e3f20f/src/commandLibrary.ts#L4)
+Defined in: [commandLibrary.ts:4](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/blob/4f45f27607314e244cc3e3d47559464b42ec5a6c/src/commandLibrary.ts#L4)

@@ -1,14 +1,52 @@
-/*Object representing game command with its associated properties.*/
+/**
+ * Represents a voice-activated command that can trigger game actions.
+ * 
+ * @interface GameCommand
+ * @example
+ * ```typescript
+ * const jumpCommand: GameCommand = {
+ *   name: "jump",
+ *   action: () => player.jump(),
+ *   description: "Makes the player character jump",
+ *   active: true
+ * };
+ * ```
+ */
 export interface GameCommand {
-    /*name of the command*/
+    /**
+     * The name/trigger phrase for the command.
+     * This is the word or phrase that will be recognized to trigger the action.
+     * 
+     * @type {string}
+     * @example "jump", "move left", "fire weapon"
+     */
     name: string;
-    /*callback function to execute the command*/
+
+    /**
+     * The callback function to execute when this command is triggered.
+     * This function contains the game logic that should run when the voice command is recognized.
+     * 
+     * @type {() => void}
+     * @example () => player.jump()
+     */
     action: () => void;
-    /*description of the command*/
+
+    /**
+     * A human-readable description of what this command does.
+     * Used for documentation, help menus, or accessibility features.
+     * 
+     * @type {string}
+     * @example "Makes the player character jump into the air"
+     */
     description: string;
-    /*icon representing the command*/
-    // icon: void;
-    /*whether the command is active or not*/
+
+    /**
+     * Whether this command is currently enabled and can be triggered.
+     * Inactive commands will not respond to voice input.
+     * 
+     * @type {boolean}
+     * @default true
+     */
     active: boolean;
 }
 

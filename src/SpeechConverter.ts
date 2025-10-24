@@ -3,10 +3,13 @@ import { AudioInputHandler } from "./AudioInputHandler";
 import { CommandConverter } from "./CommandConverter";
 
 /**
- * An object that holds each transcribed text and a timestamp it was transcribed
+ * Represents a single transcription log entry.
+ * Each entry contains the transcribed text and the time it was captured.
  */
 export interface transcribedLogEntry {
+  /** The timestamp indicating when the transcription occurred. */
   timestamp: Date;
+  /** The text that was transcribed at the given timestamp. */
   transcribedText:string,
 }
 
