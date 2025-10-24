@@ -14,6 +14,18 @@
     "lib": ["ES2020", "DOM"],
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "test", "src/__mocks__"]
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "dist",
+    "node_modules", 
+    "test",
+    "src/whisper/__mocks__",
+    "src/whisper/__mocks__/**/*",
+    "src/whisper/models",
+    "src/whisper/models/**/*",
+    "src/**/__mocks__/**",
+    "src/**/models/**",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }
