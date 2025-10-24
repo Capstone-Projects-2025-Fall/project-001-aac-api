@@ -15,5 +15,5 @@
     "types": ["vitest/globals"]
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "test"]
+  "exclude": ["dist", "node_modules", "test", "src/__mocks__"]
 }
