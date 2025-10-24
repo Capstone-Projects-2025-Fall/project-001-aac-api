@@ -2,6 +2,16 @@ import createWhisperModule, { WhisperModule } from "./whisper/libstream";
 import { AudioInputHandler } from "./AudioInputHandler";
 import { CommandConverter } from "./CommandConverter";
 
+/**
+ * Represents a single transcription log entry.
+ * Each entry contains the transcribed text and the time it was captured.
+ */
+export interface transcribedLogEntry {
+  /** The timestamp indicating when the transcription occurred. */
+  timestamp: Date;
+  /** The text that was transcribed at the given timestamp. */
+  transcribedText:string,
+}
 
 
 /**
@@ -17,10 +27,12 @@ export class SpeechConverter{
   private audioHandler: AudioInputHandler | null = null;
   /** Processes transcribed text and matches commands */
   private commandConverter: CommandConverter | null = null;
+  /**  Keeps a log of all text that has been transcribed*/
+  private textLog: transcribedLogEntry[] | null = null;
   private transcriptionInterval?: ReturnType<typeof setInterval>;
 
   constructor(){
-        this.commandConverter = CommandConverter.getInstance();  
+        this.commandConverter = CommandConverter.getInstance(); 
     }
 
 
@@ -68,10 +80,7 @@ private async loadModelToFS(modelPath: string):Promise<string> {
  */
   async init(modelPath: string, lang: string) {
 
-
-
     this.whisper = await createWhisperModule();
-
     //load path into virtual filesystem
     const path = await this.loadModelToFS(modelPath);
     this.whisper.init(path,lang);
@@ -200,9 +209,12 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
 
     this.audioHandler.startListening();
 
-  // Poll transcription every 200ms
+  // Poll transcription every 200ms and processText
   this.transcriptionInterval = setInterval(() => {
-    this.getTranscribed();
+    const text = this.getTranscribed();
+    if(text && text.trim()){
+      this.processText(text);
+    }
   }, 200);
   }
 
@@ -243,11 +255,10 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
 
 
 /**
- * Retrieves the latest transcription result from the Whisper model and processes it.
+ * Retrieves the latest transcription result from the Whisper model and logs it.
  * 
  * This method calls the underlying Whisper API to obtain the most recently
- * transcribed text and passes it to the CommandConverter for processing and
- * command matching.
+ * transcribed text. If any text has been returned from whisper, it logs it.
  * 
  * @returns {string} - The transcribed text from the current audio chunk.
  * @throws {Error} Throws if the Whisper module has not been initialized.
@@ -256,14 +267,52 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
     }
-    //only passes text to commandConverter if its not null or blank.
+    //adds text to logger
     const text = this.whisper.get_transcribed();
     if (text && text.trim()) {
-      this.commandConverter?.processTranscription(text);
+      this.logText(text);
     }
     return text;
     
   }
+
+/**
+ * Takes in text and calls CommandConverter for processing and
+ * command matching.
+ * 
+ * @param text transcribed words that have been recognized by whisper
+ */
+  private processText(text: string):void{
+
+    if(text && text.trim() && !text.includes("[BLANK_AUDIO]")){
+      this.commandConverter?.processTranscription(text);
+    }
+  }
+
+  /**
+   * Takes any recognized words from whisper and logs them into an array that contains a timestamp
+   * Excludes the string returned from whisper [BLANK_AUDIO]
+   * 
+   * @param text transcribed words that have been recognized by whisper
+   */
+  private logText(text: string):void{
+    if(text.includes("[BLANK_AUDIO]")){ 
+      return;
+    }
+      const entry: transcribedLogEntry ={
+        timestamp: new Date(),
+        transcribedText: text,
+      };
+      //adds text to log if there is any
+      if(!this.textLog) {this.textLog =[];}
+      this.textLog.push(entry);
+    }
+
+    //only exists for demo purposes
+    public getLoggedText():transcribedLogEntry[]{
+      return this.textLog || [];
+    }
+  
 /**
  * Retrieves the current status of the Whisper model.
  * 

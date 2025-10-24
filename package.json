@@ -1,18 +1,18 @@
 {
   "name": "aac-voice-api",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Games where augmentative and alternative communication (AAC) devices are used as controllers for the game is promising for increasing social inclusion of children who use these devices, such as minimally verbal autistic children. We want to build out an API which supports audio-controlled games where the output from an AAC device is automatically converted into game actions.",
   "main": "dist/AACommodateAPI.js",
   "module": "dist/AACommodateAPI.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/AACommodateAPI.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
+    "build": "vite build && tsc --emitDeclarationOnly && rollup -c rollup.dts.config.js",
     "preview": "vite preview",
     "lint": "eslint 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "format": "prettier --write '**/*.{ts,js,json}'",
     "test": "vitest",
-    "docs": "typedoc --out doc",
+    "docs": "typedoc && node rename-docs.js",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
     "coverage": "vitest run --coverage"
   },
@@ -20,9 +20,11 @@
     "type": "git",
     "url": "git+https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api.git"
   },
-  "files": [
-    "dist/"
-  ],
+"files": [
+  "dist/whisper/**",
+  "dist/AACommodateAPI.js",
+  "dist/AACommodateAPI.d.ts"
+],
   "keywords": [
     "aac",
     "voice-recognition",
@@ -32,7 +34,7 @@
     "whisper"
   ],
   "author": "Michael Colbert, Gino Russo, Jess Hutchison, Hena Patel, Tam Trang",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "bugs": {
     "url": "https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/issues"
@@ -50,6 +52,7 @@
     "globals": "^16.4.0",
     "jiti": "^2.5.1",
     "prettier": "^3.6.2",
+    "rollup-plugin-dts": "^6.2.3",
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.13",
     "typedoc-plugin-markdown": "^4.9.0",
