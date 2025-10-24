@@ -168,7 +168,7 @@ describe("SpeechConverter", () => {
         const text = "logged text";
         (converter as any).logText(text);
         const logs = (converter as any).getLoggedText();
-        expect(logs[logs.length-1]?.transcribedText).toContain(text);
+        expect(logs[logs.length-1]).toContain(text);
 
     });
     it("Does not log blank audio", () =>{
