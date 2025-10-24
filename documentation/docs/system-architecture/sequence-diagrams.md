@@ -466,25 +466,7 @@ sequenceDiagram
     deactivate APIToolkit
 ```
 
-### Use Case 7 - Previous Game Integration
-
-Actor: Steven (developer)
-
-Triggering Event: Suzy wants to play an AAC game she used last semester.
-
-Preconditions: System supports current AAC games.
-
-Normal flow:
-1. The developer adds a small connector that uses the API’s standard commands.
-2. Suzy’s voice inputs still work in the old game without needing to rewrite the code.
-
-Alternate flows / exceptions:
-1. The old game is set up in a way that is not compatible with the API.
-2. The old game's code needs to be directly modified.
-
-Postconditions: Suzy is able to play the old AAC games using the API.
-
-### Use Case 8 - Register New Commands
+### Use Case 7 - Register New Commands
 
 Actor: Steven (developer)
 
@@ -527,7 +509,7 @@ sequenceDiagram
         deactivate AAC Voice API
     end
 ```
-### Use Case 9 - Toggle Input History
+### Use Case 8 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
 
@@ -576,7 +558,7 @@ sequenceDiagram
     end
 ```
 
-### Use Case 10 - Confidence Level of Interpreted Game Input
+### Use Case 9 - Confidence Level of Interpreted Game Input
 
 Actor: Steven (developer):
 
