@@ -12,11 +12,17 @@
 
 ### Installing the API
 
-How to download the NPM package to use in your own project.
+How to download the [NPM package](https://www.npmjs.com/package/aac-voice-api) to use in your own project.
 
 To install the npm package in your project, open a terminal and enter the following command:
 
 ```npm install aac-voice-api``` 
+
+Once you have installed the npm package, you'll want to add the Whisper model to your project. The link to the model can be found [here](https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin)
+Then, using vite, add the following lines to your project code:
+
+```'Cross-Origin-Opener-Policy': 'same-origin',```
+```'Cross-Origin-Embedder-Policy': 'require-corp',```
 
 To see a sample of the API in another project, go to [this repository](https://github.com/Russo903/aac-voice-api-milestone-demo-1.git) and clone it locally. Run the following commands:
 
@@ -25,6 +31,32 @@ To see a sample of the API in another project, go to [this repository](https://g
 ```npm run dev```
 
 You are now hosting the game locally.
+
+Here is an example of how to add game commands to your project.
+
+## Example
+
+```ts
+import { AACVoiceAPI } from 'aac-voice-api';
+
+// Create an instance of the voice API
+const voice = new AACVoiceAPI();
+
+// Add a voice command
+voice.addVoiceCommand({
+  name: "jump",
+  action: () => console.log("player jumped"),
+  description: "Activates the jump command",
+  active: true,
+});
+
+// Initialize the API
+// Whisper Models can be found at https://huggingface.co/ggerganov/whisper.cpp/tree/main
+voice.initiate("url", "en");
+
+// Start listening for voice commands
+voice.start();
+```
 
 ## Project Abstract
 
