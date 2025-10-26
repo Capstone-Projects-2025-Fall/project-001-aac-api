@@ -43,12 +43,10 @@ import { AACVoiceAPI } from 'aac-voice-api';
 const voice = new AACVoiceAPI();
 
 // Add a voice command
-voice.addVoiceCommand({
+voice.addVoiceCommand(
   name: "jump",
   action: () => console.log("player jumped"),
-  description: "Activates the jump command",
-  active: true,
-});
+);
 
 // Initialize the API
 // Whisper Models can be found at https://huggingface.co/ggerganov/whisper.cpp/tree/main
