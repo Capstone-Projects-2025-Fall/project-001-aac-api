@@ -309,8 +309,16 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
     }
 
     //only exists for demo purposes
-    public getLoggedText():transcribedLogEntry[]{
-      return this.textLog || [];
+    public getLoggedText():string[]{
+      const logOfText = [];
+      if(!this.textLog) return [];
+      for(let i=0; i<this.textLog.length; i++){
+        
+        const date = this.textLog[i].timestamp.toLocaleTimeString();
+        const text = this.textLog[i].transcribedText;
+        logOfText.push(`${date} : ${text}\n`)
+      }
+      return logOfText;
     }
   
 /**
