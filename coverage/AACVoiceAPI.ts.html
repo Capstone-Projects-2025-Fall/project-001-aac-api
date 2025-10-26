@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/44</span>
+                <span class='fraction'>0/48</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/44</span>
+                <span class='fraction'>0/48</span>
             </div>
         
             
@@ -193,7 +193,13 @@
 <a name='L128'></a><a href='#L128'>128</a>
 <a name='L129'></a><a href='#L129'>129</a>
 <a name='L130'></a><a href='#L130'>130</a>
-<a name='L131'></a><a href='#L131'>131</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -209,7 +215,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -228,7 +233,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -275,6 +279,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -324,10 +336,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
-<span class="cstat-no" title="statement not covered" >import { CommandLibrary } from "./commandLibrary";</span>
 <span class="cstat-no" title="statement not covered" >import { showHistoryPopup } from "./showHistoryPopup";</span>
-<span class="cstat-no" title="statement not covered" >import { SpeechConverter, transcribedLogEntry } from "./SpeechConverter";</span>
-import { GameCommand } from "./commandLibrary";
+<span class="cstat-no" title="statement not covered" >import { SpeechConverter } from "./SpeechConverter";</span>
+<span class="cstat-no" title="statement not covered" >import { CommandMapping } from "./commandMapping";</span>
 &nbsp;
 /**
  * AACVoiceAPI is a facade class that provides a simplified interface
@@ -343,11 +354,11 @@ import { GameCommand } from "./commandLibrary";
 <span class="cstat-no" title="statement not covered" >export class AACVoiceAPI{</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    private converter: SpeechConverter | null = null;</span>
-<span class="cstat-no" title="statement not covered" >    private commands: CommandLibrary | null = null;</span>
+<span class="cstat-no" title="statement not covered" >    private mapping: CommandMapping | null = null;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    constructor(){</span>
 <span class="cstat-no" title="statement not covered" >        this.converter = new SpeechConverter();  </span>
-<span class="cstat-no" title="statement not covered" >        this.commands = new CommandLibrary();  </span>
+<span class="cstat-no" title="statement not covered" >        this.mapping = new CommandMapping();</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 &nbsp;
     /**
@@ -358,7 +369,6 @@ import { GameCommand } from "./commandLibrary";
      * @param language Language code to configure the model (e.g. 'en')
      */
 <span class="cstat-no" title="statement not covered" >    public initiate(url:string, language:string):void{</span>
-&nbsp;
 <span class="cstat-no" title="statement not covered" >        this.converter?.init(url,language);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    }</span>
@@ -384,10 +394,10 @@ import { GameCommand } from "./commandLibrary";
     /**
      * Retrieves the full transcription history from the Whisper module.
      *
-     * @returns {transcribedLogEntry[]} An array of transcription log entries,
+     * @returns {string[]} An array of transcription log entries,
      * each containing the transcribed text and its corresponding timestamp.
      */
-<span class="cstat-no" title="statement not covered" >    public getTranscribedFull():transcribedLogEntry[]{</span>
+<span class="cstat-no" title="statement not covered" >    public getTranscribedFull():string[]{</span>
 <span class="cstat-no" title="statement not covered" >        return this.converter?.getLoggedText() || [];</span>
         
 <span class="cstat-no" title="statement not covered" >    }</span>
@@ -409,8 +419,16 @@ import { GameCommand } from "./commandLibrary";
      *  - `active`: Whether the command is currently active. (true or false)
      * @returns true if successfully added
      */
-<span class="cstat-no" title="statement not covered" >    public addVoiceCommand(command: GameCommand): boolean {</span>
-<span class="cstat-no" title="statement not covered" >        return this.commands?.add(command) || false;</span>
+<span class="cstat-no" title="statement not covered" >    public addVoiceCommand(</span>
+<span class="cstat-no" title="statement not covered" >    name: string,</span>
+<span class="cstat-no" title="statement not covered" >    action: () =&gt; void,</span>
+<span class="cstat-no" title="statement not covered" >    options?: {</span>
+      description?: string;
+      active?: boolean;
+      
+    }
+<span class="cstat-no" title="statement not covered" >    ): boolean {</span>
+<span class="cstat-no" title="statement not covered" >        return this.mapping?.addCommand(name,action, options) || false;</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 &nbsp;
     /**
@@ -420,7 +438,7 @@ import { GameCommand } from "./commandLibrary";
      * @returns true if successfully removed
      */
 <span class="cstat-no" title="statement not covered" >    public removeVoiceCommand(name: string): boolean {</span>
-<span class="cstat-no" title="statement not covered" >        return this.commands?.remove(name) || false;</span>
+<span class="cstat-no" title="statement not covered" >        return this.mapping?.removeCommand(name) || false;</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
     /**
      * Allows user to check if a game command has already been added
@@ -429,22 +447,22 @@ import { GameCommand } from "./commandLibrary";
      * @returns true if found 
      */
 <span class="cstat-no" title="statement not covered" >    public isRegistered(name: string): boolean {</span>
-<span class="cstat-no" title="statement not covered" >        return this.commands?.has(name) || false;</span>
+<span class="cstat-no" title="statement not covered" >        return this.mapping?.hasCommand(name) || false;</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
     /**
      * Allows user to see a list of all known game commands
      * 
      * @returns a list of all known game commands
      */
-<span class="cstat-no" title="statement not covered" >    public getCommands():GameCommand[] | undefined{</span>
-<span class="cstat-no" title="statement not covered" >        return this.commands?.list() || [];</span>
+<span class="cstat-no" title="statement not covered" >    public getCommands():string[] | []{</span>
+<span class="cstat-no" title="statement not covered" >        return this.mapping?.getAllCommands() || [];</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 &nbsp;
     /**
      * Allows user to remove all game commands from system
      */
 <span class="cstat-no" title="statement not covered" >    public clearCommands(): void {</span>
-<span class="cstat-no" title="statement not covered" >        this.commands?.clear();</span>
+<span class="cstat-no" title="statement not covered" >        this.mapping?.clearAllCommands();</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 &nbsp;
 &nbsp;
@@ -460,7 +478,7 @@ import { GameCommand } from "./commandLibrary";
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-24T03:01:26.979Z
+                at 2025-10-26T14:36:18.990Z
             </div>
         <script src="prettify.js"></script>
         <script>
