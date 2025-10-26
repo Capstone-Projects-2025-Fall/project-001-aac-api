@@ -8,6 +8,24 @@
 
 </div>
 
+## Getting Started
+
+### Installing the API
+
+How to download the NPM package to use in your own project.
+
+To install the npm package in your project, open a terminal and enter the following command:
+
+```npm install aac-voice-api``` 
+
+To see a sample of the API in another project, go to [this repository](https://github.com/Russo903/aac-voice-api-milestone-demo-1.git) and clone it locally. Run the following commands:
+
+```npm install```
+
+```npm run dev```
+
+You are now hosting the game locally.
+
 ## Project Abstract
 
 This application programming interface (API) supports AAC games. The API allows users to play AAC games like StoryQuest through external AAC board interaction, rather than relying on an embedded AAC board in the game. Users can relay game inputs by either speaking verbally or speaking through the board. The API will enable audio-controlled games, which will promote social and communication skills in children who use AAC devices by enabling AAC users to play games alongside non-AAC users.
