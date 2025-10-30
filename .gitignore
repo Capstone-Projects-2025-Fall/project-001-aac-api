@@ -11,3 +11,5 @@ node_modules/
 dist/
 doc/
 coverage/
+backend/__pycache__
+backend/venv/
