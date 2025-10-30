@@ -3,13 +3,11 @@
   "out": "documentation/docs/api-specification/",
   "plugin": ["typedoc-plugin-markdown"],
   "exclude": ["**/dist/**", "**/node_modules/**", "**/documentation/**", "**/__mocks__/**"],
-  "excludePrivate": false,
-  "excludeExternals": true,
   "hideBreadcrumbs": true,
-  "hidePageTitle": true,
-  "readme": "none",
-  "navigationLinks": {},
-  "flattenOutputFiles": false,
-  "outputFileStrategy": "members",
-  "membersWithOwnFile": []
+  "excludePrivate": true,
+  "hidePageTitle": false,
+  "parametersFormat": "table",
+  "typeDeclarationFormat": "table",
+
+
 }
