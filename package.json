@@ -20,11 +20,11 @@
     "type": "git",
     "url": "git+https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api.git"
   },
-"files": [
-  "dist/whisper/**",
-  "dist/AACommodateAPI.js",
-  "dist/AACommodateAPI.d.ts"
-],
+  "files": [
+    "dist/whisper/**",
+    "dist/AACommodateAPI.js",
+    "dist/AACommodateAPI.d.ts"
+  ],
   "keywords": [
     "aac",
     "voice-recognition",
