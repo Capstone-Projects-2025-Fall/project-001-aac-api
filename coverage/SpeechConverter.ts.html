@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.03% </span>
+                <span class="strong">88.74% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>142/151</span>
+                <span class='fraction'>134/151</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.37% </span>
+                <span class="strong">82.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>38/43</span>
+                <span class='fraction'>33/40</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.03% </span>
+                <span class="strong">88.74% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>142/151</span>
+                <span class='fraction'>134/151</span>
             </div>
         
             
@@ -614,10 +614,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -667,17 +667,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -687,10 +687,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -699,17 +699,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
@@ -952,10 +952,10 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
 &nbsp;
   // Poll transcription every 200ms and processText
   this.transcriptionInterval = setInterval(() =&gt; {
-    const text = this.getTranscribed();
-    if(text &amp;&amp; text.trim()){
-      this.processText(text);
-    }
+<span class="cstat-no" title="statement not covered" >    const text = this.getTranscribed();</span>
+<span class="cstat-no" title="statement not covered" >    if(text &amp;&amp; text.trim()){</span>
+<span class="cstat-no" title="statement not covered" >      this.processText(text);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
   }, 200);
   }
 &nbsp;
@@ -1007,13 +1007,13 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
   public getTranscribed():string{
     if (!this.whisper) {
       throw new Error("Whisper module not initialized. Call init() first.");
-    }
+<span class="branch-0 cbranch-no" title="branch not covered" >    }</span>
     //adds text to logger
-    const text = this.whisper.get_transcribed();
-    if (text &amp;&amp; text.trim()) {
-      this.logText(text);
-    }
-    return text;
+<span class="cstat-no" title="statement not covered" >    const text = this.whisper.get_transcribed();</span>
+    if (text &amp;&amp; text.trim()) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >      this.logText(text);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    return text;</span>
     
   }
 &nbsp;
@@ -1084,7 +1084,7 @@ private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array{
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T21:40:02.011Z
+                at 2025-10-30T23:03:49.225Z
             </div>
         <script src="prettify.js"></script>
         <script>
