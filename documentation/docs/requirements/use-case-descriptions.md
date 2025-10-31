@@ -52,7 +52,7 @@ Alternate flows / exceptions:
 
 Postconditions: Jump action executed (or user prompted to repeat); command history updated.
 
-### Use Case 3 - Speaker Seperation
+### Use Case 3 - Speaker Separation
 
 Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
 
@@ -120,7 +120,7 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
-### Use Case 6 - Support Commmon Game Inputs (Incomplete)
+### Use Case 6 - Support Common Game Inputs (Incomplete)
 
 Actor: Steven (developer)
 
@@ -134,25 +134,7 @@ Normal flow:
 
 Postconditions: System contains common commands in a command library.
 
-### Use Case 7 - Previous Game Integration
-
-Actor: Steven (developer)
-
-Triggering Event: Suzy wants to play an AAC game she used last semester. 
-
-Preconditions: System supports current AAC games.
-
-Normal flow:
-    1. The developer adds a small connector that uses the API’s standard commands.
-    2. Suzy’s voice inputs still work in the old game without needing to rewrite the code.
-
-Alternate flows / exceptions:
-    1. The old game is set up in a way that is not compatible with the API.
-    2. The old game's code needs to be directly modified.
-
-Postconditions: Suzy is able to play the old AAC games using the API.
-
-### Use Case 8 - Register New Commands
+### Use Case 7 - Register New Commands
 
 Actor: Steven (developer)
 
@@ -170,7 +152,7 @@ Alternate flows / exceptions:
 
 Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
-### Use Case 9 - Toggle Input History
+### Use Case 8 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
 
@@ -190,7 +172,7 @@ Alternate flows / exceptions:
 
 Postconditions: AAC game is playable without a visible command history.
 
-### Use Case 10 - Confidence Level of Interpreted Game Input
+### Use Case 9 - Confidence Level of Interpreted Game Input
 
 Actor: Steven (developer):
 
@@ -200,7 +182,7 @@ Preconditions: Game is in a state that accepts gameplay commands; microphone is 
 
 Normal flow:
     1. Steven speaks game commands into the microphone.
-    2. The game command is interpreted and inputed to the game.
+    2. The game command is interpreted and inputted to the game.
     3. Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. 
     4. This allows him to have control over which commands are recognized as valid game inputs. ensuring that only reliable commands can affect the gameplay.
 
