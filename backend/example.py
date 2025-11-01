@@ -17,8 +17,8 @@ def wav_to_bytes(file_path: str) -> bytes:
     return audio_bytes, sample_rate
 
 def main():
-    raw_bytes1, sample_rate1 = wav_to_bytes("speech_sep.wav")
-    raw_bytes2, sample_rate2 = wav_to_bytes("example.wav")
+    raw_bytes1, sample_rate1 = wav_to_bytes("audio/speech_sep.wav")
+    raw_bytes2, sample_rate2 = wav_to_bytes("audio/example.wav")
     
     speechmodel = SpeechBrain()
         
