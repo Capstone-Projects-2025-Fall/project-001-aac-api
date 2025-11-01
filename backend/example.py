@@ -15,7 +15,7 @@ def main():
     # Path to your audio file (must be WAV, mono, 16 kHz recommended)
     audio_file = "example.wav"
     waveform, orig_src = torchaudio.load(audio_file)
-    print(orig_src)
+    
     resampler = torchaudio.transforms.Resample(orig_freq=orig_src, new_freq=16000)
     waveform_16k = resampler(waveform)
     torchaudio.save("temp.wav", waveform_16k, 16000)
