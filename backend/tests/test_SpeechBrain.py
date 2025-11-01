@@ -16,14 +16,13 @@ class TestSpeechBrain(unittest.TestCase):
         dummy_bytes = np.array(dummy_array, dtype=np.float32).tobytes()
         dummy_sample_rate = 16000
         
-        mock_model_transcribe.transcribe_batch = MagicMock(return_value=["Transcribed Data into words"])
-        mock_model_transcribe.normalizer = MagicMock(return_value=torch.tensor(dummy_array, dtype=torch.float32).unsqueeze(0))
-        
+        # Mock the return value correctly - it returns a list
+        mock_model_transcribe.transcribe_batch = MagicMock(return_value=(["Transcribed Data into words"], [[1, 2, 3]]))
         
         result = wrapper.transcribe_raw_bytes(dummy_bytes, dummy_sample_rate)
-        self.assertEqual(result, "Transcribed Data into words")
         
-        mock_model_transcribe.normalizer.assert_called_once()
+        # Result should be the first element of the tuple
+        self.assertEqual(result, ["Transcribed Data into words"])
         mock_model_transcribe.transcribe_batch.assert_called_once()
         
         
@@ -33,8 +32,8 @@ class TestSpeechBrain(unittest.TestCase):
         dummy_array = [0.0, 0.5, -0.5, 1.0, -1.0]
         dummy_bytes = np.array(dummy_array, dtype=np.float32).tobytes()
     
-        # Make normalizer raise an error
-        mock_model_transcribe.normalizer = MagicMock(side_effect=RuntimeError("Audio processing failed"))
+        # Make transcribe_batch raise an error
+        mock_model_transcribe.transcribe_batch = MagicMock(side_effect=RuntimeError("Audio processing failed"))
     
         result = wrapper.transcribe_raw_bytes(dummy_bytes, 16000)
     
@@ -48,8 +47,6 @@ class TestSpeechBrain(unittest.TestCase):
         dummy_array = [0.0, 0.5, -0.5, 1.0, -1.0]
         dummy_bytes = np.array(dummy_array, dtype=np.float32).tobytes()
         
-        # Make transcribe_batch raise a generic exception
-        mock_model_transcribe.normalizer = MagicMock(return_value=torch.tensor([[0.0]]))
         mock_model_transcribe.transcribe_batch = MagicMock(
             side_effect=Exception("Something went wrong with transcription")
         )
@@ -69,8 +66,6 @@ class TestSpeechBrain(unittest.TestCase):
         wrapper = SpeechBrain()
         dummy_array = [0.0, 0.5, -0.5, 1.0, -1.0]
         dummy_bytes = np.array(dummy_array, dtype=np.float32).tobytes()
-        dummy_sample_rate = 16000
-        
         
         answer = torch.tensor(dummy_array, dtype=torch.float32).unsqueeze(0)
         result = wrapper._SpeechBrain__bytes_to_tensor(dummy_bytes)
@@ -88,27 +83,28 @@ class TestSpeechBrain(unittest.TestCase):
         mock_output = torch.randn(1, 2, 160000) * 0.5
         mock_model_sep.separate_batch = MagicMock(return_value=mock_output)
         
-        result = wrapper.separate_speech(dummy_bytes, dummy_sample_rate)
+        result_tensor, result_rate = wrapper._separate_speech(dummy_bytes, dummy_sample_rate)  # Fixed: unpack tuple
         
-        self.assertTrue(torch.equal(result, mock_output))
-        self.assertEqual(result.shape, mock_output.shape)
+        self.assertTrue(torch.equal(result_tensor, mock_output))
+        self.assertEqual(result_tensor.shape, mock_output.shape)
+        self.assertEqual(result_rate, 8000)  # Check the returned sample rate
     
     @patch('SpeechBrainWrapper.SpeechBrain._SpeechBrain__model_sep')
-    def test_transcribe_raw_bytes_handles_runtime_error(self, mock_model_sep):
+    def test_separate_speech_handles_runtime_error(self, mock_model_sep):
         wrapper = SpeechBrain()
         dummy_array = [0.0, 0.5, -0.5, 1.0, -1.0]
         dummy_bytes = np.array(dummy_array, dtype=np.float32).tobytes()
     
-        # Make normalizer raise an error
         mock_model_sep.separate_batch = MagicMock(
             side_effect=RuntimeError("Something went wrong with speech separation")
         )
     
-        result = wrapper.separate_speech(dummy_bytes, 16000)
+        result, rate = wrapper._separate_speech(dummy_bytes, 16000)  # Fixed: unpack tuple
     
         # Verify error handling works
         self.assertTrue(result.startswith("[ERROR]"))
         self.assertIn("Speech Separation processing failed", result)
+        self.assertIsNone(rate)  # Check that rate is None on error
     
     @patch('SpeechBrainWrapper.SpeechBrain._SpeechBrain__model_sep')
     def test_separate_speech_handles_Exception(self, mock_model_sep):
@@ -116,13 +112,13 @@ class TestSpeechBrain(unittest.TestCase):
         dummy_array = [0.0, 0.5, -0.5, 1.0, -1.0]
         dummy_bytes = np.array(dummy_array, dtype=np.float32).tobytes()
         
-        # Make transcribe_batch raise a generic exception
         mock_model_sep.separate_batch = MagicMock(
             side_effect=Exception("Something went wrong with transcription")
         )
         
-        result = wrapper.separate_speech(dummy_bytes, 16000)
+        result, rate = wrapper._separate_speech(dummy_bytes, 16000)  # Fixed: unpack tuple
         
         # Verify the exception was caught and formatted correctly
         self.assertTrue(result.startswith("[ERROR] Separation failed:"))
         self.assertIn("Something went wrong with transcription", result)
+        self.assertIsNone(rate)  # Check that rate is None on error

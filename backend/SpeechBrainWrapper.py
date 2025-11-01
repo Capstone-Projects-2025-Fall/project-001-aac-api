@@ -26,13 +26,13 @@ class SpeechBrain:
     #recieves float32Array.buffer form frontend and transcribes it
     def transcribe_raw_bytes(self, data: bytes, sample_rate: int) -> str:
         try:
-            wave = self.__bytes_to_tensor(data)
+            waveform = self.__bytes_to_tensor(data)
             wav_lens = torch.tensor([1.0])
             
             target_rate= 16000 #model expects this
             if sample_rate != target_rate:
                 resampler = torchaudio.transforms.Resample(sample_rate, target_rate)
-                waveform = resampler(wave)
+                waveform = resampler(waveform)
             
             transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
             
@@ -67,9 +67,9 @@ class SpeechBrain:
             return separatedFiles, target_rate
             
         except RuntimeError as e:  # torchaudio / ffmpeg issues
-            return f"[ERROR] Speech Separation processing failed: {e}"
+            return (f"[ERROR] Speech Separation processing failed: {e}", None)
         except Exception as e:
-            return f"[ERROR] Separation failed: {e}"
+            return (f"[ERROR] Separation failed: {e}", None)
 
     def _transcribe_from_tensor(self, separated_tensor: torch.tensor, sample_rate: int) -> list:
             transcribedText = list()
