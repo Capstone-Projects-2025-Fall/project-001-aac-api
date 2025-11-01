@@ -1,30 +1,34 @@
 # transcribe.py
-from speechbrain.inference.ASR import EncoderDecoderASR
-import torchaudio
+from SpeechBrainWrapper import SpeechBrain
+import numpy as np
+import torchaudio, torch
 import tempfile
 
-def main():
-    # Load the pretrained ASR model
-    tmpdir = tempfile.mkdtemp()
-    asr_model = EncoderDecoderASR.from_hparams(
-        source="speechbrain/asr-crdnn-rnnlm-librispeech", #"speechbrain/asr-crdnn-rnnlm-librispeech",
-        savedir=tmpdir #"pretrained_models/asr",
-        
-    )
 
-    # Path to your audio file (must be WAV, mono, 16 kHz recommended)
-    audio_file = "example.wav"
-    waveform, orig_src = torchaudio.load(audio_file)
+#only have so you dont need data stream of mic input and can test against offline file
+def wav_to_bytes(file_path: str) -> bytes:
+    """Read a WAV file and return float32 bytes suitable for SpeechBrain."""
+    waveform, sample_rate = torchaudio.load(file_path)
+    # Flatten waveform to 1D if stereo
+    if waveform.shape[0] > 1:
+        waveform = waveform.mean(dim=0, keepdim=True)
+    # Convert to float32 bytes
+    audio_bytes = waveform.numpy().astype(np.float32).tobytes()
+    return audio_bytes, sample_rate
+
+def main():
+    raw_bytes1, sample_rate1 = wav_to_bytes("speech_sep.wav")
+    raw_bytes2, sample_rate2 = wav_to_bytes("example.wav")
     
-    resampler = torchaudio.transforms.Resample(orig_freq=orig_src, new_freq=16000)
-    waveform_16k = resampler(waveform)
-    torchaudio.save("temp.wav", waveform_16k, 16000)
+    speechmodel = SpeechBrain()
+        
+    text = speechmodel.transcribe_raw_bytes(raw_bytes2, sample_rate2)
+    multipleText = speechmodel.separate_then_transcribe(raw_bytes1, sample_rate1)
+    mixedText = speechmodel.transcribe_raw_bytes(raw_bytes1, sample_rate1)
     
-    # Transcribe the audio
-    print("Transcribing audio...")
-    transcription = asr_model.transcribe_file("temp.wav")
-    print("Transcription:", transcription)
-    
+    print(" only transcribing using example.wav: ", text)
+    print("speech sep using speech_sep.wav: ", multipleText)
+    print("raw trascribe using doubleSpeaking: ", mixedText)
 
 if __name__ == "__main__":
     main()
