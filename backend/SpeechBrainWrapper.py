@@ -19,7 +19,7 @@ class SpeechBrain:
             )
         if(SpeechBrain.__model_sep is None):
             SpeechBrain.__model_sep = SepformerSeparation.from_hparams(
-                source ="speechbrain/sepformer-wham",
+                source ="speechbrain/sepformer-whamr16k", #"speechbrain/sepformer-wham",
                 savedir = "pretrained_models/separation"
             )
     
@@ -57,7 +57,7 @@ class SpeechBrain:
         try:
             waveform = self.__bytes_to_tensor(data)
             
-            target_rate= 8000 #model expects this
+            target_rate= 16000 #model expects this
             if sample_rate != target_rate:
                 resampler = torchaudio.transforms.Resample(sample_rate, target_rate)
                 waveform = resampler(waveform)
@@ -73,11 +73,15 @@ class SpeechBrain:
 
     def _transcribe_from_tensor(self, separated_tensor: torch.tensor, sample_rate: int) -> list:
             transcribedText = list()
-            wave_lens = torch.tensor([1.0])
-            num_sources = separated_tensor.shape[-1]
+            wave_lens = torch.tensor([1.0])#tells it to use the full time
+            num_sources = separated_tensor.shape[-1] #should always be 2
             
             for i in range(num_sources):
                 waveform = separated_tensor[0,:,i].unsqueeze(0)
+                
+                #saving locally for testing
+                filename = f"audio/separated/separated_source_{i}.wav"
+                torchaudio.save(filename, waveform.cpu(), sample_rate)
                 
                 target_rate= 16000 #model expects this
                 if sample_rate != target_rate:

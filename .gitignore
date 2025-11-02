@@ -15,3 +15,4 @@ backend/__pycache__
 backend/venv/
 backend/tests/__pycache__
 backend/audio/
+backend/pretrained_models/
