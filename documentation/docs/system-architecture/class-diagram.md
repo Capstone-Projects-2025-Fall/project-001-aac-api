@@ -9,7 +9,7 @@ and their responsibilities
 ```mermaid
 classDiagram
     class index {
-       
+        + AACVoiceApi: AACVoiceApi
     }
 
     class AACVoiceApi {
@@ -31,7 +31,6 @@ classDiagram
         + getSampleRate() number
         + startListening() Promise~void~
         + stopListening() void
-        
     }
     
     class CommandHistory {
@@ -200,7 +199,7 @@ Consumes (from AudioHandlerInput) and converts audio chunks into text transcript
 ### CommandMapper
 Maps recognized speech text to configured voice commands and triggers the appropriate functions
 
-### SpeechSeparation (Still in Discussion)
+### SpeechSeparation
 Processes audio to separate speech from background noise, improving recognition accuracy
 
 ### Key Relationships 
