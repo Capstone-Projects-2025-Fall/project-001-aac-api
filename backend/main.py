@@ -1,18 +1,21 @@
-from typing import Union
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 from routers import transcribe
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin=["*"], # in prod url will go here
+    allow_credential=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(transcribe.router)
 
 
 #example from fastapi website
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+def root():
+    return {"message": "Speech Transcription API"}
