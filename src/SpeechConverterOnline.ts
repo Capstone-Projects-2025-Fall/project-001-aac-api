@@ -2,7 +2,7 @@ import { SpeechConverterInterface, transcribedLogEntry, TranscriptionResponse } 
 import { AudioInputHandler } from "./AudioInputHandler";
 import { CommandConverter } from "./CommandConverter";
 
-export class SpeechConverterSpeechBrain implements SpeechConverterInterface{
+export class SpeechConverterOnline implements SpeechConverterInterface{
     /** Used to capture microphone input */
     private audioHandler: AudioInputHandler | null = null;
   /** Processes transcribed text and matches commands */
@@ -18,7 +18,7 @@ export class SpeechConverterSpeechBrain implements SpeechConverterInterface{
       }
     
     init(modelPath: string, lang: string): Promise<void> {
-        
+        console.log("This implementation does not support this method. Please switch implementation to offline to use: ", modelPath, lang)
         throw new Error("init() is not applicaple for this Online transcription.");
     }
    public startListening(): void {
@@ -39,7 +39,7 @@ export class SpeechConverterSpeechBrain implements SpeechConverterInterface{
       while (bufferLength >= largeBlock) {
         //only send to speechbrain when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
-        const normalBuffer = new Float32Array(combined).buffer
+        const audioBuffer = new Float32Array(combined).buffer
         bufferLength -= largeBlock;
         try{
         const response = await fetch(this.url, {
@@ -48,7 +48,7 @@ export class SpeechConverterSpeechBrain implements SpeechConverterInterface{
                 "Content-Type": "application/octet-stream",
                 "X-Sample-Rate": inputSampleRate.toString()
                 },
-            body: normalBuffer
+            body: audioBuffer
             });
             
             const transcribed: TranscriptionResponse = await response.json();
