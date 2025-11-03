@@ -353,12 +353,21 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor Steven
-    Steven ->> AAC Game: Run Game
-    Steven ->> AAC Game: 
-    AAC Game -->> Steven: Displays toggable settings for input history
-    Steven ->> AAC Game: Toggle off input history
+    Note over Stan: AAC game shows command history while running, which makes Stan overstimulated
+    actor Stan's Caretaker
+    participant AAC Game
     
-    Note over Steven, AAC Game: AAC Game is playable without visible command history
+    Note over Stan's Caretaker, AAC Game: Game is running API, game command history is visible to players.
+    Stan's Caretaker ->> AAC Game: Access API window
+    activate AAC Game
+    Stan's Caretaker ->> AAC Game: Navigates to settings
+    AAC Game -->> Stan's Caretaker: Displays toggable settings for input history
+    Stan's Caretaker ->> AAC Game: Toggle off input history
+    
+    AAC Game -->> Stan: Reduced visual stimuli
+    deactivate AAC Game
+    Note over Stan: Stan can now comfortably enjoy playing the game
+    Note over Stan's Caretaker, AAC Game: AAC Game is playable without visible command history
     
     opt Steven troubleshoots new command registered
         Steven ->> AAC Game: Register new command
