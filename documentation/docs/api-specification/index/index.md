@@ -2,6 +2,8 @@
 
 ***
 
+# index
+
 This is the main entry point for the npm package `'aac-voice-api'`.
 It exports the core classes, functions, and types that
 make up the public API of the library.
@@ -34,4 +36,4 @@ voice.start();
 
 ### AACVoiceAPI
 
-Re-exports [AACVoiceAPI](../AACVoiceAPI/AACVoiceAPI.md#aacvoiceapi)
+Re-exports [AACVoiceAPI](../AACVoiceAPI/classes/AACVoiceAPI.md)

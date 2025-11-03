@@ -1,8 +1,7 @@
 
-import { CommandLibrary } from "./commandLibrary";
 import { showHistoryPopup } from "./showHistoryPopup";
-import { SpeechConverter, transcribedLogEntry } from "./SpeechConverter";
-import { GameCommand } from "./commandLibrary";
+import { SpeechConverter } from "./SpeechConverter";
+import { CommandMapping } from "./commandMapping";
 
 /**
  * AACVoiceAPI is a facade class that provides a simplified interface
@@ -18,11 +17,11 @@ import { GameCommand } from "./commandLibrary";
 export class AACVoiceAPI{
 
     private converter: SpeechConverter | null = null;
-    private commands: CommandLibrary | null = null;
+    private mapping: CommandMapping | null = null;
 
     constructor(){
         this.converter = new SpeechConverter();  
-        this.commands = new CommandLibrary();  
+        this.mapping = new CommandMapping();
     }
 
     /**
@@ -33,7 +32,6 @@ export class AACVoiceAPI{
      * @param language Language code to configure the model (e.g. 'en')
      */
     public initiate(url:string, language:string):void{
-
         this.converter?.init(url,language);
 
     }
@@ -59,10 +57,10 @@ export class AACVoiceAPI{
     /**
      * Retrieves the full transcription history from the Whisper module.
      *
-     * @returns {transcribedLogEntry[]} An array of transcription log entries,
+     * @returns {string[]} An array of transcription log entries,
      * each containing the transcribed text and its corresponding timestamp.
      */
-    public getTranscribedFull():transcribedLogEntry[]{
+    public getTranscribedFull():string[]{
         return this.converter?.getLoggedText() || [];
         
     }
@@ -84,8 +82,16 @@ export class AACVoiceAPI{
      *  - `active`: Whether the command is currently active. (true or false)
      * @returns true if successfully added
      */
-    public addVoiceCommand(command: GameCommand): boolean {
-        return this.commands?.add(command) || false;
+    public addVoiceCommand(
+    name: string,
+    action: () => void,
+    options?: {
+      description?: string;
+      active?: boolean;
+      
+    }
+    ): boolean {
+        return this.mapping?.addCommand(name,action, options) || false;
     }
 
     /**
@@ -95,7 +101,7 @@ export class AACVoiceAPI{
      * @returns true if successfully removed
      */
     public removeVoiceCommand(name: string): boolean {
-        return this.commands?.remove(name) || false;
+        return this.mapping?.removeCommand(name) || false;
     }
     /**
      * Allows user to check if a game command has already been added
@@ -104,22 +110,22 @@ export class AACVoiceAPI{
      * @returns true if found 
      */
     public isRegistered(name: string): boolean {
-        return this.commands?.has(name) || false;
+        return this.mapping?.hasCommand(name) || false;
     }
     /**
      * Allows user to see a list of all known game commands
      * 
      * @returns a list of all known game commands
      */
-    public getCommands():GameCommand[] | undefined{
-        return this.commands?.list() || [];
+    public getCommands():string[] | []{
+        return this.mapping?.getAllCommands() || [];
     }
 
     /**
      * Allows user to remove all game commands from system
      */
     public clearCommands(): void {
-        this.commands?.clear();
+        this.mapping?.clearAllCommands();
     }
 
 

@@ -86,9 +86,9 @@
         pollingId = window.setInterval(() => {
           const logs = sc.getLoggedText();
           const latest = logs[logs.length -1];
-          if(latest && lastSeen !=latest.transcribedText){
-            logEl.textContent += `${latest.timestamp.toLocaleTimeString()} : ${latest.transcribedText}\n`;
-            lastSeen =latest.transcribedText;
+          if(latest && lastSeen != latest){
+            logEl.textContent += latest
+            lastSeen =latest;
         }
         }, 200);
       }
