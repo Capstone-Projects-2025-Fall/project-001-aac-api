@@ -26,3 +26,9 @@ export interface SpeechConverterInterface {
 
   getStatus(): string;
 }
+export interface TranscriptionResponse {
+  success: boolean;
+  transcription: string;
+  timestamp?: number;
+  error?: string;
+}
