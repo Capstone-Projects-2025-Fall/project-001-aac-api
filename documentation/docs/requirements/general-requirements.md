@@ -4,25 +4,26 @@ sidebar_position: 3
 
 # General Requirements
 
-### Programming Language
-Typescript
+#### Programming Language
+- Typescript
 
-### Development Tools and Dependencies
-- VS Code or your preferred IDE
-- GitHub account 
-- Node.js
-- npm
+#### Development Tools and Dependencies
+- Visual Studio IDE or other IDE for API implementation
+- Git and GitHub for version control 
+- Node.js for code compilation and execution
+- NPM for package management
+- Docusaurus for documentation
 
-### Project Management
+#### Project Management
 - Jira
 - Discord
 
-### Testing and Debugging Tools
+#### Testing and Debugging Tools
 - Jest
 - Vitest
 
-### Hardware Required
-- A device required to test out our API, preferably desktop/laptop computers.
-- A stable internet connection to maintain communication with our API.
-- Desktop/laptop computers must have a microphone/built-in microphone to effectively test communication from our API. 
+#### Required Hardware
+- Desktop/laptop computer
+- Internet connection
+- Microphone
 
