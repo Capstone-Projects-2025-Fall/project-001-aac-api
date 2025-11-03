@@ -6,26 +6,24 @@ sidebar_position: 5
 
 ### Use Case 1 - Voice Recognition
 
-Actor: Suzy (player / AAC device user)
+Actor: Steven (AAC game developer)
 
-Triggering event: Suzy opens a supported game and taps the in-game microphone icon (or activates mic).
+Triggering event: Steven runs their game to test it, and starts by clicking "Whisper Init" and activating mic.
 
-Preconditions: Game is running and in a state that accepts the Start command; microphone access is granted; network (if required) is available.
+Preconditions: Game is running and in a state that uses API; microphone access is granted; network is available.
 
 Normal flow (happy path):
-    1. Suzy taps the microphone icon.
-    2. System checks microphone level and readiness.
-    3. System begins listening and records the utterance.
-    4. ASR (speech→text) transcribes the audio.
-    5. The transcribed text is normalized and matched to the command set; the text maps to the StartGame command.
-    6. If the command confidence is high, the API sends the StartGame command to the game.
-    7. The game changes to the playing state and the UI shows confirmation (visual cue like “Game started”).
-    8. The event is logged in command history.
+    1. Steven clicks Whisper Init.
+    2. System downloads Whisper module.
+    3. Steven clicks Start Listening.
+    4. System begins listening and records the utterance.
+    5. API (speech→text) transcribes the audio.
+    6. The transcribed text is normalized and matched to the command set; the transcription is sent back to the game and displayed to the developer.
+    6. Steven clicks Stop Listening.
+    7. System stops listening.
 
 Alternate flows / exceptions:
-    1. Low mic level: show prompt “Please increase mic volume / move closer to the device” 
-    2. Low confidence: show prompt “Could you say that again?” → re-listen one retry; if still low, show “Try again later” or offer manual control.
-    3. Network error: show “Unable to process voice now” and fallback to manual start.
+    1. No microphone input: show prompt “Whisper Init failed.” 
 
 Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 

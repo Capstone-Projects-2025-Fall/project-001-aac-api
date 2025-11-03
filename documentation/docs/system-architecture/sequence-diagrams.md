@@ -6,121 +6,69 @@ sidebar_position: 5
 
 ### Use Case 1 - Voice Recognition
 
-Actor: Suzy (player / AAC device user)
-
-Triggering event: Suzy opens a supported game and taps the in-game microphone icon (or activates mic).
-
-Preconditions: Game is running and in a state that accepts the Start command; microphone access is granted; network (if required) is available.
-
-Normal flow (happy path):
-1. Suzy taps the microphone icon.
-2. System checks microphone level and readiness.
-3. System begins listening and records the utterance.
-4. ASR (speech→text) transcribes the audio.
-5. The transcribed text is normalized and matched to the command set; the text maps to the StartGame command.
-6. If the command confidence is high, the API sends the StartGame command to the game.
-7. The game changes to the playing state and the UI shows confirmation (visual cue like “Game started”).
-8. The event is logged in command history.
-
-Alternate flows / exceptions:
-1. Low mic level: show prompt “Please increase mic volume / move closer to the device”
-2. Low confidence: show prompt “Could you say that again?” → re-listen one retry; if still low, show “Try again later” or offer manual control.
-3. Network error: show “Unable to process voice now” and fallback to manual start.
-
-Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
-
 ```mermaid
 sequenceDiagram
-    actor Suzy
+    actor Steven
     participant Game
     participant System
-    participant ASR
     participant API
     
-    Suzy->>Game: Tap microphone icon
     activate Game
-    Game->>System: Check microphone status
+    Steven->>Game: Click Whisper Init
+    activate Game
+    Game->>System: Download whisper module
     activate System
-    System-->>Game: Microphone ready
-    deactivate System
-
-    Game->>System: Begin listening
-    activate System
-    Note right of System: Records audio input
-    System->>ASR: Send audio for transcription
-    activate ASR
-    ASR-->>System: Return transcribed text
-    deactivate ASR
-
-    System->>System: Normalize and match to command set
-    Note right of System: Maps to StartGame command
-    
-    alt High confidence
-        System->>API: Send StartGame command
-        activate API
-        API->>Game: Execute StartGame
-        Game->>Game: Change to playing state
-        Game-->>Suzy: Show visual confirmation
-        API->>System: Log command in history
-        deactivate API
-    else Low confidence
-        System-->>Suzy: "Could you say that again?"
-        opt Still low after retry
-            System-->>Suzy: "Try again later"
-            System-->>Game: Fallback to manual control
-        end
-    else Network error
-        System-->>Suzy: "Unable to process voice now"
-        System-->>Game: Fallback to manual start
+    System-->>Game: Whisper downloaded
+    Game-->>Steven: Whisper initalized.
+        
+    alt Whisper not initialized
+        System-->>Game: Whisper module not downloaded
+        deactivate System
+        Game-->> Steven: Whisper init failed.
+        deactivate Game
     end
+
+    Steven->>Game: Start listening
+    activate Game
+    Game->>System: Open audio stream
+    activate System
+    Game-->>Steven: Started Listening.
+    Note right of System: Audio input stream
+    loop every two seconds
+        System->>API: Send audio for transcription
+        activate API
+        API->>API: Transcribe text
+        API-->>Game: Transcribed text
+        deactivate API
+        Game-->>Steven: Display transcribed text
+    end
+    Steven->>Game: Stop listening
+    Game->>System: Close audio stream
     deactivate System
+    Game-->>Steven: Stopped Listening.
     deactivate Game
 ```
 
 ### Use Case 2 - Filter Out Filler Words
 
-Actor: Suzy (player)
-
-Triggering event: Suzy speaks while playing, e.g., “uh jump now.”
-
-Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
-
-Normal flow:
-1. The system captures Suzy’s voice.
-2. ASR transcribes the audio into text (e.g., “uh jump now”).
-3. The pipeline runs a filler-word filter and removes tokens like “uh”, “um”, “now”.
-4. Remaining tokens are tokenized and mapped to command(s) (e.g., “jump” → Jump).
-5. If mapping confidence is high, the API issues the Jump action to the game immediately.
-6. UI gives immediate feedback (visual cue + animation) and logs the command.
-
-Alternate flows / exceptions:
-1. Filter removes all meaningful words (e.g., utterance was “uh now”): ask the player to repeat.
-2. Multiple possible commands: request quick confirmation (“Did you mean JUMP?”) or choose highest-confidence and log uncertainty.
-3. Low confidence: prompt for repeat.
-
-Postconditions: Jump action executed (or user prompted to repeat); command history updated.
-
 ```mermaid
 sequenceDiagram
     actor Suzy
     participant Game
     participant System
-    participant ASR
     participant API
-    participant FillerFilter
     
     Suzy->>System: Speak command "uh jump now"
     activate System
-    System->>ASR: Send audio for transcription
-    activate ASR
-    ASR-->>System: Return transcribed text
-    deactivate ASR
+    System->>API: Send audio for transcription
+    activate API
+    API-->>System: Return transcribed text
+    deactivate API
     
-    System->>FillerFilter: Process text "uh jump now"
-    activate FillerFilter
-    Note right of FillerFilter: Remove filler words<br/>"uh" and "now"
-    FillerFilter-->>System: Return filtered text "jump"
-    deactivate FillerFilter
+    System->>API: Process text "uh jump now"
+    activate API
+    API-->>System: Return filtered text "jump"
+    deactivate API
     
     System->>System: Tokenize and map to command
     Note right of System: Maps to Jump command
@@ -152,113 +100,65 @@ sequenceDiagram
 
 ### Use Case 3 - Speaker Seperation
 
-Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
-
-Triggering event: Suzy speaks a command while other people speak at the same time.
-
-Preconditions: Enrolled player voice profile exists; speaker-separation model is enabled.
-
-Normal flow:
-1. System captures mixed audio with multiple speakers.
-2. The speaker-separation model isolates the enrolled player’s audio stream (prefer enrolled stream).
-3. ASR runs on the isolated player stream and transcribes the utterance.
-4. Transcription is normalized and mapped to a game command (e.g., PauseGame).
-5. If confidence is high, API sends PauseGame to the game; UI confirms action.
-6. Log command and speaker attribution.
-
-Alternate flows / exceptions:
-1. No enrolled profile available
-2. Separation uncertain / low confidence: show a quick confirmation prompt (“Did you say ‘pause’?”). If the player confirms, proceed; otherwise ignore.
-3. Overlapping identical words from multiple speakers: use confidence + enrolled preference; if unresolved, request confirmation.
-
-Postconditions: Game paused (if confirmed); system records speaker attribution and confidence.
-
 ```mermaid
 sequenceDiagram
     actor Suzy
     actor Parent
     participant Game
-    participant System
-    participant SpeakerSeparation
-    participant ASR
     participant API
     
     Note over Suzy,Parent: Both speaking simultaneously
     par Suzy speaks command
-        Suzy->>System: Speak "pause game"
+        Suzy->>Game: Speak "pause game"
     and Parent speaks
-        Parent->>System: Speaking other words
+        Parent->>Game: Speaking other words
     end
     
-    activate System
-    System->>SpeakerSeparation: Process mixed audio
-    activate SpeakerSeparation
-    Note right of SpeakerSeparation: Compare with enrolled<br/>player voice profile
-    SpeakerSeparation-->>System: Return isolated player audio
-    deactivate SpeakerSeparation
+    activate Game
+    Game->>API: Process mixed audio
+    activate API
+    API-->>Game: Return isolated player audio
+    deactivate API
     
-    System->>ASR: Transcribe isolated audio
-    activate ASR
-    ASR-->>System: Return transcribed text
-    deactivate ASR
+    Game->>API: Transcribe isolated audio
+    activate API
+    API-->>Game: Return transcribed text
+    deactivate API
     
-    System->>System: Normalize and map to command
-    Note right of System: Maps to PauseGame command
+    Game->>Game: Normalize and map to command
+    Note right of Game: Maps to PauseGame command
     
     alt High confidence & clear speaker separation
-        System->>API: Send PauseGame command
+        Game->>API: Send PauseGame command
         activate API
         API->>Game: Execute pause action
         activate Game
         Game-->>Suzy: Show UI confirmation
         deactivate Game
-        API->>System: Log command with speaker attribution
+        API->>Game: Log command with speaker attribution
         deactivate API
-    else No enrolled profile
-        System-->>Suzy: "Please enroll voice profile"
     else Uncertain speaker separation
-        System-->>Suzy: "Did you say 'pause'?"
+        Game-->>Suzy: "Did you say 'pause'?"
         alt User confirms
-            Suzy->>System: Confirm command
-            System->>API: Send PauseGame command
+            Suzy->>Game: Confirm command
+            Game->>API: Send PauseGame command
             API->>Game: Execute pause action
             Game-->>Suzy: Show UI confirmation
         end
     else Overlapping identical words
-        System->>System: Check confidence & enrolled preference
+        Game->>Game: Check confidence & enrolled preference
         alt Can resolve with confidence
-            System->>API: Send command with high confidence
+            Game->>API: Send command with high confidence
             API->>Game: Execute action
             Game-->>Suzy: Show UI confirmation
         else Cannot resolve
-            System-->>Suzy: Request confirmation
+            Game-->>Suzy: Request confirmation
         end
     end
-    deactivate System
+    deactivate Game
 ```
 
 ### Use Case 4 - Background Noise Filtering
-
-Actor: Suzy (player)
-
-Triggering event: Suzy issues a command in a noisy environment (e.g., TV).
-
-Preconditions: Noise-robust ASR / denoising pipeline active; microphone picks up signal.
-
-Normal flow:
-1. System captures the noisy audio.
-2. Noise suppression/denoising module processes the audio to reduce background interference.
-3. ASR transcribes the cleaned audio.
-4. Transcription is matched to a command (e.g., “left” → MoveLeft).
-5. If confidence is high, API sends MoveLeft to the game and UI shows visual confirmation.
-6. Command and environment metadata (noise level) are logged.
-
-Alternate flows / exceptions:
-1. Noise overwhelms voice: prompt the user to repeat or show a “can’t hear” note.
-2. Misrecognized phrase due to residual noise: if confidence low, ask for repeat or confirmation.
-3. Adaptive fallback: optionally switch to a push-to-talk or require closer mic.
-
-Postconditions: Movement executed (or prompt shown); noise metrics recorded for debugging.
 
 ```mermaid
 sequenceDiagram
@@ -266,7 +166,6 @@ sequenceDiagram
     participant Game
     participant System
     participant NoiseFilter
-    participant ASR
     participant API
     
     Note over Suzy,System: Noisy environment (e.g., TV playing)
@@ -279,10 +178,10 @@ sequenceDiagram
     NoiseFilter-->>System: Return cleaned audio
     deactivate NoiseFilter
     
-    System->>ASR: Transcribe cleaned audio
-    activate ASR
-    ASR-->>System: Return transcribed text
-    deactivate ASR
+    System->>API: Transcribe cleaned audio
+    activate API
+    API-->>System: Return transcribed text
+    deactivate API
     
     System->>System: Match to command
     Note right of System: Maps to MoveLeft command
@@ -316,26 +215,6 @@ sequenceDiagram
 ```
 
 ### Use Case 5 - Interpret Synonyms of Commands
-
-Actor: Suzy (player); Developer (configures mapping)
-
-Triggering event: Suzy uses a synonym (e.g., “go” for Move, “hop” for Jump).
-
-Preconditions: Synonym mapping table exists (configured by developer or default set); ASR and command mapper active.
-
-Normal flow:
-1. System captures the utterance and ASR produces text (e.g., “hop”).
-2. The command-mapping module looks up the token in the synonym table.
-3. “hop” is mapped to canonical command Jump.
-4. If confidence is high, API issues Jump to the game.
-5. Provide visual confirmation and log synonym used and mapping confidence.
-
-Alternate flows / exceptions:
-1. Unknown synonym: present developer UI option to register this phrase as a synonym, or prompt the player: “Did you mean JUMP?”
-2. Multiple possible canonical matches: prompt for confirmation or use highest confidence mapping.
-3. Developer disabled synonym mapping: treat unknown words as unrecognized and prompt to repeat or register command.
-
-Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
 ```mermaid
 sequenceDiagram
@@ -395,19 +274,7 @@ sequenceDiagram
     deactivate System
 ```
 
-### Use Case 6 - Support Commmon Game Inputs (Incomplete)
-
-Actor: Steven (developer)
-
-Triggering Event: Steven uses the API toolkit to set up the basic commands the game will understand.
-
-Preconditions: Game API has empty command library.
-
-Normal flow:
-1. Steven, a game developer, uses the API toolkit, like Start Game, Move Left, Move Right, Jump, Pause, and Shield.
-2. They tell the API what each command means and connect those commands to the game’s actions. When a player speaks, the API listens, figures out the right command, and sends it back to the game in a clear format.
-
-Postconditions: System contains common commands in a command library.
+### Use Case 6 - Support Commmon Game Inputs
 
 ```mermaid
 sequenceDiagram
@@ -419,21 +286,9 @@ sequenceDiagram
     Steven->>APIToolkit: Open API toolkit
     activate APIToolkit
         
-    par Add Movement Commands
-        Steven->>APIToolkit: Add "Move Left" command
-        APIToolkit->>CommandLibrary: Register command
-        Steven->>APIToolkit: Add "Move Right" command
-        APIToolkit->>CommandLibrary: Register command
-    and Add Action Commands
-        Steven->>APIToolkit: Add "Jump" command
-        APIToolkit->>CommandLibrary: Register command
-        Steven->>APIToolkit: Add "Shield" command
-        APIToolkit->>CommandLibrary: Register command
-    and Add Game Control Commands
-        Steven->>APIToolkit: Add "Start Game" command
-        APIToolkit->>CommandLibrary: Register command
-        Steven->>APIToolkit: Add "Pause" command
-        APIToolkit->>CommandLibrary: Register command
+    loop Add Common Game Commands
+        Steven->>APIToolkit: Add command
+        APIToolkit->>CommandLibrary: Register command 
     end
     
     Steven->>APIToolkit: Map commands to game actions
@@ -468,22 +323,6 @@ sequenceDiagram
 
 ### Use Case 7 - Register New Commands
 
-Actor: Steven (developer)
-
-Triggering Event: Steven adds new commands to command library through the API to support new game.
-
-Preconditions: System command library has common commands in command library.
-
-Normal flow:
-1. System has the ability to register new commands through the API.
-2. Steven enters new commands in command library using the API toolkit.
-3. This will allow the API to remain flexible to any future games that require more complex commands that are not currently supported.
-
-Alternate flows / exceptions:
-1. The system command log already contains all the needed commands for the game.
-
-Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
-
 ```mermaid
 sequenceDiagram
     actor Steven
@@ -511,43 +350,15 @@ sequenceDiagram
 ```
 ### Use Case 8 - Toggle Input History
 
-Actor: Steven (developer); Stan (player)
-
-Triggering Event: Stan is overstimulated by the AAC game.
-
-Preconditions: AAC game is running API and game command history is visible to players.
-
-Normal flow:
-1. Stan's caretaker uses the API window and goes to settings.
-2. The system has toggleable settings for input history.
-3. The caretaker toggles off the input history.
-4. Stan receives reduced visual stimuli and can comfortably enjoy playing the AAC game.
-
-Alternate flows / exceptions:
-1. Steven has registered a new command and uses the command history to troubleshoot the new command.
-2. He has confidence that it was registered correctly and working once he is able to see it in the command history.
-
-Postconditions: AAC game is playable without a visible command history.
-
 ```mermaid
 sequenceDiagram
-    actor Stan
     actor Steven
-    Note over Stan: AAC game shows command history while running, which makes Stan overstimulated
-    actor Stan's Caretaker
-    participant AAC Game
+    Steven ->> AAC Game: Run Game
+    Steven ->> AAC Game: 
+    AAC Game -->> Steven: Displays toggable settings for input history
+    Steven ->> AAC Game: Toggle off input history
     
-    Note over Stan's Caretaker, AAC Game: Game is running API, game command history is visible to players.
-    Stan's Caretaker ->> AAC Game: Access API window
-    activate AAC Game
-    Stan's Caretaker ->> AAC Game: Navigates to settings
-    AAC Game -->> Stan's Caretaker: Displays toggable settings for input history
-    Stan's Caretaker ->> AAC Game: Toggle off input history
-    
-    AAC Game -->> Stan: Reduced visual stimuli
-    deactivate AAC Game
-    Note over Stan: Stan can now comfortably enjoy playing the game
-    Note over Stan's Caretaker, AAC Game: AAC Game is playable without visible command history
+    Note over Steven, AAC Game: AAC Game is playable without visible command history
     
     opt Steven troubleshoots new command registered
         Steven ->> AAC Game: Register new command
@@ -560,31 +371,12 @@ sequenceDiagram
 
 ### Use Case 9 - Confidence Level of Interpreted Game Input
 
-Actor: Steven (developer):
-
-Triggering Event: Steven is experimenting with API speech input.
-
-Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
-
-Normal flow:
-1. Steven speaks game commands into the microphone.
-2. The game command is interpreted and inputed to the game.
-3. Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command.
-4. This allows him to have control over which commands are recognized as valid game inputs. ensuring that only reliable commands can affect the gameplay.
-
-Alternate flows / exceptions:
-1. The game incorrectly interprets the voice input.
-2. Steven adjusts the code accordingly.
-
-Postconditions: Game accurately interprets gameplay commands.
-
 ```mermaid
 sequenceDiagram
     actor Steven
     participant GameSystem
     
-    Note over Steven: Steven is experimenting with API speech input
-    Note over GameSystem: Game accepts gameplay commands, microphone is active
+    Note over GameSystem: microphone is active
     
     Steven ->> GameSystem: Speak game commands into microphone
     activate GameSystem
@@ -592,7 +384,6 @@ sequenceDiagram
     GameSystem -->> Steven: Return confidence level
     deactivate GameSystem
     
-    Note over Steven: Control over which commands are valid inputs, ensuring reliable commands affect gameplay
     Note over GameSystem: Game accurately interprets game commands
     
     opt Incorrect voice input
