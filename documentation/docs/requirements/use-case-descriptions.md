@@ -118,7 +118,7 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
-### Use Case 6 - Support Common Game Inputs (Incomplete)
+### Use Case 6 - Support Common Game Inputs
 
 Actor: Steven (developer)
 
