@@ -1,0 +1,20 @@
+Documentation Changelog
+System Overview
+1.	Project Abstract: Made requested wording changes.
+2.	Conceptual Design: Rewritten for clarity and concision.
+3.	Background: Rewritten for clarity and concision.
+System Block Diagram
+4.	Added figure number for system block diagram.
+5.	Remade block diagram.
+6.	Added descriptions of each component of the API.
+General Requirements
+7.	Updated to include tools needed for API developers and AAC game developers. (Added following headers: Programming language, development tools, and dependencies, project management, testing and debugging tools). 
+Features and Requirements
+8.	Moved three bullet points from nonfunctional requirements to functional requirements.
+Use-Case Descriptions
+9.	Rewritten as step-by-step descriptions. 
+10.	Added normal flows and alternate flows to show how the either the user, game developer, and/or any other entity/actor would take part in each use case whenever applicable.
+11.	Preconditions and postconditions added to show the required environment setup for the beginning and the end.
+Sequence Diagrams
+12.	All sequence diagrams added.
+13.	Class diagram added.

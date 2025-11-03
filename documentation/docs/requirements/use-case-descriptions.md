@@ -6,26 +6,24 @@ sidebar_position: 5
 
 ### Use Case 1 - Voice Recognition
 
-Actor: Suzy (player / AAC device user)
+Actor: Steven (AAC game developer)
 
-Triggering event: Suzy opens a supported game and taps the in-game microphone icon (or activates mic).
+Triggering event: Steven runs their game to test it, and starts by clicking "Whisper Init" and activating mic.
 
-Preconditions: Game is running and in a state that accepts the Start command; microphone access is granted; network (if required) is available.
+Preconditions: Game is running and in a state that uses API; microphone access is granted; network is available.
 
 Normal flow (happy path):
-    1. Suzy taps the microphone icon.
-    2. System checks microphone level and readiness.
-    3. System begins listening and records the utterance.
-    4. ASR (speech→text) transcribes the audio.
-    5. The transcribed text is normalized and matched to the command set; the text maps to the StartGame command.
-    6. If the command confidence is high, the API sends the StartGame command to the game.
-    7. The game changes to the playing state and the UI shows confirmation (visual cue like “Game started”).
-    8. The event is logged in command history.
+    1. Steven clicks Whisper Init.
+    2. System downloads Whisper module.
+    3. Steven clicks Start Listening.
+    4. System begins listening and records the utterance.
+    5. API (speech→text) transcribes the audio.
+    6. The transcribed text is normalized and matched to the command set; the transcription is sent back to the game and displayed to the developer.
+    6. Steven clicks Stop Listening.
+    7. System stops listening.
 
 Alternate flows / exceptions:
-    1. Low mic level: show prompt “Please increase mic volume / move closer to the device” 
-    2. Low confidence: show prompt “Could you say that again?” → re-listen one retry; if still low, show “Try again later” or offer manual control.
-    3. Network error: show “Unable to process voice now” and fallback to manual start.
+    1. No microphone input: show prompt “Whisper Init failed.” 
 
 Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 
@@ -52,7 +50,7 @@ Alternate flows / exceptions:
 
 Postconditions: Jump action executed (or user prompted to repeat); command history updated.
 
-### Use Case 3 - Speaker Seperation
+### Use Case 3 - Speaker Separation
 
 Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
 
@@ -120,7 +118,7 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
-### Use Case 6 - Support Commmon Game Inputs (Incomplete)
+### Use Case 6 - Support Common Game Inputs
 
 Actor: Steven (developer)
 
@@ -134,25 +132,7 @@ Normal flow:
 
 Postconditions: System contains common commands in a command library.
 
-### Use Case 7 - Previous Game Integration
-
-Actor: Steven (developer)
-
-Triggering Event: Suzy wants to play an AAC game she used last semester. 
-
-Preconditions: System supports current AAC games.
-
-Normal flow:
-    1. The developer adds a small connector that uses the API’s standard commands.
-    2. Suzy’s voice inputs still work in the old game without needing to rewrite the code.
-
-Alternate flows / exceptions:
-    1. The old game is set up in a way that is not compatible with the API.
-    2. The old game's code needs to be directly modified.
-
-Postconditions: Suzy is able to play the old AAC games using the API.
-
-### Use Case 8 - Register New Commands
+### Use Case 7 - Register New Commands
 
 Actor: Steven (developer)
 
@@ -170,7 +150,7 @@ Alternate flows / exceptions:
 
 Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
-### Use Case 9 - Toggle Input History
+### Use Case 8 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
 
@@ -190,7 +170,7 @@ Alternate flows / exceptions:
 
 Postconditions: AAC game is playable without a visible command history.
 
-### Use Case 10 - Confidence Level of Interpreted Game Input
+### Use Case 9 - Confidence Level of Interpreted Game Input
 
 Actor: Steven (developer):
 
@@ -200,7 +180,7 @@ Preconditions: Game is in a state that accepts gameplay commands; microphone is 
 
 Normal flow:
     1. Steven speaks game commands into the microphone.
-    2. The game command is interpreted and inputed to the game.
+    2. The game command is interpreted and inputted to the game.
     3. Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. 
     4. This allows him to have control over which commands are recognized as valid game inputs. ensuring that only reliable commands can affect the gameplay.
 
