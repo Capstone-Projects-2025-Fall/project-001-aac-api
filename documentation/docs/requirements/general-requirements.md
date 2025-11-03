@@ -22,7 +22,7 @@ sidebar_position: 3
 - Jest
 - Vitest
 
-#### Required Hardware
+#### Hardware
 - Desktop/laptop computer
 - Internet connection
 - Microphone
