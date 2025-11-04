@@ -15,7 +15,7 @@ vi.mock("../src/CommandConverter");
 import createWhisperModule from '../src/whisper/libstream';
 //@ts-expect-error used because its a test with a mockup
 import { mockCommandConverter } from '../src/CommandConverter';
-import {SpeechConverter} from "../src/SpeechConverter";
+import {SpeechConverterOffline} from "../src/SpeechConverterOffline";
 
 
 
@@ -23,7 +23,7 @@ import {SpeechConverter} from "../src/SpeechConverter";
 describe("SpeechConverter", () => {
 
     
-    let converter: SpeechConverter;
+    let converter: SpeechConverterOffline;
 
 
 
@@ -35,7 +35,7 @@ describe("SpeechConverter", () => {
             ok: true,
             arrayBuffer: async () => new ArrayBuffer(8),
         })) as unknown as typeof fetch;
-        converter = new SpeechConverter();
+        converter = new SpeechConverterOffline();
         
     });
     it("initializes Whisper module and loads model", async () => {  
@@ -167,14 +167,14 @@ describe("SpeechConverter", () => {
     it("Logs transcribed text", () => {
         const text = "logged text";
         (converter as any).logText(text);
-        const logs = (converter as any).getLoggedText();
+        const logs = (converter as any).getTextLog();
         expect(logs[logs.length-1]).toContain(text);
 
     });
     it("Does not log blank audio", () =>{
         const text = "[BLANK_AUDIO]";
         (converter as any).logText(text);
-        expect((converter as any).getLoggedText()).toEqual([]);
+        expect((converter as any).getTextLog()).toEqual([]);
     });
     it("Processes valid transcribed text", () => {
         const text = "run";

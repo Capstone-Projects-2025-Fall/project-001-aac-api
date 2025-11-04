@@ -1,6 +1,7 @@
 
 import { showHistoryPopup } from "./showHistoryPopup";
-import { SpeechConverter } from "./SpeechConverterOffline";
+import { SpeechConverterInterface } from "./SpeechConverterInterface";
+import { SpeechConverterOffline } from "./SpeechConverterOffline";
 import { CommandMapping } from "./commandMapping";
 
 /**
@@ -16,11 +17,11 @@ import { CommandMapping } from "./commandMapping";
 
 export class AACVoiceAPI{
 
-    private converter: SpeechConverter | null = null;
+    private converter: SpeechConverterInterface | null = null;
     private mapping: CommandMapping | null = null;
 
     constructor(){
-        this.converter = new SpeechConverter();  
+        this.converter = new SpeechConverterOffline();  
         this.mapping = new CommandMapping();
     }
 

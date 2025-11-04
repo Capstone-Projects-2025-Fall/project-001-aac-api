@@ -12,6 +12,11 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   private transcriptionInterval?: ReturnType<typeof setInterval>;
   private url: string = "http://localhost:8000/transcription/";
 
+      /**
+       * updates the 
+       * 
+       * @param backendURL url of hosted backend
+       */
       constructor(backendURL: string) {
         this.commandConverter = CommandConverter.getInstance();
         if(backendURL){
@@ -25,7 +30,6 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     }
    public startListening(): void {
     
-
     const inputSampleRate = this.audioHandler?.getSampleRate() || 48000; //default from browser is 48000
     const bufferSeconds = 3; //may need to adjust if too short of a time frame
     const largeBlock = inputSampleRate * bufferSeconds; //creates the block size for x amount of seconds
@@ -41,10 +45,10 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       while (bufferLength >= largeBlock) {
         //only send to speechbrain when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
-        const audioBuffer = new Float32Array(combined).buffer
+        const audioBuffer = new Float32Array(combined).buffer;
         bufferLength -= largeBlock;
         try{
-        const response = await fetch(this.url, {
+          const response = await fetch(this.url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/octet-stream",
@@ -53,11 +57,18 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
             body: audioBuffer
             });
             
+            if(!response.ok){ 
+              throw new Error(`Did not return status:200 ${response.status}`)
+            }
             const transcribed: TranscriptionResponse = await response.json();
             console.log(transcribed);
+          
             if(transcribed.success){
+              if(transcribed.transcription && transcribed.transcription.trim())
+                {
                 this.processText(transcribed.transcription);
                 this.logText(transcribed.transcription);
+              }
             }
         }
         catch (err){
@@ -69,21 +80,13 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       }
     });
         this.audioHandler.startListening();
-
-    // Poll transcription every 200ms and processText
-    this.transcriptionInterval = setInterval(() => {
-      const text = this.getTranscribed();
-      if (text && text.trim()) {
-        this.processText(text);
-      }
-    }, 200);
   }
 
     public stopListening(): void {
         this.audioHandler?.stopListening();
     }
     public getTranscribed(): string {
-            //adds text to logger
+    //adds text to logger
     const text = this.getTextLog();
     return text.toString();
     }
@@ -144,7 +147,10 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     this.textLog.push(entry);
   }
 
-    //only exists for demo purposes
+  /**
+   * 
+   * @returns {string[]} Returns an array of transcribed
+   */
   public getTextLog(): string[] {
     const logOfText = [];
     if (!this.textLog) return [];

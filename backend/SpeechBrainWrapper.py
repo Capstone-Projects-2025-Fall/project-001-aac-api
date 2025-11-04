@@ -31,7 +31,7 @@ class SpeechBrain:
     #recieves float32Array.buffer form frontend and transcribes it
     def transcribe_raw_bytes(self, data: bytes, sample_rate: int) -> str:
         try:
-            waveform = self.__bytes_to_tensor(data)
+            waveform = self._bytes_to_tensor(data)
             wav_lens = torch.tensor([1.0])
             
             #checks for blank audio

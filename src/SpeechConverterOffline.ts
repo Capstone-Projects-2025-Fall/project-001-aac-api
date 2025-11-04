@@ -9,7 +9,7 @@ import { SpeechConverterInterface, transcribedLogEntry } from './SpeechConverter
  * 
  */
 
-export class SpeechConverter implements SpeechConverterInterface {
+export class SpeechConverterOffline implements SpeechConverterInterface {
   /** Reference to the WhisperModule instance for transcribing data */
   private whisper: WhisperModule | null = null;
   /** Used to capture microphone input */
@@ -167,10 +167,8 @@ export class SpeechConverter implements SpeechConverterInterface {
 
       while (bufferLength >= largeBlock) {
         //only send to whisper when enough chunks exist
-
         const combined = this.combineChunks(buffer, largeBlock);
         bufferLength -= largeBlock;
-
         //this may need to change to an third party api call later as it could be too cpu intensive
         //must be downsampled otherwise whisper wont work right
         const downsampled = this.downSample(combined, inputSampleRate, targetSampleRate);
