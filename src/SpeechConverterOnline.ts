@@ -14,7 +14,9 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
 
       constructor(backendURL: string) {
         this.commandConverter = CommandConverter.getInstance();
-        this.url = backendURL;
+        if(backendURL){
+          this.url = backendURL;
+        }
       }
     
     init(modelPath: string, lang: string): Promise<void> {
@@ -25,7 +27,7 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     
 
     const inputSampleRate = this.audioHandler?.getSampleRate() || 48000; //default from browser is 48000
-    const bufferSeconds = 2; //may need to adjust if too short of a time frame
+    const bufferSeconds = 3; //may need to adjust if too short of a time frame
     const largeBlock = inputSampleRate * bufferSeconds; //creates the block size for x amount of seconds
 
     let buffer: Float32Array[] = [];
@@ -35,7 +37,7 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       //collects chunks until enough data is recieved
       buffer.push(chunk);
       bufferLength += chunk.length;
-
+      
       while (bufferLength >= largeBlock) {
         //only send to speechbrain when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
@@ -52,9 +54,10 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
             });
             
             const transcribed: TranscriptionResponse = await response.json();
-            
+            console.log(transcribed);
             if(transcribed.success){
                 this.processText(transcribed.transcription);
+                this.logText(transcribed.transcription);
             }
         }
         catch (err){
@@ -80,7 +83,9 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
         this.audioHandler?.stopListening();
     }
     getTranscribed(): string {
-        throw new Error("Method not implemented.");
+            //adds text to logger
+    const text = this.getLoggedText();
+    return text.toString();
     }
     getStatus(): string {
         throw new Error("Method not implemented.");

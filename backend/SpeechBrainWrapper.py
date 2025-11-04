@@ -14,7 +14,7 @@ class SpeechBrain:
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
             SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-                source ="speechbrain/asr-crdnn-rnnlm-librispeech",
+                source = "speechbrain/asr-wav2vec2-commonvoice-en",#"speechbrain/asr-crdnn-rnnlm-librispeech",
                 savedir = "pretrained_models/asr"
             )
         if(SpeechBrain.__model_sep is None):
@@ -28,15 +28,15 @@ class SpeechBrain:
         try:
             waveform = self.__bytes_to_tensor(data)
             wav_lens = torch.tensor([1.0])
-            
-            target_rate= 16000 #model expects this
-            if sample_rate != target_rate:
-                resampler = torchaudio.transforms.Resample(sample_rate, target_rate)
-                waveform = resampler(waveform)
-            
-            transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
-            
-            return transcribed[0]
+            if(self._has_speech):
+                target_rate= 16000 #model expects this
+                if sample_rate != target_rate:
+                    resampler = torchaudio.transforms.Resample(sample_rate, target_rate)
+                    waveform = resampler(waveform)
+                
+                transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
+                print(transcribed[0])
+                return str(transcribed[0])
         
         except RuntimeError as e:  # torchaudio / ffmpeg issues
             return f"[ERROR] Audio processing failed: {e}"
@@ -49,7 +49,8 @@ class SpeechBrain:
         audio_data = np.frombuffer(data, dtype=np.float32)
         return torch.tensor(audio_data, dtype=torch.float32).unsqueeze(0)
     
-    
+    def _has_speech(audio, threshold=0.01):
+        return np.mean(np.abs(audio)) > threshold
         
     #takes in float32Array.buffer from frontend and performs speech separation
     #returns a tensor that can have multiple audios

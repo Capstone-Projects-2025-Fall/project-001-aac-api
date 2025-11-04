@@ -15,14 +15,14 @@
   <pre id="transcriptionLog" style="max-height: 2000px; overflow-y: scroll;"></pre>
 
   <script type="module">
-    import { SpeechConverter } from './src/SpeechConverter.js';
+    import { SpeechConverterOnline } from './src/SpeechConverterOnline.js';
     import {showHistoryPopup } from './src/showHistoryPopup.js';
     import { CommandMapping } from './src/commandMapping.js';
     
 
     document.getElementById("popUp").onclick = () => showHistoryPopup();
 
-    const sc = new SpeechConverter();
+    const sc = new SpeechConverterOnline();
     const logEl = document.getElementById("transcriptionLog");
     let pollingId = null;
     let lastTextIndex = 0;

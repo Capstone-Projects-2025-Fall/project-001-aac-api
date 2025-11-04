@@ -1,6 +1,6 @@
 
 import { showHistoryPopup } from "./showHistoryPopup";
-import { SpeechConverter } from "./SpeechConverter";
+import { SpeechConverter } from "./SpeechConverterOffline";
 import { CommandMapping } from "./commandMapping";
 
 /**
