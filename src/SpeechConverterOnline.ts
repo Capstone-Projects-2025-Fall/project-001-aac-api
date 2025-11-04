@@ -13,7 +13,7 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   private url: string = "http://localhost:8000/transcription/";
 
       /**
-       * updates the 
+       * updates the url to point to the correct backend on initialization
        * 
        * @param backendURL url of hosted backend
        */
@@ -23,11 +23,28 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
           this.url = backendURL;
         }
       }
-    
+    /**
+     * 
+     * Is not implemented for this version, throws an error if called
+     * 
+     */
     public init(modelPath: string, lang: string): Promise<void> {
         console.log("This implementation does not support this method. Please switch implementation to offline to use: ", modelPath, lang)
         throw new Error("init() is not applicaple for this Online transcription.");
     }
+
+    /**
+   *
+   * Starts listening to the user's microphone input, collects audio chunks,
+   * and feeds them into the backend for transcription in real time.
+   *
+   * The method continuously gathers small chunks from `AudioInputHandler`,
+   * combines them into fixed-size blocks and sends them to the model for inference.
+   *
+   * @throws {Error} Throws if fetch status is not 200
+   * @throws {Error} Throws if Promise fails to resolve
+   *
+   */
    public startListening(): void {
     
     const inputSampleRate = this.audioHandler?.getSampleRate() || 48000; //default from browser is 48000
@@ -81,19 +98,40 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     });
         this.audioHandler.startListening();
   }
-
+  /**
+   * Stops the audio input stream and halts the real-time transcription process.
+   *
+   * This should be called after `startListening()` to stop capturing microphone input
+   * and free up system audio resources.
+   *
+   */
     public stopListening(): void {
         this.audioHandler?.stopListening();
     }
+  /**
+   * Retrieves the latest transcription result from the Whisper model and logs it.
+   *
+   * This method calls the underlying Whisper API to obtain the most recently
+   * transcribed text. If any text has been returned from whisper, it logs it.
+   *
+   * @returns {string} - The transcribed text from the current audio chunk.
+   * 
+   */
     public getTranscribed(): string {
     //adds text to logger
     const text = this.getTextLog();
     return text.toString();
     }
+    
+    /**
+     * Is not implemented for this implementation of SpeechConverter
+     * @throws {Error} Method not implemented
+     */
     getStatus(): string {
         throw new Error("Method not implemented.");
     }
 
+  
   private combineChunks(buffer: Float32Array[], blockSize: number): Float32Array {
     const combined = new Float32Array(blockSize);
     let offset = 0;
@@ -126,11 +164,11 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       this.commandConverter?.processTranscription(text);
     }
   }
-    /**
-   * Takes any recognized words from whisper and logs them into an array that contains a timestamp
-   * Excludes the string returned from whisper [BLANK_AUDIO]
+  /**
+   * Takes any recognized words and logs them into an array that contains a timestamp
+   * Excludes the string [BLANK_AUDIO]
    *
-   * @param text transcribed words that have been recognized by whisper
+   * @param text transcribed words that have been recognized
    */
   private logText(text: string): void {
     if (text.includes('[BLANK_AUDIO]')) {
@@ -148,8 +186,11 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   }
 
   /**
+   * takes the array of objects that hold the transcribed logs 
+   * and converts it into a string of the following format
+   * Timestamp: Transcribed text
    * 
-   * @returns {string[]} Returns an array of transcribed
+   * @returns {string[]} Returns an array of transcribed logs
    */
   public getTextLog(): string[] {
     const logOfText = [];
