@@ -84,7 +84,7 @@
       let lastSeen = "";
       if (!pollingId) {
         pollingId = window.setInterval(() => {
-          const logs = sc.getLoggedText();
+          const logs = sc.getTextLog();
           const latest = logs[logs.length -1];
           if(latest && lastSeen != latest){
             logEl.textContent += latest
@@ -101,6 +101,7 @@
     document.getElementById("stopBtn").onclick = async () => {
         try{
           sc.stopListening();
+          logEl.textContent += "[System] Stopped listening...\n";
         }
         catch(err){
           logEl.textContent += "[Error] Stop listening failed: " + err + "\n";

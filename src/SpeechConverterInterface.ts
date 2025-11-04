@@ -22,13 +22,13 @@ export interface SpeechConverterInterface {
 
   getTranscribed():string;
 
-  getLoggedText():string[];
+  getTextLog():string[];
 
   getStatus(): string;
 }
 export interface TranscriptionResponse {
   success: boolean;
-  transcription: string;
+  transcription: string; 
   timestamp?: number;
   error?: string;
 }

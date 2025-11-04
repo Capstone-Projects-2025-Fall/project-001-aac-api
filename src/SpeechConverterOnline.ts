@@ -19,7 +19,7 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
         }
       }
     
-    init(modelPath: string, lang: string): Promise<void> {
+    public init(modelPath: string, lang: string): Promise<void> {
         console.log("This implementation does not support this method. Please switch implementation to offline to use: ", modelPath, lang)
         throw new Error("init() is not applicaple for this Online transcription.");
     }
@@ -79,12 +79,12 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     }, 200);
   }
 
-    stopListening(): void {
+    public stopListening(): void {
         this.audioHandler?.stopListening();
     }
-    getTranscribed(): string {
+    public getTranscribed(): string {
             //adds text to logger
-    const text = this.getLoggedText();
+    const text = this.getTextLog();
     return text.toString();
     }
     getStatus(): string {
@@ -143,8 +143,9 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     }
     this.textLog.push(entry);
   }
+
     //only exists for demo purposes
-  public getLoggedText(): string[] {
+  public getTextLog(): string[] {
     const logOfText = [];
     if (!this.textLog) return [];
     for (let i = 0; i < this.textLog.length; i++) {

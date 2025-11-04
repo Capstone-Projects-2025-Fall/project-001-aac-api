@@ -279,7 +279,7 @@ export class SpeechConverter implements SpeechConverterInterface {
   }
 
   //only exists for demo purposes
-  public getLoggedText(): string[] {
+  public getTextLog(): string[] {
     const logOfText = [];
     if (!this.textLog) return [];
     for (let i = 0; i < this.textLog.length; i++) {
