@@ -60,8 +60,8 @@ export class AACVoiceAPI{
      * @returns {string[]} An array of transcription log entries,
      * each containing the transcribed text and its corresponding timestamp.
      */
-    public getTranscribedFull():string[]{
-        return this.converter?.getLoggedText() || [];
+    public getTranscriptionLogs():string[]{
+        return this.converter?.getTextLog() || [];
         
     }
 
