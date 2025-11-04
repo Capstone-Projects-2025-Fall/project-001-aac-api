@@ -1,13 +1,17 @@
 {
-  "entryPoints": ["src/**/*.ts"],
+  "entryPoints": ["src/API-doc-entry.ts"],
   "out": "documentation/docs/api-specification/",
   "plugin": ["typedoc-plugin-markdown"],
   "exclude": ["**/dist/**", "**/node_modules/**", "**/documentation/**", "**/__mocks__/**"],
   "hideBreadcrumbs": true,
   "excludePrivate": true,
-  "hidePageTitle": false,
-  "parametersFormat": "table",
+  "hidePageTitle": true,
+  "parametersFormat": "htmlTable",
   "typeDeclarationFormat": "table",
+  "useCodeBlocks": true,
+  "readme": "none",
+  "categorizeByGroup": false,
+  
 
 
 }
