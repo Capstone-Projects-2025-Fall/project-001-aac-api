@@ -1,6 +1,7 @@
 
 import { showHistoryPopup } from "./showHistoryPopup";
-import { SpeechConverter } from "./SpeechConverter";
+import { SpeechConverterInterface } from "./SpeechConverterInterface";
+import { SpeechConverterOffline } from "./SpeechConverterOffline";
 import { CommandMapping } from "./commandMapping";
 
 /**
@@ -16,11 +17,11 @@ import { CommandMapping } from "./commandMapping";
 
 export class AACVoiceAPI{
 
-    private converter: SpeechConverter | null = null;
+    private converter: SpeechConverterInterface | null = null;
     private mapping: CommandMapping | null = null;
 
     constructor(){
-        this.converter = new SpeechConverter();  
+        this.converter = new SpeechConverterOffline();  
         this.mapping = new CommandMapping();
     }
 
@@ -60,8 +61,8 @@ export class AACVoiceAPI{
      * @returns {string[]} An array of transcription log entries,
      * each containing the transcribed text and its corresponding timestamp.
      */
-    public getTranscribedFull():string[]{
-        return this.converter?.getLoggedText() || [];
+    public getTranscriptionLogs():string[]{
+        return this.converter?.getTextLog() || [];
         
     }
 

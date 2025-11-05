@@ -23,7 +23,9 @@
   "files": [
     "dist/whisper/**",
     "dist/AACommodateAPI.js",
-    "dist/AACommodateAPI.d.ts"
+    "dist/AACommodateAPI.d.ts",
+    "!dist/API-doc-entry.js",
+    "!dist/API-doc-entry.d.ts"
   ],
   "keywords": [
     "aac",
