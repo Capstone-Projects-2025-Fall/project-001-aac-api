@@ -4,6 +4,19 @@ import numpy as np
 import torch
 import torchaudio
 
+# Transcription Models
+# "speechbrain/asr-streaming-conformer-librispeech",
+# "https://huggingface.co/speechbrain/models",
+# "speechbrain/asr-whisper-medium-commonvoice-en",
+# speechbrain/asr-wav2vec2-commonvoice-en" - does not work
+# "speechbrain/asr-crdnn-rnnlm-librispeech",
+# "openai/whisper-medium.en"
+# speechbrain/spkrec-ecapa-voxceleb
+
+# Speech Separation Models
+# "speechbrain/sepformer-wham",
+# speechbrain/sepformer-whamr16k
+# speechbrain/asr-transformer-transformerlm-librispeech - works but very slow
 
 class SpeechBrain:
     __model_transcribe = None
@@ -13,18 +26,12 @@ class SpeechBrain:
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
             SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-                source = "speechbrain/asr-streaming-conformer-librispeech",
-                #"speechbrain/asr-streaming-conformer-librispeech",
-                #"https://huggingface.co/speechbrain/models",
-                #"speechbrain/asr-whisper-medium-commonvoice-en",
-                #speechbrain/asr-wav2vec2-commonvoice-en",
-                # #"speechbrain/asr-crdnn-rnnlm-librispeech",
+                source = "speechbrain/asr-transformer-transformerlm-librispeech",
                 savedir = "pretrained_models/asr"
             )
         if(SpeechBrain.__model_sep is None):
             SpeechBrain.__model_sep = SepformerSeparation.from_hparams(
-                source ="speechbrain/sepformer-whamr16k", 
-                #"speechbrain/sepformer-wham",
+                source ="speechbrain/sepformer-whamr16k",
                 savedir = "pretrained_models/separation"
             )
     
