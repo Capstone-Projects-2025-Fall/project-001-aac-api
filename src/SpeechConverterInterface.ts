@@ -9,6 +9,7 @@ export interface transcribedLogEntry {
   timestamp: Date;
   /** The text that was transcribed at the given timestamp. */
   transcribedText:string,
+  speakerId?: string;
 }
 
 
@@ -31,4 +32,13 @@ export interface TranscriptionResponse {
   transcription: string; 
   timestamp?: number;
   error?: string;
+}
+export interface SeparatedTranscriptionResponse {
+    success: boolean;
+    speakers: Array<{
+        speaker_id: string;
+        text: string;
+    }>;
+    timestamp?: number;
+    error?: string;
 }

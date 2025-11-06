@@ -1,4 +1,4 @@
-import { SpeechConverterInterface, transcribedLogEntry, TranscriptionResponse } from "./SpeechConverterInterface";
+import { SpeechConverterInterface, transcribedLogEntry, TranscriptionResponse, SeparatedTranscriptionResponse } from "./SpeechConverterInterface";
 import { AudioInputHandler } from "./AudioInputHandler";
 import { CommandConverter } from "./CommandConverter";
 
@@ -22,8 +22,8 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
         this.commandConverter = CommandConverter.getInstance();
         this.useSeparation = useSeparation;
         this.url = useSeparation
-          ? 'http://localhost:8000/transcription/'
-          : 'http://localhost:8000/transcription/separation/';
+          ? 'http://localhost:8000/transcription/separation/'
+          : 'http://localhost:8000/transcription/';
         console.log(`Using endpoint: ${this.url}`);
       }
 
@@ -93,13 +93,25 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
             const transcribed: TranscriptionResponse = await response.json();
             console.log(transcribed);
           
-            if(transcribed.success){
-              if(transcribed.transcription && transcribed.transcription.trim())
-                {
-                this.processText(transcribed.transcription);
-                this.logText(transcribed.transcription);
-              }
+            if (transcribed.success) {
+
+            if ('speakers' in transcribed && Array.isArray((transcribed as any).speakers)) {
+                // Multi speaker response
+                const sepResponse = transcribed as SeparatedTranscriptionResponse;
+                sepResponse.speakers.forEach(speaker => {
+                    if (speaker.text && speaker.text.trim()) {
+                        this.processText(speaker.text);
+                        this.logText(speaker.text, speaker.speaker_id);
+                    }
+                });
+            } else {
+                // Single speaker response
+                if (transcribed.transcription && transcribed.transcription.trim()) {
+                    this.processText(transcribed.transcription);
+                    this.logText(transcribed.transcription);
+                }
             }
+        }
         }
         catch (err){
             console.log("Issue trancsribing voice on Backend: ", err);
@@ -183,13 +195,14 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
    *
    * @param text transcribed words that have been recognized
    */
-  private logText(text: string): void {
+  private logText(text: string, speakerId?: string): void {
     if (text.includes('[BLANK_AUDIO]')) {
       return;
     }
     const entry: transcribedLogEntry = {
       timestamp: new Date(),
       transcribedText: text,
+      speakerId: speakerId
     };
     //adds text to log if there is any
     if (!this.textLog) {
@@ -208,10 +221,14 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   public getTextLog(): string[] {
     const logOfText = [];
     if (!this.textLog) return [];
+
     for (let i = 0; i < this.textLog.length; i++) {
       const date = this.textLog[i].timestamp.toLocaleTimeString();
       const text = this.textLog[i].transcribedText;
-      logOfText.push(`${date} : ${text}\n`);
+      const speakerId = this.textLog[i].speakerId;
+
+      const speakerPrefix = speakerId ? `[Speaker ${speakerId}] ` : '';
+      logOfText.push(`${date} : ${speakerPrefix}${text}\n`);
     }
     return logOfText;
   }

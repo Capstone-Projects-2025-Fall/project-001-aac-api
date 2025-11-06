@@ -268,6 +268,11 @@ export class AACVoiceAPI{
         return this.currentMode
     }
 
+   /**
+    * Tells the user if speaker separation toggle is on
+    *
+    * @returns The current status of whether speaker separation is on or off
+    */
     public isUsingSpeakerSeparation(): boolean | null {
         if (this.currentMode !== 'online') {
             return null;
