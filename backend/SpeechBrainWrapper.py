@@ -13,7 +13,7 @@ class SpeechBrain:
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
             SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-                source = "openai/whisper-medium.en",
+                source = "speechbrain/asr-streaming-conformer-librispeech",
                 #"speechbrain/asr-streaming-conformer-librispeech",
                 #"https://huggingface.co/speechbrain/models",
                 #"speechbrain/asr-whisper-medium-commonvoice-en",

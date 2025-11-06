@@ -10,19 +10,32 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   /**  Keeps a log of all text that has been transcribed*/
   private textLog: transcribedLogEntry[] | null = null;
   private transcriptionInterval?: ReturnType<typeof setInterval>;
-  private url: string = "http://localhost:8000/transcription/";
+  private useSeparation: boolean = false;
+  private url: string;
 
       /**
        * updates the url to point to the correct backend on initialization
        * 
        * @param backendURL url of hosted backend
        */
-      constructor(backendURL: string) {
+      constructor(useSeparation: boolean = false) {
         this.commandConverter = CommandConverter.getInstance();
-        if(backendURL){
-          this.url = backendURL;
-        }
+        this.useSeparation = useSeparation;
+        this.url = useSeparation
+          ? 'http://localhost:8000/transcription/'
+          : 'http://localhost:8000/transcription/separation/';
+        console.log(`Using endpoint: ${this.url}`);
       }
+
+    /**
+     * Get whether speaker separation is enabled
+     *
+     * @returns true if using separation endpoint
+     */
+    public getUseSeparation(): boolean {
+        return this.useSeparation;
+    }
+
     /**
      * 
      * Is not implemented for this version, throws an error if called
@@ -202,6 +215,4 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     }
     return logOfText;
   }
-
-
 }

@@ -2,6 +2,7 @@
 import { showHistoryPopup } from "./showHistoryPopup";
 import { SpeechConverterInterface } from "./SpeechConverterInterface";
 import { SpeechConverterOffline } from "./SpeechConverterOffline";
+import { SpeechConverterOnline } from "./SpeechConverterOnline";
 import { CommandMapping } from "./commandMapping";
 
 /**
@@ -11,17 +12,41 @@ import { CommandMapping } from "./commandMapping";
  * This class wraps functionalities such as audio input handling, 
  * speech-to-text conversion, and command history management, 
  * exposing them through a single, easy-to-use API.
- * 
+ *
+ * @example
+ * // Offline
+ * const api = new AACVoiceAPI();
+ * await api.initiate({
+ *  mode: 'offline',
+ *  modelUrl: 'models/whisper-tiny.bin',
+ *  language: 'en'
+ *  });
+ *
+ * * @example
+ * // Online
+ * const api = new AACVoiceAPI();
+ * await api.initiate({
+ *  mode: 'online',
+ *  backendUrl: 'http://localhost:8000/transcription/'
+ *  });
+ *
  * @class
  */
 
-export class AACVoiceAPI{
+export interface voiceAPIConfig {
+    mode: 'offline' | 'online';
+    modelUrl?: string,
+    language?: string;
+    useSpeakerSeparation?: boolean;
+    }
 
+export class AACVoiceAPI{
     private converter: SpeechConverterInterface | null = null;
     private mapping: CommandMapping | null = null;
+    private currentMode: 'offline' | 'online' | null = null;
+    private isCurrentlyListening: boolean = false;
 
     constructor(){
-        this.converter = new SpeechConverterOffline();  
         this.mapping = new CommandMapping();
     }
 
@@ -29,13 +54,111 @@ export class AACVoiceAPI{
      * 
      * Initializes the API with the specified model and language
      * 
-     * @param url Path to URL for the Whipser model file
+     * @param url Path to URL for the Whisper model file
      * @param language Language code to configure the model (e.g. 'en')
+     * @throws {Error} Throws error when modelUrl is not provided in the params in .initiate() for online mode  
      */
-    public initiate(url:string, language:string):void{
-        this.converter?.init(url,language);
+    public async initiate(config: voiceAPIConfig): Promise<void> {
+        this.currentMode = config.mode;
 
+        if (config.mode === 'offline') {
+            if (!config.modelUrl || !config.language) {
+                throw new Error("Offline mode requires modelUrl and langauge parameters");
+            }
+
+            this.converter = new SpeechConverterOffline();
+            await this.converter.init(config.modelUrl, config.language);
+
+        } else if (config.mode === 'online') {
+            const useSeparation = config.useSpeakerSeparation ?? false;
+            this.converter = new SpeechConverterOnline(useSeparation);
+
+            const modeText = useSeparation ? 'with speaker separation' : 'single speaker';
+            console.log(`Initialized in online mode (${modeText})`);
+
+        } else {
+            throw new Error(`Invalid mode: ${config.mode}. Use 'offline' or 'online'`);
+      }
     }
+
+    /**
+     * Initialize online mode for single speaker
+     */
+    public async initiateOnlineSingleSpeaker(): Promise<void> {
+        await this.initiate({
+            mode: 'online',
+            useSpeakerSeparation: false
+        });
+    }
+
+    /**
+     * Initialize online mode with speaker separation
+     */
+    public async initiateOnlineMultiSpeaker(): Promise<void> {
+        await this.initiate({
+            mode: 'online',
+            useSpeakerSeparation: true
+        });
+    }
+
+    /**
+     * Switches between single speaker and multi-speaker mode for online mode
+     * Automatically restarts listening if currently active
+     *
+     * @param useSpeakerSeparation Whether to use speaker separation
+     * @throws {Error} If not in online mode or not initialized
+     *
+     * @example
+     * // Switch to multi speaker
+     * api.switchSpeakerMode(true);
+     *
+     * // Switch back to single speaker
+     * api.switchSpeakerMode(false);
+     */
+    public switchSpeakerMode(useSpeakerSeparation: boolean): void {
+        if (!this.converter) {
+            throw new Error("Must call initiate() first before switching modes");
+        }
+
+        if (this.currentMode !== 'online') {
+            throw new Error("Can only switch speaker mode in online mode. Current mode: " + this.currentMode);
+        }
+
+        if (!(this.converter instanceof SpeechConverterOnline)) {
+            throw new Error("Converter is not SpeechConverterOnline");
+        }
+
+        const wasListening = this.isCurrentlyListening;
+
+        if (wasListening) {
+            this.converter.stopListening();
+            this.isCurrentlyListening = false;
+        }
+
+        this.converter = new SpeechConverterOnline(useSpeakerSeparation);
+
+        const modeText = useSpeakerSeparation ? 'multi-speaker' : 'single-speaker';
+        console.log(`Switched to ${modeText} mode`);
+
+        if (wasListening) {
+            this.converter.startListening();
+            this.isCurrentlyListening = true;
+        }
+    }
+
+    public toggleSpeakerMode(): void {
+         if (this.currentMode !== 'online') {
+            throw new Error("Can only toggle speaker mode in online mode");
+        }
+
+        if (!(this.converter instanceof SpeechConverterOnline)) {
+            throw new Error("Converter is not online mode");
+        }
+
+        const currentSeparation = this.converter.getUseSeparation();
+        this.switchSpeakerMode(!currentSeparation);
+    }
+
     /**
      * Allows the user to start speaking into the microphone and initiate game commands
      * 
@@ -45,14 +168,16 @@ export class AACVoiceAPI{
             throw new Error("Must call initiate() first");
         }
         this.converter?.startListening();
+        this.isCurrentlyListening = true;
     }
 
     /**
      * Stops all voice recording and transcription
-     * 
+     *
      */
     public stop():void {
         this.converter?.stopListening();
+        this.isCurrentlyListening = false;
     }
 
     /**
@@ -63,7 +188,6 @@ export class AACVoiceAPI{
      */
     public getTranscriptionLogs():string[]{
         return this.converter?.getTextLog() || [];
-        
     }
 
     /**
@@ -73,6 +197,7 @@ export class AACVoiceAPI{
     public displayCommandHistory():void{
         showHistoryPopup(); 
     }
+
     /**
      * Adds a voice command to the system.
      *
@@ -104,6 +229,7 @@ export class AACVoiceAPI{
     public removeVoiceCommand(name: string): boolean {
         return this.mapping?.removeCommand(name) || false;
     }
+
     /**
      * Allows user to check if a game command has already been added
      * 
@@ -113,6 +239,7 @@ export class AACVoiceAPI{
     public isRegistered(name: string): boolean {
         return this.mapping?.hasCommand(name) || false;
     }
+
     /**
      * Allows user to see a list of all known game commands
      * 
@@ -129,10 +256,27 @@ export class AACVoiceAPI{
         this.mapping?.clearAllCommands();
     }
 
+   /**
+    * Gets the current mode of operation
+    *
+    * @returns The current mode ('offline' or 'online'), or null if not initialized
+    */
+    public getMode(): string {
+        if (this.currentMode === null) {
+            return "Call initiate and try again!"
+        }
+        return this.currentMode
+    }
 
-    
+    public isUsingSpeakerSeparation(): boolean | null {
+        if (this.currentMode !== 'online') {
+            return null;
+        }
 
+        if (this.converter instanceof SpeechConverterOnline) {
+            return this.converter.getUseSeparation();
+        }
 
-
-
+        return null;
+    }
 }
