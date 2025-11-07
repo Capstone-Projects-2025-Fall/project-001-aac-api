@@ -6,39 +6,39 @@ sidebar_position: 5
 
 ### Use Case 1 - Voice Recognition
 
-Actor: AAC game developer
+Actor: AAC Game Developer
 
-Triggering event: Steven runs their game to test it, and starts by clicking "Whisper Init" and activating mic.
+Triggering event: Developer runs their game to test it, and starts by clicking "Whisper Init" and activating mic.
 
 Preconditions: Game is running and in a state that uses API; microphone access is granted; network is available.
 
-Normal flow (happy path):
-    1. Steven clicks Whisper Init.
+Normal flow:
+    1. Developer initializes Whisper.
     2. System downloads Whisper module.
-    3. Steven clicks Start Listening.
+    3. Developer clicks Start Listening.
     4. System begins listening and records the utterance.
     5. API (speech→text) transcribes the audio.
     6. The transcribed text is normalized and matched to the command set; the transcription is sent back to the game and displayed to the developer.
-    6. Steven clicks Stop Listening.
+    6. Developer clicks Stop Listening.
     7. System stops listening.
 
 Alternate flows / exceptions:
-    1. No microphone input: show prompt “Whisper Init failed.” 
+    1. Whisper package not downloaded: show prompt “Whisper Init failed.” 
 
 Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 
 ### Use Case 2 - Extract Commands
 
-Actor: AAC user
+Actor: AAC Player
 
-Triggering event: Suzy speaks while playing, e.g., “uh jump now.”
+Triggering event: AAC user speaks while playing, e.g., “please jump now.”
 
 Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
 
 Normal flow:
-    1. The system captures Suzy’s voice.
-    2. ASR transcribes the audio into text (e.g., “uh jump now”).
-    3. The pipeline runs a filler-word filter and removes tokens like “uh”, “um”, “now”.
+    1. The system captures AAC board voice input.
+    2. Whisper transcribes the audio into text (e.g., “please jump now”).
+    3. The pipeline runs a filler-word filter and removes filler words, sounds, and non-command words (e.g., "please" and "now").
     4. Remaining tokens are tokenized and mapped to command(s) (e.g., “jump” → Jump).
     5. If mapping confidence is high, the API issues the Jump action to the game immediately.
     6. UI gives immediate feedback (visual cue + animation) and logs the command.
@@ -52,18 +52,18 @@ Postconditions: Jump action executed (or user prompted to repeat); command histo
 
 ### Use Case 3 - Speaker Separation
 
-Actor: Suzy (primary player) and nearby non-player speakers (e.g., parent)
+Actor: AAC Player and nearby non-player speakers (e.g., parent)
 
-Triggering event: Suzy speaks a command while other people speak at the same time.
+Triggering event: AAC player speaks a command while other people speak at the same time.
 
 Preconditions: Enrolled player voice profile exists; speaker-separation model is enabled.
 
 Normal flow:
     1. System captures mixed audio with multiple speakers.
     2. The speaker-separation model isolates the enrolled player’s audio stream (prefer enrolled stream).
-    3. ASR runs on the isolated player stream and transcribes the utterance.
+    3. Whisper runs on the isolated player stream and transcribes the utterance.
     4. Transcription is normalized and mapped to a game command (e.g., PauseGame).
-    5. If confidence is high, API sends PauseGame to the game; UI confirms action.
+    5. API sends PauseGame to the game; UI confirms action.
     6. Log command and speaker attribution.
 
 Alternate flows / exceptions:
@@ -75,9 +75,9 @@ Postconditions: Game paused (if confirmed); system records speaker attribution a
 
 ### Use Case 4 - Background Noise Filtering
 
-Actor: Suzy (player)
+Actor: AAC Player
 
-Triggering event: Suzy issues a command in a noisy environment (e.g., TV).
+Triggering event: AAC player issues a command in a noisy environment (e.g., TV).
 
 Preconditions: Noise-robust ASR / denoising pipeline active; microphone picks up signal.
 
@@ -98,9 +98,9 @@ Postconditions: Movement executed (or prompt shown); noise metrics recorded for 
 
 ### Use Case 5 - Interpret Synonyms of Commands
 
-Actor: Suzy (player); Developer (configures mapping)
+Actor: AAC Player; Developer (configures mapping)
 
-Triggering event: Suzy uses a synonym (e.g., “go” for Move, “hop” for Jump).
+Triggering event: AAC player uses a synonym (e.g., “go” for Move, “hop” for Jump).
 
 Preconditions: Synonym mapping table exists (configured by developer or default set); Whisper and command mapper active.
 
@@ -108,66 +108,66 @@ Normal flow:
     1. System captures the utterance and Whisper produces text (e.g., “hop”).
     2. The command-mapping module looks up the token in the synonym table.
     3. “hop” is mapped to canonical command Jump.
-    4. If confidence is high, API issues Jump to the game.
-    5. Provide visual confirmation and log synonym used and mapping confidence.
+    4. API issues Jump to the game.
+    5. Provide visual confirmation, log synonym used, and log mapping confidence.
 
 Alternate flows / exceptions:
-    1. Developer disabled synonym mapping: treat unknown words as unrecognized and prompt to repeat or register command.
+    1. Developer disabled synonym mapping, and non-command words are filtered out.
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
 ### Use Case 6 - Register New Game Commands
 
-Actor: Steven (developer)
+Actor: AAC Game Developer
 
-Triggering Event: Steven uses the API toolkit to set up the basic commands the game will understand.
+Triggering Event: Developer uses the API toolkit to set up the basic commands the game will understand.
 
 Preconditions: Game API has empty command library.
 
 Normal flow:
-    1. Steven, a game developer, uses the API toolkit to add commands like Start Game, Move Left, Move Right, Jump, Pause, and Shield. 
+    1. AAC game developer uses the API toolkit to add commands like Start Game, Move Left, Move Right, Jump, Pause, and Shield. 
     2. They tell the API what each command means and connect those commands to the game’s actions. 
-    3. Steven speaks, the API listens, figures out the right command, and sends it back to the game.
+    3. Developer speaks, the API listens, figures out the right command, and sends it back to the game.
     4. The game executes the command. 
 
 Postconditions: System contains common commands in a command library. All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
 ### Use Case 7 - Toggle Input History
 
-Actor: Steven (developer); Stan (player)
+Actor: AAC Game Developer; AAC Player
 
-Triggering Event: Stan is overstimulated by the AAC game.
+Triggering Event: Player is overstimulated by the AAC game.
 
-Preconditions: AAC game is running API and game command history is visible to players.
+Preconditions: AAC game is running and game command history is visible to players.
 
 Normal flow: 
-    1. Stan's caretaker uses the API window and goes to settings.
+    1. AAC player's caretaker uses the API window and goes to settings.
     2. The system has toggleable settings for input history.
     3. The caretaker toggles off the input history.
-    4. Stan receives reduced visual stimuli and can comfortably enjoy playing the AAC game.
+    4. AAC player receives reduced visual stimuli and can comfortably enjoy playing the AAC game.
 
 Alternate flows / exceptions:
-    1. Steven has registered a new command and uses the command history to troubleshoot the new command. 
+    1. Developer has registered a new command and uses the command history to troubleshoot the new command. 
     2. He has confidence that it was registered correctly and working once he is able to see it in the command history.
 
 Postconditions: AAC game is playable without a visible command history.
 
 ### Use Case 8 - Confidence Level of Interpreted Game Input
 
-Actor: Steven (developer):
+Actor: AAC Game Developer
 
-Triggering Event: Steven is testing new commands through API speech input.
+Triggering Event: Developer is testing new commands through API speech input.
 
 Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
 
 Normal flow:
-    1. Steven speaks game commands into the microphone.
+    1. Developer speaks game commands into the microphone.
     2. The game command is interpreted and inputted to the game.
-    3. Steven receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. 
+    3. Developer receives a confidence level from the API that determines how confident the API was in choosing that command based on synonyms to a known command. 
     4. This allows him to have control over which commands are recognized as valid game inputs. ensuring that only reliable commands can affect the gameplay.
 
 Alternate flows / exceptions:
     1. The game incorrectly interprets the voice input.
-    2. Steven adjusts the code accordingly.
+    2. Developer adjusts the code accordingly.
 
-Postconditions: Game accurately interprets gameplay commands.
+Postconditions: Game provides confidence level when it interprets gameplay commands.
