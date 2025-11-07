@@ -33,6 +33,9 @@ jobs:
           mkdir -p documentation/static/coverage
           cp -r coverage/* documentation/static/coverage/
 
+      - name: Update JSDoc's and Deploy to docusaurus
+        run: npm run docs
+
       - name: Install
         run: cd documentation && yarn install
 
