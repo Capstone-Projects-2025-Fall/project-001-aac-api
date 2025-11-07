@@ -16,5 +16,4 @@ backend/venv/
 backend/tests/__pycache__
 backend/audio/
 backend/pretrained_models/
-backend/routers/__pycache__/__init__.cpython-311.pyc
-backend/routers/__pycache__/transcribe.cpython-311.pyc
+backend/routers/__pycache__
