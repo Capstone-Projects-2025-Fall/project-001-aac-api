@@ -117,6 +117,8 @@ export class SynonymResolver {
     }
   }
 
+  
+
   /**
    * Clears the entire synonym cache.
    * Useful for testing or if you want to force fresh API calls.
@@ -136,4 +138,79 @@ export class SynonymResolver {
   public getCacheSize(): number {
     return this.synonymCache.size;
   }
+
+  /**
+   * Checks if two words are synonyms of each other.
+   * 
+   * This method checks if word2 appears in word1's synonym list.
+   * 
+   * @param {string} word1 - First word to compare
+   * @param {string} word2 - Second word to compare
+   * @returns {Promise<boolean>} True if the words are synonyms, false otherwise
+   * 
+   * @example
+   * ```ts
+   * const resolver = SynonymResolver.getInstance();
+   * const areSynonyms = await resolver.areSynonyms('jump', 'leap');
+   * console.log(areSynonyms); // true
+   * ```
+   */
+  public async areSynonyms(word1: string, word2: string): Promise<boolean> {
+    const normalized1 = word1.toLowerCase().trim();
+    const normalized2 = word2.toLowerCase().trim();
+
+    // Same word is obviously a match
+    if (normalized1 === normalized2) {
+      return true;
+    }
+
+    // Check if word2 is in word1's synonyms
+    const synonyms1 = await this.getSynonyms(normalized1);
+    return synonyms1.includes(normalized2);
+  }
+
+  /**
+   * Checks if synonyms for a specific word are already cached.
+   * 
+   * @param {string} word - The word to check
+   * @returns {boolean} True if synonyms are cached, false otherwise
+   * 
+   * @example
+   * ```ts
+   * const resolver = SynonymResolver.getInstance();
+   * if (resolver.isCached('jump')) {
+   *   console.log('Synonyms for "jump" are already cached');
+   * }
+   * ```
+   */
+  public isCached(word: string): boolean {
+    const normalized = word.toLowerCase().trim();
+    return this.synonymCache.has(normalized);
+  }
+
+  /**
+   * Pre-fetches and caches synonyms for multiple words at once.
+   * Useful for initializing the cache with commonly used words.
+   * 
+   * @param {string[]} words - Array of words to pre-fetch synonyms for
+   * @returns {Promise<void>} Resolves when all synonyms are fetched
+   * 
+   * @example
+   * ```ts
+   * const resolver = SynonymResolver.getInstance();
+   * await resolver.prefetchSynonyms(['jump', 'run', 'walk']);
+   * // All synonyms are now cached and ready for instant lookup
+   * ```
+   */
+  public async prefetchSynonyms(words: string[]): Promise<void> {
+    console.log(`Pre-fetching synonyms for ${words.length} words...`);
+    
+    // Fetch all synonyms in parallel for better performance
+    const promises = words.map(word => this.getSynonyms(word));
+    await Promise.all(promises);
+    
+    console.log(`Pre-fetch complete. Cache now contains ${this.getCacheSize()} words`);
+  }
+
+
 }
