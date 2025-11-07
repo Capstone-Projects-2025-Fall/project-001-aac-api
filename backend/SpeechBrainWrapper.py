@@ -47,10 +47,13 @@ class SpeechBrain:
                 return "[BLANK_AUDIO]"
 
             target_rate= 16000 #model expects this
-            waveform = self._resample(sample_rate, target_rate, waveform)
-                
-            transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
+            transcribed = ""
+            with torch.no_grad():
+                waveform = self._resample(sample_rate, target_rate, waveform)
+                transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
             print(transcribed[0][0])
+            del waveform, wav_lens
+            torch.cuda.empty_cache()
             return str(transcribed[0][0])
         
         except RuntimeError as e:  # torchaudio / ffmpeg issues
