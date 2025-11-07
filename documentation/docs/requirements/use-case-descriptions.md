@@ -6,7 +6,7 @@ sidebar_position: 5
 
 ### Use Case 1 - Voice Recognition
 
-Actor: Steven (AAC game developer)
+Actor: AAC game developer
 
 Triggering event: Steven runs their game to test it, and starts by clicking "Whisper Init" and activating mic.
 
@@ -27,9 +27,9 @@ Alternate flows / exceptions:
 
 Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
 
-### Use Case 2 - Filter Out Filler Words
+### Use Case 2 - Extract Commands
 
-Actor: Suzy (player)
+Actor: AAC user
 
 Triggering event: Suzy speaks while playing, e.g., “uh jump now.”
 
@@ -102,23 +102,21 @@ Actor: Suzy (player); Developer (configures mapping)
 
 Triggering event: Suzy uses a synonym (e.g., “go” for Move, “hop” for Jump).
 
-Preconditions: Synonym mapping table exists (configured by developer or default set); ASR and command mapper active.
+Preconditions: Synonym mapping table exists (configured by developer or default set); Whisper and command mapper active.
 
 Normal flow:
-    1. System captures the utterance and ASR produces text (e.g., “hop”).
+    1. System captures the utterance and Whisper produces text (e.g., “hop”).
     2. The command-mapping module looks up the token in the synonym table.
     3. “hop” is mapped to canonical command Jump.
     4. If confidence is high, API issues Jump to the game.
     5. Provide visual confirmation and log synonym used and mapping confidence.
 
 Alternate flows / exceptions:
-    1. Unknown synonym: present developer UI option to register this phrase as a synonym, or prompt the player: “Did you mean JUMP?”
-    2. Multiple possible canonical matches: prompt for confirmation or use highest confidence mapping.
-    3. Developer disabled synonym mapping: treat unknown words as unrecognized and prompt to repeat or register command.
+    1. Developer disabled synonym mapping: treat unknown words as unrecognized and prompt to repeat or register command.
 
 Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
 
-### Use Case 6 - Support Common Game Inputs
+### Use Case 6 - Register New Game Commands
 
 Actor: Steven (developer)
 
@@ -127,30 +125,14 @@ Triggering Event: Steven uses the API toolkit to set up the basic commands the g
 Preconditions: Game API has empty command library.
 
 Normal flow:
-    1. Steven, a game developer, uses the API toolkit, like Start Game, Move Left, Move Right, Jump, Pause, and Shield. 
-    2. They tell the API what each command means and connect those commands to the game’s actions. When a player speaks, the API listens, figures out the right command, and sends it back to the game in a clear format.
+    1. Steven, a game developer, uses the API toolkit to add commands like Start Game, Move Left, Move Right, Jump, Pause, and Shield. 
+    2. They tell the API what each command means and connect those commands to the game’s actions. 
+    3. Steven speaks, the API listens, figures out the right command, and sends it back to the game.
+    4. The game executes the command. 
 
-Postconditions: System contains common commands in a command library.
+Postconditions: System contains common commands in a command library. All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
-### Use Case 7 - Register New Commands
-
-Actor: Steven (developer)
-
-Triggering Event: Steven adds new commands to command library through the API to support new game.
-
-Preconditions: System command library has common commands in command library.
-
-Normal flow:
-    1. System has the ability to register new commands through the API.
-    2. Steven enters new commands in command library using the API toolkit.
-    3. This will allow the API to remain flexible to any future games that require more complex commands that are not currently supported.
-
-Alternate flows / exceptions:
-    1. The system command log already contains all the needed commands for the game.
-
-Postconditions: All commands for the AAC game are entered in the command library, and can be used by players through the API.
-
-### Use Case 8 - Toggle Input History
+### Use Case 7 - Toggle Input History
 
 Actor: Steven (developer); Stan (player)
 
@@ -170,11 +152,11 @@ Alternate flows / exceptions:
 
 Postconditions: AAC game is playable without a visible command history.
 
-### Use Case 9 - Confidence Level of Interpreted Game Input
+### Use Case 8 - Confidence Level of Interpreted Game Input
 
 Actor: Steven (developer):
 
-Triggering Event: Steven is experimenting with API speech input.
+Triggering Event: Steven is testing new commands through API speech input.
 
 Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
 
