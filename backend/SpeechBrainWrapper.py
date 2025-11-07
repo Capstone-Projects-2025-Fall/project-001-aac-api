@@ -26,7 +26,7 @@ class SpeechBrain:
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
             SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-                source = "speechbrain/asr-transformer-transformerlm-librispeech",
+                source = "speechbrain/asr-crdnn-rnnlm-librispeech",
                 savedir = "pretrained_models/asr"
             )
         if(SpeechBrain.__model_sep is None):
