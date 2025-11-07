@@ -7,6 +7,7 @@ export { showHistoryPopup } from "./showHistoryPopup";
 export { SpeechConverterInterface, transcribedLogEntry, TranscriptionResponse } from "./SpeechConverterInterface";
 export { SpeechConverterOffline } from "./SpeechConverterOffline";
 export { SpeechConverterOnline } from "./SpeechConverterOnline";
+export { SynonymResolver } from "./SynonymResolver";
 
 //this file exists solely for the api typedoc automation.
 //To add a file to the api automation export it it here.
