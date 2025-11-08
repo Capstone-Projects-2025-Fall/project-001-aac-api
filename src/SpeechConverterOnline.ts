@@ -75,6 +75,12 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       while (bufferLength >= largeBlock) {
         //only send to speechbrain when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
+
+        if(this.isSilence(combined)){
+          console.log("No audio detected");
+          break;
+        }
+
         const audioBuffer = new Float32Array(combined).buffer;
         bufferLength -= largeBlock;
         try{
@@ -232,4 +238,29 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     }
     return logOfText;
   }
+  
+  /**
+   * Checks the audio chunk for voice. 
+   * Uses root mean square method to determine if voice has been detected
+   * 
+   * @param {Float32Array} waveform Audio sample
+   * @returns {boolean} True if audio has detected no sound
+   */
+  private isSilence(waveform: Float32Array): boolean {
+    // Compute RMS (root mean square) of waveform
+    let sumSquares = 0;
+    for (let i = 0; i < waveform.length; i++) {
+      const sample = waveform[i];
+      sumSquares += sample * sample;
+    }
+
+    const mean = sumSquares / waveform.length;
+    const rms = Math.sqrt(mean);
+
+    if (rms < .01) {
+      console.log("No voice detected");
+      return true;
+    }
+    return false;
+}
 }

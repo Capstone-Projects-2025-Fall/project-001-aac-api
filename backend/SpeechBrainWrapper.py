@@ -26,7 +26,7 @@ class SpeechBrain:
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
             SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-                source = "speechbrain/asr-crdnn-rnnlm-librispeech",
+                source = "speechbrain/asr-transformer-transformerlm-librispeech",
                 savedir = "pretrained_models/asr"
             )
         if(SpeechBrain.__model_sep is None):
@@ -49,7 +49,11 @@ class SpeechBrain:
             target_rate= 16000 #model expects this
             transcribed = ""
             with torch.no_grad():
-                waveform = self._resample(sample_rate, target_rate, waveform)
+                if(sample_rate != target_rate):
+                    waveform = self._resample(sample_rate, target_rate, waveform)
+                if waveform.abs().max() > 1.0:
+                    print("normailizing")
+                    waveform /= waveform.abs().max()      
                 transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
             print(transcribed[0][0])
             del waveform, wav_lens
@@ -57,9 +61,9 @@ class SpeechBrain:
             return str(transcribed[0][0])
         
         except RuntimeError as e:  # torchaudio / ffmpeg issues
-            return f"[ERROR] Audio processing failed: {e}"
+            raise RuntimeError(f"[ERROR] Audio processing failed: {e}")
         except Exception as e:
-            return f"[ERROR] Transcription failed: {e}"
+            raise Exception(f"[ERROR] Transcription failed: {e}")
     
     #Expects the input to be float32Arrary.buffer
     #Outputs a tensor object for furthery processing
@@ -84,9 +88,9 @@ class SpeechBrain:
             return separatedFiles, target_rate
             
         except RuntimeError as e:  # torchaudio / ffmpeg issues
-            return (f"[ERROR] Speech Separation processing failed: {e}", None)
+            raise RuntimeError(f"[ERROR] Speech Separation processing failed: {e}")
         except Exception as e:
-            return (f"[ERROR] Separation failed: {e}", None)
+            raise Exception(f"[ERROR] Separation failed: {e}")
 
     def _transcribe_from_tensor(self, separated_tensor: torch.tensor, sample_rate: int) -> list:
             transcribedText = list()
@@ -102,10 +106,14 @@ class SpeechBrain:
                     transcribedText.append("[BLANK_AUDIO]")
                 else:                   
                     target_rate= 16000 #model expects this
-                    waveform = self._resample(sample_rate, target_rate, waveform)    
-                    transcription = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wave_lens)    
+                    with torch.no_grad():
+                        waveform = self._resample(sample_rate, target_rate, waveform)    
+                        transcription = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wave_lens)    
+                        print(f"Speaker[{i+1}]: {transcription[0]}")
                     text = transcription[0][0] if isinstance(transcription[0], list) else transcription[0]
                     transcribedText.append(text)
+            del waveform, wave_lens
+            torch.cuda.empty_cache()
             return transcribedText
         
     def separate_then_transcribe(self, data:bytes, sample_rate: int) -> list:
