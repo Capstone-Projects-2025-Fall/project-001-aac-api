@@ -1,22 +1,11 @@
 from speechbrain.inference.ASR import EncoderDecoderASR
 from speechbrain.inference.separation import SepformerSeparation
+from faster_whisper import WhisperModel
 import numpy as np
 import torch
 import torchaudio
 
-# Transcription Models
-# "speechbrain/asr-streaming-conformer-librispeech",
-# "https://huggingface.co/speechbrain/models",
-# "speechbrain/asr-whisper-medium-commonvoice-en",
-# speechbrain/asr-wav2vec2-commonvoice-en" - does not work
-# "speechbrain/asr-crdnn-rnnlm-librispeech",
-# "openai/whisper-medium.en"
-# speechbrain/spkrec-ecapa-voxceleb
 
-# Speech Separation Models
-# "speechbrain/sepformer-wham",
-# speechbrain/sepformer-whamr16k
-# speechbrain/asr-transformer-transformerlm-librispeech - works but very slow
 
 class SpeechBrain:
     __model_transcribe = None
@@ -25,46 +14,52 @@ class SpeechBrain:
     #Treats the models as a static instance where they are only loaded once
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
-            SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-                source = "speechbrain/asr-transformer-transformerlm-librispeech",
-                savedir = "pretrained_models/asr"
+            # SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
+            #     source = "speechbrain/asr-transformer-transformerlm-librispeech",
+            #     savedir = "pretrained_models/asr"
+            # )
+            SpeechBrain.__model_transcribe = WhisperModel(
+                "base",
+                device="cpu",
+                compute_type="int8",
+                
             )
         if(SpeechBrain.__model_sep is None):
             SpeechBrain.__model_sep = SepformerSeparation.from_hparams(
                 source ="speechbrain/sepformer-whamr16k",
                 savedir = "pretrained_models/separation"
             )
-    
-    #recieves float32Array.buffer form frontend and transcribes it
+            
+    #recieves float32Array.buffer form frontend and transcribes it       
     def transcribe_raw_bytes(self, data: bytes, sample_rate: int) -> str:
         try:
             waveform = self._bytes_to_tensor(data)
-            wav_lens = torch.tensor([1.0])
             
-            #checks for blank audio
             if(self._is_silence(waveform)):
-                print("No voice detected")
                 return "[BLANK_AUDIO]"
-
-            target_rate= 16000 #model expects this
-            transcribed = ""
-            with torch.no_grad():
-                if(sample_rate != target_rate):
-                    waveform = self._resample(sample_rate, target_rate, waveform)
-                if waveform.abs().max() > 1.0:
-                    print("normailizing")
-                    waveform /= waveform.abs().max()      
-                transcribed = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wav_lens)
-            print(transcribed[0][0])
-            del waveform, wav_lens
-            torch.cuda.empty_cache()
-            return str(transcribed[0][0])
-        
-        except RuntimeError as e:  # torchaudio / ffmpeg issues
-            raise RuntimeError(f"[ERROR] Audio processing failed: {e}")
+            target_rate=16000
+            if(sample_rate != target_rate):
+                waveform = self._resample(sample_rate, target_rate, waveform)
+            
+            # Convert to numpy for faster-whisper
+            audio_np = waveform.squeeze(0).numpy()
+            
+            # Transcribe
+            segments, info = SpeechBrain.__model_transcribe.transcribe(
+                audio_np,
+                language="en",
+                beam_size=1  # Greedy decoding for speed
+                
+            )
+            
+            # Collect all segments
+            text = " ".join([segment.text for segment in segments])
+            
+            return text.strip()
+            
         except Exception as e:
             raise Exception(f"[ERROR] Transcription failed: {e}")
-    
+      
     #Expects the input to be float32Arrary.buffer
     #Outputs a tensor object for furthery processing
     def _bytes_to_tensor(self, data : bytes) -> torch.Tensor:
@@ -102,18 +97,23 @@ class SpeechBrain:
                 
                 #checks for blank audio
                 if(self._is_silence(waveform)):
-                    print("No voice detected")
                     transcribedText.append("[BLANK_AUDIO]")
-                else:                   
+                else:       
+                    #make sure sample rate is correct            
                     target_rate= 16000 #model expects this
-                    with torch.no_grad():
-                        waveform = self._resample(sample_rate, target_rate, waveform)    
-                        transcription = SpeechBrain.__model_transcribe.transcribe_batch(waveform, wave_lens)    
-                        print(f"Speaker[{i+1}]: {transcription[0]}")
-                    text = transcription[0][0] if isinstance(transcription[0], list) else transcription[0]
-                    transcribedText.append(text)
-            del waveform, wave_lens
-            torch.cuda.empty_cache()
+                    if(target_rate != sample_rate):
+                        waveform = self._resample(sample_rate, target_rate, waveform) 
+                    audio_np = waveform.squeeze(0).numpy()   #convert to whisper format
+                    segments, info = SpeechBrain.__model_transcribe.transcribe(
+                        audio_np,
+                        language="en",
+                        beam_size=1
+                    )
+                    #convert to a single string and add to list
+                    transcription = " ".join([segment.text for segment in segments])  
+                    print(f"Speaker[{i+1}]: {transcription}")
+                    transcribedText.append(transcription)
+
             return transcribedText
         
     def separate_then_transcribe(self, data:bytes, sample_rate: int) -> list:
