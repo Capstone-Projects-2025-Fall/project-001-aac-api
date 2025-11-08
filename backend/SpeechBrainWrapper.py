@@ -14,10 +14,6 @@ class SpeechBrain:
     #Treats the models as a static instance where they are only loaded once
     def __init__(self):
         if(SpeechBrain.__model_transcribe is None):
-            # SpeechBrain.__model_transcribe = EncoderDecoderASR.from_hparams(
-            #     source = "speechbrain/asr-transformer-transformerlm-librispeech",
-            #     savedir = "pretrained_models/asr"
-            # )
             SpeechBrain.__model_transcribe = WhisperModel(
                 "base",
                 device="cpu",
