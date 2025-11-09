@@ -12,18 +12,20 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   private transcriptionInterval?: ReturnType<typeof setInterval>;
   private useSeparation: boolean = false;
   private url: string;
+  private callTranscribe: string = "/transcription/";
+  private callSeparation: string = "/transcription/separation/"
 
       /**
        * updates the url to point to the correct backend on initialization
        * 
        * @param backendURL url of hosted backend
        */
-      constructor(useSeparation: boolean = false) {
+      constructor(domainName: string, useSeparation: boolean = false) {
         this.commandConverter = CommandConverter.getInstance();
         this.useSeparation = useSeparation;
         this.url = useSeparation
-          ? 'http://localhost:8000/transcription/separation/'
-          : 'http://localhost:8000/transcription/';
+          ? `${domainName}${this.callSeparation}`
+          : `${domainName}${this.callTranscribe}`;
         console.log(`Using endpoint: ${this.url}`);
       }
 
@@ -75,8 +77,15 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       while (bufferLength >= largeBlock) {
         //only send to speechbrain when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
-        const audioBuffer = new Float32Array(combined).buffer;
         bufferLength -= largeBlock;
+
+        //throws away chunk if silence is detected
+        if(this.isSilence(combined)){
+          break;
+        }
+
+        const audioBuffer = new Float32Array(combined).buffer;
+        
         try{
           const response = await fetch(this.url, {
             method: "POST",
@@ -232,4 +241,30 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     }
     return logOfText;
   }
+  
+  /**
+   * Checks the audio chunk for voice. 
+   * Uses root mean square method to determine if voice has been detected
+   * 
+   * @param {Float32Array} waveform Audio sample
+   * @returns {boolean} True if audio has detected no sound
+   */
+  private isSilence(waveform: Float32Array): boolean {
+    // Compute RMS (root mean square) of waveform
+    let sumSquares = 0;
+    for (let i = 0; i < waveform.length; i++) {
+      const sample = waveform[i];
+      sumSquares += sample * sample;
+    }
+
+    const mean = sumSquares / waveform.length;
+    const rms = Math.sqrt(mean);
+
+    if (rms < .01) {
+      const dates = new Date();
+      console.log("No voice detected at time: ", dates.toLocaleTimeString());
+      return true;
+    }
+    return false;
+}
 }
