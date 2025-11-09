@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/126</span>
+                <span class='fraction'>0/132</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/126</span>
+                <span class='fraction'>0/132</span>
             </div>
         
             
@@ -349,7 +349,12 @@
 <a name='L284'></a><a href='#L284'>284</a>
 <a name='L285'></a><a href='#L285'>285</a>
 <a name='L286'></a><a href='#L286'>286</a>
-<a name='L287'></a><a href='#L287'>287</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -396,7 +401,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -412,6 +417,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -420,6 +426,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -441,6 +448,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -451,6 +460,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -548,7 +559,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -664,7 +674,7 @@ import { SpeechConverterInterface } from "./SpeechConverterInterface";
  * const api = new AACVoiceAPI();
  * await api.initiate({
  *  mode: 'online',
- *  backendUrl: 'http://localhost:8000/transcription/'
+ *  backendUrl: 'http://localhost:8000'
  *  });
  *
  * @class
@@ -672,7 +682,7 @@ import { SpeechConverterInterface } from "./SpeechConverterInterface";
 &nbsp;
 export interface voiceAPIConfig {
     mode: 'offline' | 'online';
-    modelUrl?: string,
+    modelUrl: string,
     language?: string;
     useSpeakerSeparation?: boolean;
     }
@@ -682,7 +692,7 @@ export interface voiceAPIConfig {
 <span class="cstat-no" title="statement not covered" >    private mapping: CommandMapping | null = null;</span>
 <span class="cstat-no" title="statement not covered" >    private currentMode: 'offline' | 'online' | null = null;</span>
 <span class="cstat-no" title="statement not covered" >    private isCurrentlyListening: boolean = false;</span>
-&nbsp;
+<span class="cstat-no" title="statement not covered" >    private domain: string = "http://localhost:8000";</span>
 <span class="cstat-no" title="statement not covered" >    constructor(){</span>
 <span class="cstat-no" title="statement not covered" >        this.mapping = new CommandMapping();</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
@@ -692,11 +702,12 @@ export interface voiceAPIConfig {
      * Initializes the API with the specified model and language
      * 
      * @param url Path to URL for the Whisper model file
-     * @param language Language code to configure the model (e.g. 'en')
+     * @param language Language code to configure the model (e.g. 'en') for offline mode 
      * @throws {Error} Throws error when modelUrl is not provided in the params in .initiate() for online mode  
      */
 <span class="cstat-no" title="statement not covered" >    public async initiate(config: voiceAPIConfig): Promise&lt;void&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        this.currentMode = config.mode;</span>
+        
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if (config.mode === 'offline') {</span>
 <span class="cstat-no" title="statement not covered" >            if (!config.modelUrl || !config.language) {</span>
@@ -707,8 +718,9 @@ export interface voiceAPIConfig {
 <span class="cstat-no" title="statement not covered" >            await this.converter.init(config.modelUrl, config.language);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        } else if (config.mode === 'online') {</span>
+<span class="cstat-no" title="statement not covered" >            this.domain = config.modelUrl;</span>
 <span class="cstat-no" title="statement not covered" >            const useSeparation = config.useSpeakerSeparation ?? false;</span>
-<span class="cstat-no" title="statement not covered" >            this.converter = new SpeechConverterOnline(useSeparation);</span>
+<span class="cstat-no" title="statement not covered" >            this.converter = new SpeechConverterOnline(this.domain, useSeparation);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >            const modeText = useSeparation ? 'with speaker separation' : 'single speaker';</span>
 <span class="cstat-no" title="statement not covered" >            console.log(`Initialized in online mode (${modeText})`);</span>
@@ -721,9 +733,11 @@ export interface voiceAPIConfig {
     /**
      * Initialize online mode for single speaker
      */
-<span class="cstat-no" title="statement not covered" >    public async initiateOnlineSingleSpeaker(): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    public async initiateOnlineSingleSpeaker(domainName: string): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        this.domain = domainName;</span>
 <span class="cstat-no" title="statement not covered" >        await this.initiate({</span>
 <span class="cstat-no" title="statement not covered" >            mode: 'online',</span>
+<span class="cstat-no" title="statement not covered" >            modelUrl: this.domain,</span>
 <span class="cstat-no" title="statement not covered" >            useSpeakerSeparation: false</span>
 <span class="cstat-no" title="statement not covered" >        });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
@@ -731,9 +745,11 @@ export interface voiceAPIConfig {
     /**
      * Initialize online mode with speaker separation
      */
-<span class="cstat-no" title="statement not covered" >    public async initiateOnlineMultiSpeaker(): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    public async initiateOnlineMultiSpeaker(domainName: string): Promise&lt;void&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        this.domain = domainName</span>
 <span class="cstat-no" title="statement not covered" >        await this.initiate({</span>
 <span class="cstat-no" title="statement not covered" >            mode: 'online',</span>
+<span class="cstat-no" title="statement not covered" >            modelUrl: this.domain,</span>
 <span class="cstat-no" title="statement not covered" >            useSpeakerSeparation: true</span>
 <span class="cstat-no" title="statement not covered" >        });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
@@ -772,7 +788,7 @@ export interface voiceAPIConfig {
 <span class="cstat-no" title="statement not covered" >            this.isCurrentlyListening = false;</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        this.converter = new SpeechConverterOnline(useSpeakerSeparation);</span>
+<span class="cstat-no" title="statement not covered" >        this.converter = new SpeechConverterOnline(this.domain, useSpeakerSeparation);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        const modeText = useSpeakerSeparation ? 'multi-speaker' : 'single-speaker';</span>
 <span class="cstat-no" title="statement not covered" >        console.log(`Switched to ${modeText} mode`);</span>
@@ -838,11 +854,10 @@ export interface voiceAPIConfig {
     /**
      * Adds a voice command to the system.
      *
-     * @param {GameCommand} command - The command object containing:
-     *  - `name`: The name of the command that the user needs to speak.
-     *  - `action`: A callback function that executes when the command is triggered.
-     *  - `description`: A short explanation of what the command does. 
-     *  - `active`: Whether the command is currently active. (true or false)
+     * @param {string} name: The name of the command that the user needs to speak.
+     * @param {Function} action: A callback function that executes when the command is triggered.
+     * @param {string} description: A short explanation of what the command does. 
+     * @param {boolean} active: Whether the command is currently active. (true or false)
      * @returns true if successfully added
      */
 <span class="cstat-no" title="statement not covered" >    public addVoiceCommand(</span>
@@ -928,7 +943,7 @@ export interface voiceAPIConfig {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-07T15:52:08.901Z
+                at 2025-11-09T03:20:10.681Z
             </div>
         <script src="prettify.js"></script>
         <script>
