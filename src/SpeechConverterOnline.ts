@@ -12,18 +12,20 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
   private transcriptionInterval?: ReturnType<typeof setInterval>;
   private useSeparation: boolean = false;
   private url: string;
+  private callTranscribe: string = "/transcription/";
+  private callSeparation: string = "/transcription/separation/"
 
       /**
        * updates the url to point to the correct backend on initialization
        * 
        * @param backendURL url of hosted backend
        */
-      constructor(useSeparation: boolean = false) {
+      constructor(domainName: string, useSeparation: boolean = false) {
         this.commandConverter = CommandConverter.getInstance();
         this.useSeparation = useSeparation;
         this.url = useSeparation
-          ? 'http://localhost:8000/transcription/separation/'
-          : 'http://localhost:8000/transcription/';
+          ? `${domainName}${this.callSeparation}`
+          : `${domainName}${this.callTranscribe}`;
         console.log(`Using endpoint: ${this.url}`);
       }
 
@@ -75,14 +77,15 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
       while (bufferLength >= largeBlock) {
         //only send to speechbrain when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
+        bufferLength -= largeBlock;
 
+        //throws away chunk if silence is detected
         if(this.isSilence(combined)){
-          console.log("No audio detected");
           break;
         }
 
         const audioBuffer = new Float32Array(combined).buffer;
-        bufferLength -= largeBlock;
+        
         try{
           const response = await fetch(this.url, {
             method: "POST",
@@ -258,7 +261,8 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
     const rms = Math.sqrt(mean);
 
     if (rms < .01) {
-      console.log("No voice detected");
+      const dates = new Date();
+      console.log("No voice detected at time: ", dates.toLocaleTimeString());
       return true;
     }
     return false;
