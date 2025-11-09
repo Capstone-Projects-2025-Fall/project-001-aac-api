@@ -165,10 +165,17 @@ export class SpeechConverterOffline implements SpeechConverterInterface {
       buffer.push(chunk);
       bufferLength += chunk.length;
 
+      
+
       while (bufferLength >= largeBlock) {
         //only send to whisper when enough chunks exist
         const combined = this.combineChunks(buffer, largeBlock);
         bufferLength -= largeBlock;
+
+        //throws away chunk if silence is detected
+        if(this.isSilence(combined)){
+          break;
+        }
         //this may need to change to an third party api call later as it could be too cpu intensive
         //must be downsampled otherwise whisper wont work right
         const downsampled = this.downSample(combined, inputSampleRate, targetSampleRate);
@@ -302,4 +309,30 @@ export class SpeechConverterOffline implements SpeechConverterInterface {
     }
     return this.whisper.get_status();
   }
+
+    /**
+   * Checks the audio chunk for voice. 
+   * Uses root mean square method to determine if voice has been detected
+   * 
+   * @param {Float32Array} waveform Audio sample
+   * @returns {boolean} True if audio has detected no sound
+   */
+  private isSilence(waveform: Float32Array): boolean {
+    // Compute RMS (root mean square) of waveform
+    let sumSquares = 0;
+    for (let i = 0; i < waveform.length; i++) {
+      const sample = waveform[i];
+      sumSquares += sample * sample;
+    }
+
+    const mean = sumSquares / waveform.length;
+    const rms = Math.sqrt(mean);
+
+    if (rms < .01) {
+      const dates = new Date();
+      console.log("No voice detected at time: ", dates.toLocaleTimeString());
+      return true;
+    }
+    return false;
+}
 }

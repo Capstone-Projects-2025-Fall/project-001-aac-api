@@ -27,7 +27,7 @@ import { CommandMapping } from "./commandMapping";
  * const api = new AACVoiceAPI();
  * await api.initiate({
  *  mode: 'online',
- *  backendUrl: 'http://localhost:8000/transcription/'
+ *  backendUrl: 'http://localhost:8000'
  *  });
  *
  * @class
@@ -35,7 +35,7 @@ import { CommandMapping } from "./commandMapping";
 
 export interface voiceAPIConfig {
     mode: 'offline' | 'online';
-    modelUrl?: string,
+    modelUrl: string,
     language?: string;
     useSpeakerSeparation?: boolean;
     }
@@ -45,7 +45,7 @@ export class AACVoiceAPI{
     private mapping: CommandMapping | null = null;
     private currentMode: 'offline' | 'online' | null = null;
     private isCurrentlyListening: boolean = false;
-
+    private domain: string = "http://localhost:8000";
     constructor(){
         this.mapping = new CommandMapping();
     }
@@ -55,11 +55,12 @@ export class AACVoiceAPI{
      * Initializes the API with the specified model and language
      * 
      * @param url Path to URL for the Whisper model file
-     * @param language Language code to configure the model (e.g. 'en')
+     * @param language Language code to configure the model (e.g. 'en') for offline mode 
      * @throws {Error} Throws error when modelUrl is not provided in the params in .initiate() for online mode  
      */
     public async initiate(config: voiceAPIConfig): Promise<void> {
         this.currentMode = config.mode;
+        
 
         if (config.mode === 'offline') {
             if (!config.modelUrl || !config.language) {
@@ -70,8 +71,9 @@ export class AACVoiceAPI{
             await this.converter.init(config.modelUrl, config.language);
 
         } else if (config.mode === 'online') {
+            this.domain = config.modelUrl;
             const useSeparation = config.useSpeakerSeparation ?? false;
-            this.converter = new SpeechConverterOnline(useSeparation);
+            this.converter = new SpeechConverterOnline(this.domain, useSeparation);
 
             const modeText = useSeparation ? 'with speaker separation' : 'single speaker';
             console.log(`Initialized in online mode (${modeText})`);
@@ -84,9 +86,11 @@ export class AACVoiceAPI{
     /**
      * Initialize online mode for single speaker
      */
-    public async initiateOnlineSingleSpeaker(): Promise<void> {
+    public async initiateOnlineSingleSpeaker(domainName: string): Promise<void> {
+        this.domain = domainName;
         await this.initiate({
             mode: 'online',
+            modelUrl: this.domain,
             useSpeakerSeparation: false
         });
     }
@@ -94,9 +98,11 @@ export class AACVoiceAPI{
     /**
      * Initialize online mode with speaker separation
      */
-    public async initiateOnlineMultiSpeaker(): Promise<void> {
+    public async initiateOnlineMultiSpeaker(domainName: string): Promise<void> {
+        this.domain = domainName
         await this.initiate({
             mode: 'online',
+            modelUrl: this.domain,
             useSpeakerSeparation: true
         });
     }
@@ -135,7 +141,7 @@ export class AACVoiceAPI{
             this.isCurrentlyListening = false;
         }
 
-        this.converter = new SpeechConverterOnline(useSpeakerSeparation);
+        this.converter = new SpeechConverterOnline(this.domain, useSpeakerSeparation);
 
         const modeText = useSpeakerSeparation ? 'multi-speaker' : 'single-speaker';
         console.log(`Switched to ${modeText} mode`);
@@ -201,11 +207,10 @@ export class AACVoiceAPI{
     /**
      * Adds a voice command to the system.
      *
-     * @param {GameCommand} command - The command object containing:
-     *  - `name`: The name of the command that the user needs to speak.
-     *  - `action`: A callback function that executes when the command is triggered.
-     *  - `description`: A short explanation of what the command does. 
-     *  - `active`: Whether the command is currently active. (true or false)
+     * @param {string} name: The name of the command that the user needs to speak.
+     * @param {Function} action: A callback function that executes when the command is triggered.
+     * @param {string} description: A short explanation of what the command does. 
+     * @param {boolean} active: Whether the command is currently active. (true or false)
      * @returns true if successfully added
      */
     public addVoiceCommand(
