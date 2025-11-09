@@ -69,3 +69,4 @@ watchfiles==1.1.1
 websockets==15.0.1
 transformers==4.57.1
 sentencepiece==0.2.1
+faster_whisper==1.2.1

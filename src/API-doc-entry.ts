@@ -1,6 +1,6 @@
 export { CommandConverter } from "./CommandConverter";
 export { CommandLogEntry, CommandHistory } from "./CommandHistory";
-export { AACVoiceAPI } from "./AACVoiceAPI";
+export { AACVoiceAPI, voiceAPIConfig } from "./AACVoiceAPI";
 export { AudioInputHandler } from "./AudioInputHandler"
 export { GameCommand, CommandLibrary } from "./commandLibrary";
 export { showHistoryPopup } from "./showHistoryPopup";
