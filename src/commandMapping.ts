@@ -1,4 +1,5 @@
 import { CommandLibrary, GameCommand } from './commandLibrary';
+import { SynonymResolver } from './SynonymResolver';
 
 /**
  * CommandMapping provides a simple interface for developers to add and remove
@@ -6,22 +7,26 @@ import { CommandLibrary, GameCommand } from './commandLibrary';
  *
  * This class allows you to:
  * - Create and add new commands to the library.
+ * - Automatically fetch and register synonyms for commands
  * - Remove commands by name.
  * - Retrieve all commands or check if a command exists.
  * - Clear all commands from the library.
  *
  * Command names are case-insensitive and stored in lowercase.
  * Commands are stored in the CommandLibrary's HashMap.
+ * Synonyms are automatically fetched from DataMuse API unless disabled.
  */
 export class CommandMapping {
   /** Reference to the CommandLibrary singleton */
   private library: CommandLibrary;
+  private synonymResolver: SynonymResolver;
 
   /**
    * Creates a new CommandMapping instance and connects to the CommandLibrary.
    */
   constructor() {
     this.library = CommandLibrary.getInstance();
+    this.synonymResolver = SynonymResolver.getInstance();
   }
 
   /**
@@ -36,6 +41,7 @@ export class CommandMapping {
 
   /**
    * Creates and adds a new command to the CommandLibrary.
+   * Optionally fetches synonyms from DataMuse API and registers them automatically.
    *
    * If a command with the same name already exists, it will not be added.
    * The command name is case-insensitive and will be stored in lowercase.
@@ -45,17 +51,20 @@ export class CommandMapping {
    * @param {Object} options - Optional configuration object
    * @param {string} options.description - Description of what the command does
    * @param {boolean} options.active - Whether the command is active (default: true)
-   * @returns {boolean} Returns true if command was added successfully, false if duplicate or invalid
+   * @param {boolean} options.fetchSynonyms - Whether to auto-fetch synonyms (default: true)
+   * @returns {Promise <boolean>} Returns true if command was added successfully, false if duplicate or invalid
    */
-  public addCommand(
+  public async addCommand(
     name: string,
     action: () => void,
     options?: {
       description?: string;
       active?: boolean;
+      fetchSynonyms?: boolean;
+      
       // icon?: unknown; // Uncomment if you reintroduce `icon` in the interface
     }
-  ): boolean {
+  ): Promise <boolean> {
     const normalized = this.normalize(name);
 
     if (!normalized) {
@@ -76,12 +85,103 @@ export class CommandMapping {
     };
 
     const ok = this.library.add(cmd);
-    if (ok) {
-      console.log(`Command "${normalized}" added successfully`);
-    } else {
+
+    if (!ok) {
       console.warn(`Failed to add command "${normalized}"`);
+      return false;
     }
-    return ok;
+
+    console.log(`Command "${normalized}" added successfully`);
+
+    // Fetch and register synonyms if enabled (default: true)
+    const fetchSynonyms = options?.fetchSynonyms ?? true;
+    
+    if (fetchSynonyms) {
+      // Fetch synonyms asynchronously (doesn't block command registration)
+      this.fetchAndRegisterSynonyms(normalized).catch(error => {
+        console.error(`Error fetching synonyms for "${normalized}":`, error);
+      });
+    }
+    return true;
+
+  }
+
+  /**
+   * Fetches synonyms from the API and registers them in the CommandLibrary.
+   * This is called automatically by addCommand() unless fetchSynonyms is disabled.
+   * 
+   * @private
+   * @param {string} commandName - The command name to fetch synonyms for
+   * @returns {Promise<void>}
+   */
+  private async fetchAndRegisterSynonyms(commandName: string): Promise<void> {
+    console.log(`Fetching synonyms for "${commandName}"...`);
+    
+    try {
+      // Get synonyms from the API (cached if already fetched)
+      const synonyms = await this.synonymResolver.getSynonyms(commandName);
+      
+      if (synonyms.length === 0) {
+        console.log(`No synonyms found for "${commandName}"`);
+        return;
+      }
+
+      // Register all synonyms in the library
+      const count = this.library.addSynonyms(synonyms, commandName);
+      
+      console.log(`Registered ${count} synonym(s) for "${commandName}": ${synonyms.slice(0, 5).join(', ')}${synonyms.length > 5 ? '...' : ''}`);
+    } catch (error) {
+      console.error(`Failed to fetch synonyms for "${commandName}":`, error);
+    }
+  }
+
+  /**
+   * Manually adds a synonym for an existing command.
+   * Use this to add custom synonyms that aren't in the API.
+   * 
+   * @param {string} synonym - The synonym word
+   * @param {string} commandName - The command it should trigger
+   * @returns {boolean} True if synonym was added successfully
+   * 
+   * @example
+   * ```ts
+   * mapper.addSynonym('hop', 'jump');  // Now "hop" triggers "jump" command
+   * ```
+   */
+  public addSynonym(synonym: string, commandName: string): boolean {
+    return this.library.addSynonym(synonym, commandName);
+  }
+
+  /**
+   * Manually adds multiple synonyms for an existing command.
+   * 
+   * @param {string[]} synonyms - Array of synonym words
+   * @param {string} commandName - The command they should trigger
+   * @returns {number} Number of synonyms successfully added
+   * 
+   * @example
+   * ```ts
+   * mapper.addSynonyms(['hop', 'leap', 'spring'], 'jump');
+   * ```
+   */
+  public addSynonyms(synonyms: string[], commandName: string): number {
+    return this.library.addSynonyms(synonyms, commandName);
+  }
+
+  /**
+   * Gets all synonyms for a specific command.
+   * 
+   * @param {string} commandName - The command name
+   * @returns {string[]} Array of synonyms
+   * 
+   * @example
+   * ```ts
+   * const synonyms = mapper.getSynonymsForCommand('jump');
+   * console.log(synonyms);  // ['leap', 'hop', 'bound', ...]
+   * ```
+   */
+  public getSynonymsForCommand(commandName: string): string[] {
+    return this.library.getSynonymsForCommand(commandName);
   }
 
   /**
@@ -134,13 +234,22 @@ export class CommandMapping {
   }
 
   /**
-   * Clears all commands from the CommandLibrary.
+   * Clears all commands and synonyms from the CommandLibrary.
    *
    * @returns {void}
    */
   public clearAllCommands(): void {
     this.library.clear();
-    console.log('All commands cleared');
+    console.log('All commands and synonyms cleared');
+  }
+
+  /**
+   * Gets the total number of synonym mappings registered.
+   * 
+   * @returns {number} Number of synonyms
+   */
+  public getSynonymCount(): number {
+    return this.library.getSynonymCount();
   }
 }
 
