@@ -50,7 +50,7 @@ class SpeechBrain:
             
             # Collect all segments
             text = " ".join([segment.text for segment in segments])
-            
+            print(text)
             return text.strip()
             
         except Exception as e:
