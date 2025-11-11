@@ -29,26 +29,25 @@ Postconditions: Game has started (or appropriate error/feedback displayed); comm
 
 ### Use Case 2 - Extract Commands
 
-Actor: AAC Player
+Actor: AAC Player, AAC Game Developer
 
-Triggering event: AAC user speaks while playing, e.g., “please jump now.”
+Triggering event: AAC user speaks while playing an AAC game, e.g., “please jump now.”
 
 Preconditions: Game is in a state that accepts gameplay commands; microphone is active.
 
 Normal flow:
     1. The system captures AAC board voice input.
     2. Whisper transcribes the audio into text (e.g., “please jump now”).
-    3. The pipeline runs a filler-word filter and removes filler words, sounds, and non-command words (e.g., "please" and "now").
-    4. Remaining tokens are tokenized and mapped to command(s) (e.g., “jump” → Jump).
-    5. If mapping confidence is high, the API issues the Jump action to the game immediately.
-    6. UI gives immediate feedback (visual cue + animation) and logs the command.
+    3. The transcription is tokenized by Command Converter.
+    4. Tokenized transcription is filtered to remove filler words, sounds, and non-command words (e.g., "please" and "now").
+    4. Remaining tokens are mapped to commands.
+    5. UI gives immediate feedback (visual cue + animation) and logs the command.
 
 Alternate flows / exceptions:
-    1. Filter removes all meaningful words (e.g., utterance was “uh now”): ask the player to repeat.
+    1. Filter removes all meaningful words (e.g., utterance was “uh now”): no game action.
     2. Multiple possible commands: request quick confirmation (“Did you mean JUMP?”) or choose highest-confidence and log uncertainty.
-    3. Low confidence: prompt for repeat.
 
-Postconditions: Jump action executed (or user prompted to repeat); command history updated.
+Postconditions: Jump action executed; command history updated.
 
 ### Use Case 3 - Speaker Separation
 
