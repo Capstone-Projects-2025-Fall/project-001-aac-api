@@ -11,7 +11,7 @@ sidebar_position: 4
   - Distinguish between multiple voice inputs.
   - Filter out background noise.
 - The API must be able to define game controls.
-- The user can play previous AAC games using our API.
+- Game developers can use the API on previous AAC games.
 - The API is able to interpret synonyms of commands as valid inputs.
 - The API should allow game developers to update a list of known game commands.
 - Users will be able to view a toggleable command history, recording all commands voiced by users during the game.
