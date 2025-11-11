@@ -56,7 +56,7 @@ To install the npm package in your project, open a terminal and enter the follow
 Once you have installed the npm package, you'll want to add the Whisper model to your project. The link to the model can be found [here](https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin)
 Then, for example, if you are using vite, add these CORS headers in the vite config file:
 
-```'Cross-Origin-Opener-Policy': 'same-origin',```<br>
+```'Cross-Origin-Opener-Policy': 'same-origin',```<br />
 ```'Cross-Origin-Embedder-Policy': 'require-corp',```
 
 
