@@ -8,9 +8,44 @@
 
 </div>
 
-## Getting Started
+# Getting Started
 
-### Installing the API
+### Setting up Backend Transcription for Online mode
+
+
+#### For Mac/Linux
+- Clone this project.
+- Navigate to the folder called backend
+- Ensure you have python version 3.11 installed To check your version, use command ```python3 --version```
+- Create a virtual environment using the command ```python3.11 -m venv venv```
+- Enter the virtual environment using the command ```source venv/bin/activate```
+- Install all the requirements using command ```pip install -r requirements.txt```
+- Once all requirements have installed successfully, start the server using the command ```fastapi dev main.py```
+
+#### For Windows
+- Clone this project.
+- Navigate to the folder called backend
+- Ensure you have python version 3.11 installed. To check your version, use command ```python3 --version```
+- Create a virtual environment using the command ```python3.11 -m venv venv```
+- Enter the virtual environment using the command ```venv\Scripts\activate```
+- Install all the requirements using command ```pip install -r requirementsWindows.txt```
+- Once all requirements have installed successfully, start the server using the command ```fastapi dev main.py```
+
+### Sample Game using our NPM package
+
+- Clone this Github repo [Sample Coloring Game](https://github.com/Russo903/aac-voice-api-milestone-demo-1.git)
+
+- Once cloned, enter the root folder of the project and run command ```npm install``` 
+- Once all pacakages have been installed, run the game using the command ```npm run dev```
+    - To use the "Online" mode, you must have the backend service running by following the steps [here](#Setting-up-Backend-Transcription-for-Online-mode)
+    - Browser must be in "Light mode" to see dialog box clearly
+  
+
+
+
+
+## How to integrate our API into your project
+
 
 How to download the [NPM package](https://www.npmjs.com/package/aac-voice-api) to use in your own project.
 
@@ -19,18 +54,11 @@ To install the npm package in your project, open a terminal and enter the follow
 ```npm install aac-voice-api``` 
 
 Once you have installed the npm package, you'll want to add the Whisper model to your project. The link to the model can be found [here](https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin)
-Then, using vite, add the following lines to your project code:
+Then, for example, if you are using vite, add these CORS headers in the vite config file:
 
-```'Cross-Origin-Opener-Policy': 'same-origin',```
+```'Cross-Origin-Opener-Policy': 'same-origin',```<br />
 ```'Cross-Origin-Embedder-Policy': 'require-corp',```
 
-To see a sample of the API in another project, go to [this repository](https://github.com/Russo903/aac-voice-api-milestone-demo-1.git) and clone it locally. Run the following commands:
-
-```npm install```
-
-```npm run dev```
-
-You are now hosting the game locally.
 
 Here is an example of how to add game commands to your project.
 
@@ -48,13 +76,19 @@ voice.addVoiceCommand(
   action: () => console.log("player jumped"),
 );
 
-// Initialize the API
-// Whisper Models can be found at https://huggingface.co/ggerganov/whisper.cpp/tree/main
-voice.initiate("url", "en");
+// Initialize the API in offline mode
+// Recommended Whisper model: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
+voice.initiate("offline", "url", "en");
+
+//Initialize the API in online **Note requires the backend of our project to be running also
+//During development "domain" would be http://localhost:8000
+voice.initiate("online", "domain", false);
 
 // Start listening for voice commands
 voice.start();
 ```
+
+For comprehensive details on our API endpoints refer to our documentation [AACVoiceAPI](https://capstone-projects-2025-fall.github.io/project-001-aac-api/docs/api-specification/classes/AACVoiceAPI)
 
 ## Project Abstract
 
@@ -78,6 +112,6 @@ Augmentative and Alternate Communication (AAC) devices provide essential communi
 
 [//]: # 'Replace with your collaborators'
 
-[Ian Tyler Applebaum](https://github.com/ApplebaumIan) • [Kyle Dragon Lee](https://github.com/leekd99) • [Tam Trang](https://github.com/HolyGodEze) • [Michael Colbert](https://github.com/colbert95) • [Jessica Hutchison](https://github.com/jesshutchison) • [Gino Russo](https://github.com/Russo903) • [Hena Patel](https://github.com/Hena3124)
+   [Michael Colbert](https://github.com/colbert95) • [Jessica Hutchison](https://github.com/jesshutchison) • [Hena Patel](https://github.com/Hena3124) • [Gino Russo](https://github.com/Russo903) • [Tam Trang](https://github.com/HolyGodEze)  
 
 </div>
