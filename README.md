@@ -37,7 +37,7 @@
 
 - Once cloned, enter the root folder of the project and run command ```npm install``` 
 - Once all pacakages have been installed, run the game using the command ```npm run dev```
-    - To use the "Online" mode, you must have the backend service running by following the steps previously stated
+    - To use the "Online" mode, you must have the backend service running by following the steps [here](#Setting-up-Backend-Transcription-for-Online-mode)
     - Browser must be in "Light mode" to see dialog box clearly
   
 
