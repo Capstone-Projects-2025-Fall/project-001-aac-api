@@ -144,12 +144,12 @@ const config = {
             position: 'left',
             label: 'Documentation',
           },
-          {
-            to: '/tutorial/Intro',
-            label: 'Docusaurus Tutorial',
-            position: 'left',
-            activeBaseRegex: `/tutorial/`,
-          },
+          // {
+          //   to: '/getting-started/Intro',
+          //   label: 'Getting Started',
+          //   position: 'left',
+          //   activeBaseRegex: `/getting-started/`,
+          // },
           {
             href: 'https://github.com/' + process.env.ORG_NAME + '/' + process.env.PROJECT_NAME,
             label: 'GitHub',
@@ -221,12 +221,22 @@ const config = {
       },
     }),
   plugins: [
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'tutorial',
+    //     path: 'tutorial',
+    //     routeBasePath: 'tutorial',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //     // ... other options
+    //   },
+    // ],
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'tutorial',
-        path: 'tutorial',
-        routeBasePath: 'tutorial',
+        id: 'getting-started',
+        path: 'getting-started',
+        routeBasePath: 'getting-started',
         sidebarPath: require.resolve('./sidebars.js'),
         // ... other options
       },
