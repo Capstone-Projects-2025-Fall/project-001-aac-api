@@ -10,22 +10,22 @@ Actor: AAC Game Developer
 
 Triggering event: Developer runs their game to test it, and starts by clicking "Whisper Init" and activating mic.
 
-Preconditions: Game is running and in a state that uses API; microphone access is granted; network is available.
+Preconditions: Game is running and using the API; microphone access is granted; network is available.
 
 Normal flow:
     1. Developer initializes Whisper.
     2. System downloads Whisper module.
     3. Developer clicks Start Listening.
     4. System begins listening and records the utterance.
-    5. API (speech→text) transcribes the audio.
-    6. The transcribed text is normalized and matched to the command set; the transcription is sent back to the game and displayed to the developer.
+    5. Whisper transcribes the audio.
+    6. The transcription is sent back to the game and displayed to the developer.
     6. Developer clicks Stop Listening.
     7. System stops listening.
 
 Alternate flows / exceptions:
     1. Whisper package not downloaded: show prompt “Whisper Init failed.” 
 
-Postconditions: Game has started (or appropriate error/feedback displayed); command logged.
+Postconditions: Game has started (or appropriate error/feedback displayed).
 
 ### Use Case 2 - Extract Commands
 
