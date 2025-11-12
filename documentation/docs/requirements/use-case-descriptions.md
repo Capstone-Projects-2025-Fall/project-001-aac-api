@@ -115,19 +115,19 @@ Alternate flows / exceptions:
 
 Postconditions: Correct canonical command executed.
 
-### Use Case 6 - Register New Game Commands
+### Use Case 6 - Register Game Commands
 
 Actor: AAC Game Developer
 
 Triggering Event: Developer uses the API toolkit to set up the basic commands the game will understand.
 
-Preconditions: Game API has empty command library.
+Preconditions: Game uses the API.
 
 Normal flow:
-    1. AAC game developer uses the API toolkit to add commands like Start Game, Move Left, Move Right, Jump, Pause, and Shield. 
-    2. They tell the API what each command means and connect those commands to the game’s actions. 
-    3. Developer speaks, the API listens, figures out the right command, and sends it back to the game.
-    4. The game executes the command. 
+    1. AAC game developer uses the API toolkit to add commands like Start Game, red, blue, green. 
+    2. They tell the API what each command means and map those commands to game actions. 
+    3. Developer speaks. The API transcribes and tokenizes the audio.
+    4. The game executes and logs the command.
 
 Postconditions: System contains common commands in a command library. All commands for the AAC game are entered in the command library, and can be used by players through the API.
 
