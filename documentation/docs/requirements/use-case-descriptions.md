@@ -13,17 +13,18 @@ Triggering event: Developer runs their game to test it, and starts by clicking "
 Preconditions: Game is running and using the API; microphone access is granted; network is available.
 
 Normal flow:
-    1. Developer initializes Whisper.
-    2. System downloads Whisper module.
-    3. Developer clicks Start Listening.
-    4. System begins listening and records the utterance.
-    5. Whisper transcribes the audio.
-    6. The transcription is sent back to the game and displayed to the developer.
-    6. Developer clicks Stop Listening.
-    7. System stops listening.
+    1. Developer selects online or offline mode.
+    2. Developer initializes model.
+    3. System downloads model module.
+    4. Developer clicks Start Listening.
+    5. System begins listening and records the utterance.
+    6. API transcribes the audio.
+    7. The transcription is sent back to the game and displayed to the developer.
+    8. Developer clicks Stop Listening.
+    9. System stops listening.
 
 Alternate flows / exceptions:
-    1. Whisper package not downloaded: show prompt “Whisper Init failed.” 
+    1. Model package not downloaded: show prompt “Init failed.” 
 
 Postconditions: Game has started (or appropriate error/feedback displayed).
 
@@ -37,14 +38,15 @@ Preconditions: Game is in a state that accepts gameplay commands; microphone is 
 
 Normal flow:
     1. The system captures AAC board voice input.
-    2. Whisper transcribes the audio into text (e.g., “please jump now”).
+    2. SpeechConverter transcribes the audio into text (e.g., “please jump now”).
     3. The transcription is tokenized by Command Converter.
     4. Tokenized transcription is filtered to remove filler words, sounds, and non-command words (e.g., "please" and "now").
     4. Remaining tokens are mapped to commands.
-    5. UI gives immediate feedback (visual cue + animation) and logs the command.
+    5. Commands are sent to the game.
+    6. Game displays and logs the commands.
 
 Alternate flows / exceptions:
-    1. Filter removes all meaningful words (e.g., utterance was “uh now”): no game action.
+    1. No command, filter removes all meaningful words (e.g., utterance was “uh now”): no game action.
     2. Multiple possible commands: request quick confirmation (“Did you mean JUMP?”) or choose highest-confidence and log uncertainty.
 
 Postconditions: Jump action executed; command history updated.
@@ -55,22 +57,21 @@ Actor: AAC Player and nearby non-player speakers (e.g., parent)
 
 Triggering event: AAC player speaks a command while other people speak at the same time.
 
-Preconditions: Enrolled player voice profile exists; speaker-separation model is enabled.
+Preconditions: Online mode and speaker-separation model is enabled.
 
 Normal flow:
     1. System captures mixed audio with multiple speakers.
-    2. The speaker-separation model isolates the enrolled player’s audio stream (prefer enrolled stream).
-    3. Whisper runs on the isolated player stream and transcribes the utterance.
+    2. The speaker-separation model splits the audio stream into streams for each speaker.
+    3. Model runs on the isolated player streams and transcribes the utterance.
     4. Transcription is normalized and mapped to a game command (e.g., PauseGame).
     5. API sends PauseGame to the game; UI confirms action.
     6. Log command and speaker attribution.
 
 Alternate flows / exceptions:
-    1. No enrolled profile available
-    2. Separation uncertain / low confidence: show a quick confirmation prompt (“Did you say ‘pause’?”). If the player confirms, proceed; otherwise ignore.
-    3. Overlapping identical words from multiple speakers: use confidence + enrolled preference; if unresolved, request confirmation.
+    1. Separation uncertain / low confidence: show a quick confirmation prompt (“Did you say ‘pause’?”). If the player confirms, proceed; otherwise ignore.
 
-Postconditions: Game paused (if confirmed); system records speaker attribution and confidence.
+
+Postconditions: Commands from both speakers recognized. System records speaker attribution and confidence.
 
 ### Use Case 4 - Background Noise Filtering
 
@@ -89,9 +90,8 @@ Normal flow:
     6. Command and environment metadata (noise level) are logged.
 
 Alternate flows / exceptions:
-    1. Noise overwhelms voice: prompt the user to repeat or show a “can’t hear” note.
+    1. Noise overwhelms voice: Show "no speech detected" note.
     2. Misrecognized phrase due to residual noise: if confidence low, ask for repeat or confirmation.
-    3. Adaptive fallback: optionally switch to a push-to-talk or require closer mic.
 
 Postconditions: Movement executed (or prompt shown); noise metrics recorded for debugging.
 
@@ -101,10 +101,10 @@ Actor: AAC Player; Developer (configures mapping)
 
 Triggering event: AAC player uses a synonym (e.g., “go” for Move, “hop” for Jump).
 
-Preconditions: Synonym mapping table exists (configured by developer or default set); Whisper and command mapper active.
+Preconditions: Synonym mapping table exists (configured by developer or default set); Speech to text model and command mapper active.
 
 Normal flow:
-    1. System captures the utterance and Whisper produces text (e.g., “hop”).
+    1. System captures the utterance and model transcribes it (e.g., “hop”).
     2. The command-mapping module looks up the token in the synonym table.
     3. “hop” is mapped to canonical command Jump.
     4. API issues Jump to the game.
@@ -113,7 +113,7 @@ Normal flow:
 Alternate flows / exceptions:
     1. Developer disabled synonym mapping, and non-command words are filtered out.
 
-Postconditions: Correct canonical command executed or developer/user receives a prompt to resolve ambiguity.
+Postconditions: Correct canonical command executed.
 
 ### Use Case 6 - Register New Game Commands
 
