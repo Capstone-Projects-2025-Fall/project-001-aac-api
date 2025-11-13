@@ -14,7 +14,7 @@ Online mode is designed for the users where speed and accuracy is critical for t
 :::tip Recommendation
 It is recommended to set useSpeakerSeparation to ```false``` if speed and accuracy is critical to your app
 :::
-## Option 1
+## Full Control
 ---
 ```ts
 const voice = new AACVoiceAPI();
@@ -34,7 +34,7 @@ await voiceApi.initiate({
 
 
 
-## Option 2
+## Single Speaker
 ---
 ```ts
 const voice = new AACVoiceAPI();
@@ -46,7 +46,7 @@ await voiceAPI.initiateOnlineSingleSpeaker('http://localhost:8000');
 |:----------:|:-----:|:----------|
 |modelUrl    | string| The domain name of where the backend is being hosted<br/>During development, you can simply pass in ```http://localhost:PORT``` where PORT = the port it is running on|
 
-## Option 3
+## Multi-Speaker
 ---
 ```ts
 const voice = new AACVoiceAPI();
