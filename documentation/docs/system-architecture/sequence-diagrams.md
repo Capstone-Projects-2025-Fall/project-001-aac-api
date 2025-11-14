@@ -4,38 +4,35 @@ sidebar_position: 5
 
 # Sequence Diagrams
 
-### Use Case 1 - Voice Recognition
+### Sequence Diagram 1 - Voice Recognition
 
 ```mermaid
 sequenceDiagram
     actor AAC Game Developer
     participant Game
-    participant System
     participant API
     
+    AAC Game Developer->>Game: Click Init
     activate Game
-    AAC Game Developer->>Game: Click Whisper Init
-    activate Game
-    Game->>System: Download whisper module
-    activate System
-    System-->>Game: Whisper downloaded
-    Game-->>AAC Game Developer: Whisper initalized.
+    Game->>API: Download speech-to-text model
+    activate API
+    API-->>Game: Model downloaded
+    Game-->>AAC Game Developer: Model initalized
         
-    alt Whisper not initialized
-        System-->>Game: Whisper module not downloaded
-        deactivate System
-        Game-->> AAC Game Developer: Whisper init failed.
+    alt STT model not initialized
+        API-->>Game: STT module not downloaded
+        deactivate API
+        Game-->> AAC Game Developer: Init failed
         deactivate Game
     end
 
     AAC Game Developer->>Game: Start listening
     activate Game
-    Game->>System: Open audio stream
-    activate System
-    Game-->>AAC Game Developer: Started Listening.
-    Note right of System: Audio input stream
+    Game-->>AAC Game Developer: Started listening
     loop every two seconds
-        System->>API: Send audio for transcription
+        AAC Game Developer ->> Game: Open audio stream
+        activate Game
+        Game->>API: Captured audio data 
         activate API
         API->>API: Transcribe text
         API-->>Game: Transcribed text
@@ -43,13 +40,13 @@ sequenceDiagram
         Game-->>AAC Game Developer: Display transcribed text
     end
     AAC Game Developer->>Game: Stop listening
-    Game->>System: Close audio stream
-    deactivate System
-    Game-->>AAC Game Developer: Stopped Listening.
+    Game-->>AAC Game Developer: Close audio stream
+    deactivate Game
+    Game-->>AAC Game Developer: Stopped listening
     deactivate Game
 ```
 
-### Use Case 2 - Filter Out Filler Words
+### Sequence Diagram 2 - Filter Out Filler Words
 
 ```mermaid
 sequenceDiagram
@@ -98,7 +95,7 @@ sequenceDiagram
     deactivate System
 ```
 
-### Use Case 3 - Speaker Seperation
+### Sequence Diagram 3 - Speaker Seperation
 
 ```mermaid
 sequenceDiagram
@@ -158,7 +155,7 @@ sequenceDiagram
     deactivate Game
 ```
 
-### Use Case 4 - Background Noise Filtering
+### Sequence Diagram 4 - Background Noise Filtering
 
 ```mermaid
 sequenceDiagram
@@ -214,7 +211,7 @@ sequenceDiagram
     deactivate System
 ```
 
-### Use Case 5 - Interpret Synonyms of Commands
+### Sequence Diagram 5 - Interpret Synonyms of Commands
 
 ```mermaid
 sequenceDiagram
@@ -274,7 +271,7 @@ sequenceDiagram
     deactivate System
 ```
 
-### Use Case 6 - Register Game Commands
+### Sequence Diagram 6 - Register Game Commands
 
 ```mermaid
 sequenceDiagram
@@ -308,7 +305,7 @@ sequenceDiagram
     AAC Game Developer->>System: Speak Command
     activate System
     System->>System: Process audio input
-    Note over System, CommandLibrary: Handled by API (see Use Case 1)
+    Note over System, CommandLibrary: Handled by API (see Sequence Diagram 1)
     System-->>CommandLibrary: Transcribed command
     deactivate System
     activate CommandLibrary
@@ -320,7 +317,7 @@ sequenceDiagram
     APIToolkit-->>AAC Game Developer: Setup complete
     deactivate APIToolkit
 ```
-### Use Case 7 - Toggle Input History
+### Sequence Diagram 7 - Toggle Input History
 
 ```mermaid
 sequenceDiagram
@@ -335,10 +332,7 @@ sequenceDiagram
     Stan's Caretaker ->> AAC Game: Toggle off input history
     
     AAC Game -->> Stan: Reduced visual stimuli
-    deactivate AAC Game
-    Note over Stan: Stan can now comfortably enjoy playing the game
-    Note over Stan's Caretaker, AAC Game: AAC Game is playable without visible command history
-    
+    deactivate AAC Game    
     alt AAC game developer troubleshoots new command registered
         AAC Game Developer ->> AAC Game: Register new command
         activate AAC Game
@@ -348,7 +342,7 @@ sequenceDiagram
     end
 ```
 
-### Use Case 8 - Confidence Level of Interpreted Game Input
+### Sequence Diagram 8 - Confidence Level of Interpreted Game Input
 
 ```mermaid
 sequenceDiagram
