@@ -144,12 +144,12 @@ const config = {
             position: 'left',
             label: 'Documentation',
           },
-          // {
-          //   to: '/getting-started/Intro',
-          //   label: 'Getting Started',
-          //   position: 'left',
-          //   activeBaseRegex: `/getting-started/`,
-          // },
+          {
+            to: '/getting-started/Intro',
+            label: 'Getting Started',
+            position: 'left',
+            activeBaseRegex: `/getting-started/`,
+          },
           {
             href: 'https://github.com/' + process.env.ORG_NAME + '/' + process.env.PROJECT_NAME,
             label: 'GitHub',
