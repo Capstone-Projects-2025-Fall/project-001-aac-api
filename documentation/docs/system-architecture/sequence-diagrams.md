@@ -56,7 +56,7 @@ sequenceDiagram
     
     AAC Player->>Game: "please jump now"
     activate Game
-    Game->>API: Send audio for transcription
+    Game->>API: transcribe audio
     activate API
     API->>API: Tokenize and filter out non-command words
     API-->>Game: Return game commands
@@ -75,57 +75,46 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor Suzy
-    actor Parent
+    actor AAC Player
+    actor Non-player
     participant Game
     participant API
-    
-    Note over Suzy,Parent: Both speaking simultaneously
-    par Suzy speaks command
-        Suzy->>Game: Speak "pause game"
-    and Parent speaks
-        Parent->>Game: Speaking other words
+
+    Note over Game: Multiple speaker mode activated
+    activate Game
+
+    par AAC Player speaks
+        AAC Player->>Game: "Pause game"
+    and Non-player speaks
+        Non-player->>Game: "A potato flew around my room"
     end
     
+    Game->>API: Process audio data
+    activate API
+    API->>API: Split audio stream into two audio streams
+    loop for each audio stream
+        API->>API: Transcribe audio
+        API->>API: Tokenize and filter out non-command words
+    end
+    API-->>Game: Return game commands
+    deactivate API
     activate Game
-    Game->>API: Process mixed audio
-    activate API
-    API-->>Game: Return isolated player audio
-    deactivate API
+    Game->>Game: Execute callback functions
+    deactivate Game
+    Game-->>AAC Player: Changed game state and logs
     
-    Game->>API: Transcribe isolated audio
-    activate API
-    API-->>Game: Return transcribed text
-    deactivate API
-    
-    Game->>Game: Normalize and map to command
-    Note right of Game: Maps to PauseGame command
-    
-    alt High confidence & clear speaker separation
-        Game->>API: Send PauseGame command
-        activate API
-        API->>Game: Execute pause action
-        activate Game
-        Game-->>Suzy: Show UI confirmation
-        deactivate Game
-        API->>Game: Log command with speaker attribution
-        deactivate API
-    else Uncertain speaker separation
-        Game-->>Suzy: "Did you say 'pause'?"
-        alt User confirms
-            Suzy->>Game: Confirm command
-            Game->>API: Send PauseGame command
-            API->>Game: Execute pause action
-            Game-->>Suzy: Show UI confirmation
-        end
+    alt Uncertain speaker separation
+        Game-->>AAC Player: "Did you say 'pause'?"
+        AAC Player->>Game: Confirm command
+        Game->>Game: Execute pause action
+        Game-->>AAC Player: Game paused
     else Overlapping identical words
-        Game->>Game: Check confidence & enrolled preference
+        Game->>Game: Check confidence 
         alt Can resolve with confidence
-            Game->>API: Send command with high confidence
-            API->>Game: Execute action
-            Game-->>Suzy: Show UI confirmation
+            Game->>Game: Execute pause action
+            Game-->>AAC Player: Game paused
         else Cannot resolve
-            Game-->>Suzy: Request confirmation
+            Game-->>AAC Player: Request confirmation
         end
     end
     deactivate Game
