@@ -46,53 +46,29 @@ sequenceDiagram
     deactivate Game
 ```
 
-### Sequence Diagram 2 - Filter Out Filler Words
+### Sequence Diagram 2 - Extract Commands
 
 ```mermaid
 sequenceDiagram
-    actor Suzy
+    actor AAC Player
     participant Game
-    participant System
     participant API
     
-    Suzy->>System: Speak command "uh jump now"
-    activate System
-    System->>API: Send audio for transcription
+    AAC Player->>Game: "please jump now"
+    activate Game
+    Game->>API: Send audio for transcription
     activate API
-    API-->>System: Return transcribed text
+    API->>API: Tokenize and filter out non-command words
+    API-->>Game: Return game commands
     deactivate API
-    
-    System->>API: Process text "uh jump now"
-    activate API
-    API-->>System: Return filtered text "jump"
-    deactivate API
-    
-    System->>System: Tokenize and map to command
-    Note right of System: Maps to Jump command
-    
-    alt High confidence mapping
-        System->>API: Send Jump command
-        activate API
-        API->>Game: Execute Jump action
-        activate Game
-        Game-->>Suzy: Show visual feedback + animation
-        deactivate Game
-        API->>System: Log command
-        deactivate API
-    else Filter removes all words
-        System-->>Suzy: "Please repeat command"
+    Game->>Game: Execute callback function
+
+    alt Filter removes all words
+        Game-->>AAC Player: No change to game state
     else Multiple possible commands
-        System-->>Suzy: "Did you mean JUMP?"
-        alt User confirms
-            Suzy->>System: Confirm command
-            System->>API: Send Jump command
-            API->>Game: Execute Jump action
-            Game-->>Suzy: Show visual feedback
-        end
-    else Low confidence
-        System-->>Suzy: "Please repeat command"
+        Game-->>AAC Player: "Did you mean JUMP?"
     end
-    deactivate System
+    deactivate Game
 ```
 
 ### Sequence Diagram 3 - Speaker Seperation
