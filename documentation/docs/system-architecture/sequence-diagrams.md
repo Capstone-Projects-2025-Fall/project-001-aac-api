@@ -348,28 +348,28 @@ sequenceDiagram
     end
 ```
 
-### Use Case 9 - Confidence Level of Interpreted Game Input
+### Use Case 8 - Confidence Level of Interpreted Game Input
 
 ```mermaid
 sequenceDiagram
     actor AAC Game Developer
-    participant GameSystem
-    
-    Note over GameSystem: microphone is active
-    
-    AAC Game Developer ->> GameSystem: Speak game commands into microphone
-    activate GameSystem
-    GameSystem ->> GameSystem: Interpret and input command into game
-    GameSystem -->> AAC Game Developer: Return confidence level
-    deactivate GameSystem
-    
-    Note over GameSystem: Game accurately interprets game commands
-    
-    opt Incorrect voice input
-        activate GameSystem
-        GameSystem -->> AAC Game Developer: Incorrectly interpreted voice input
-        AAC Game Developer ->> GameSystem: Adjusts code accordingly
-        deactivate GameSystem
+    participant System
+    participant Game
+    participant API
+        
+    AAC Game Developer ->> System: Speak into microphone
+    activate System
+    System ->> Game: Audio data stream
+    activate Game
+    loop Audio Processing
+        Game ->> API: Transcribe, tokenize, and filter commands
+        activate API
+        API -->> Game: return game commands
+        deactivate API
     end
-
+    Game ->> Game: execute game callback function
+    Game -->> System: log command, confidence level, and transcription
+    deactivate Game
+    System -->> AAC Game Developer: display logs
+    deactivate System
 ```
