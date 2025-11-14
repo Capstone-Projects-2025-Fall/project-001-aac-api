@@ -8,31 +8,31 @@ sidebar_position: 5
 
 ```mermaid
 sequenceDiagram
-    actor Steven
+    actor AAC Game Developer
     participant Game
     participant System
     participant API
     
     activate Game
-    Steven->>Game: Click Whisper Init
+    AAC Game Developer->>Game: Click Whisper Init
     activate Game
     Game->>System: Download whisper module
     activate System
     System-->>Game: Whisper downloaded
-    Game-->>Steven: Whisper initalized.
+    Game-->>AAC Game Developer: Whisper initalized.
         
     alt Whisper not initialized
         System-->>Game: Whisper module not downloaded
         deactivate System
-        Game-->> Steven: Whisper init failed.
+        Game-->> AAC Game Developer: Whisper init failed.
         deactivate Game
     end
 
-    Steven->>Game: Start listening
+    AAC Game Developer->>Game: Start listening
     activate Game
     Game->>System: Open audio stream
     activate System
-    Game-->>Steven: Started Listening.
+    Game-->>AAC Game Developer: Started Listening.
     Note right of System: Audio input stream
     loop every two seconds
         System->>API: Send audio for transcription
@@ -40,12 +40,12 @@ sequenceDiagram
         API->>API: Transcribe text
         API-->>Game: Transcribed text
         deactivate API
-        Game-->>Steven: Display transcribed text
+        Game-->>AAC Game Developer: Display transcribed text
     end
-    Steven->>Game: Stop listening
+    AAC Game Developer->>Game: Stop listening
     Game->>System: Close audio stream
     deactivate System
-    Game-->>Steven: Stopped Listening.
+    Game-->>AAC Game Developer: Stopped Listening.
     deactivate Game
 ```
 
@@ -219,14 +219,14 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor Suzy
-    actor Steven
+    actor AAC Game Developer
     participant Game
     participant System
     participant ASR
     participant SynonymMapper
     participant API
     
-    Note over Steven: Previously configured<br/>synonym mappings
+    Note over AAC Game Developer: Previously configured<br/>synonym mappings
     
     Suzy->>System: Speak command "hop"
     activate System
@@ -267,45 +267,45 @@ sequenceDiagram
         end
     else Synonym mapping disabled
         System-->>Suzy: "Command not recognized"
-        System-->>Steven: Option to enable synonym mapping
+        System-->>AAC Game Developer: Option to enable synonym mapping
     end
     
     System->>System: Log synonym usage and confidence
     deactivate System
 ```
 
-### Use Case 6 - Support Commmon Game Inputs
+### Use Case 6 - Register Game Commands
 
 ```mermaid
 sequenceDiagram
-    actor Steven
+    actor AAC Game Developer
     participant APIToolkit
     participant CommandLibrary
     participant System
     
-    Steven->>APIToolkit: Open API toolkit
+    AAC Game Developer->>APIToolkit: Open API toolkit
     activate APIToolkit
         
     loop Add Common Game Commands
-        Steven->>APIToolkit: Add command
+        AAC Game Developer->>APIToolkit: Add command
         APIToolkit->>CommandLibrary: Register command 
     end
     
-    Steven->>APIToolkit: Map commands to game actions
+    AAC Game Developer->>APIToolkit: Map commands to game actions
     APIToolkit->>CommandLibrary: Store command mappings
     activate CommandLibrary
 
     CommandLibrary-->>APIToolkit: Confirm successful registration
     deactivate CommandLibrary
     
-    Steven->>APIToolkit: Test command recognition
+    AAC Game Developer->>APIToolkit: Test command recognition
     activate APIToolkit
     APIToolkit->>System: Turn on microphone
     activate System
     System-->>APIToolkit: Microphone ready
     deactivate System
-    APIToolkit-->>Steven: Ready to listen for commands
-    Steven->>System: Speak "Move Left"
+    APIToolkit-->>AAC Game Developer: Ready to listen for commands
+    AAC Game Developer->>System: Speak Command
     activate System
     System->>System: Process audio input
     Note over System, CommandLibrary: Handled by API (see Use Case 1)
@@ -315,49 +315,19 @@ sequenceDiagram
     CommandLibrary->>CommandLibrary: Match text to command
     CommandLibrary-->>APIToolkit: Command recognized
     deactivate CommandLibrary
-    APIToolkit-->>Steven: Command recognized: Move Left
+    APIToolkit-->>AAC Game Developer: Command recognized
     deactivate APIToolkit
-    APIToolkit-->>Steven: Setup complete
+    APIToolkit-->>AAC Game Developer: Setup complete
     deactivate APIToolkit
 ```
-
-### Use Case 7 - Register New Commands
+### Use Case 7 - Toggle Input History
 
 ```mermaid
 sequenceDiagram
-    actor Steven
-    participant AAC Voice API
-    participant CommandLibrary
-    Note over CommandLibrary: Assume the system command library has common commands in command library by initialization
-
-    Steven ->> AAC Voice API: Enters a new command
-    activate AAC Voice API
-    AAC Voice API ->> CommandLibrary: Checks if command exists
-    activate CommandLibrary
-    
-    alt Command exists
-        CommandLibrary -->> AAC Voice API: Send message back
-        deactivate CommandLibrary
-        AAC Voice API -->> Steven: Notify command exists
-    else Command doesn't exist
-        AAC Voice API ->> CommandLibrary: Add new command
-        activate CommandLibrary
-        CommandLibrary -->> AAC Voice API: Notify confirmation
-        deactivate CommandLibrary
-        AAC Voice API -->> Steven: Confirms success of adding command
-        deactivate AAC Voice API
-    end
-```
-### Use Case 8 - Toggle Input History
-
-```mermaid
-sequenceDiagram
-    actor Steven
-    Note over Stan: AAC game shows command history while running, which makes Stan overstimulated
-    actor Stan's Caretaker
+    actor Caretaker
+    actor AAC Game Developer
     participant AAC Game
     
-    Note over Stan's Caretaker, AAC Game: Game is running API, game command history is visible to players.
     Stan's Caretaker ->> AAC Game: Access API window
     activate AAC Game
     Stan's Caretaker ->> AAC Game: Navigates to settings
@@ -369,12 +339,12 @@ sequenceDiagram
     Note over Stan: Stan can now comfortably enjoy playing the game
     Note over Stan's Caretaker, AAC Game: AAC Game is playable without visible command history
     
-    opt Steven troubleshoots new command registered
-        Steven ->> AAC Game: Register new command
+    alt AAC game developer troubleshoots new command registered
+        AAC Game Developer ->> AAC Game: Register new command
         activate AAC Game
-        Steven ->> AAC Game: Checks command history
-        AAC Game -->> Steven: Displays command history
-        Note over Steven, AAC Game: Confidence tha command ws registered and working correctly
+        AAC Game Developer ->> AAC Game: Checks command history
+        AAC Game -->> AAC Game Developer: Displays command history
+        Note over AAC Game Developer, AAC Game: Confidence tha command ws registered and working correctly
     end
 ```
 
@@ -382,23 +352,23 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor Steven
+    actor AAC Game Developer
     participant GameSystem
     
     Note over GameSystem: microphone is active
     
-    Steven ->> GameSystem: Speak game commands into microphone
+    AAC Game Developer ->> GameSystem: Speak game commands into microphone
     activate GameSystem
     GameSystem ->> GameSystem: Interpret and input command into game
-    GameSystem -->> Steven: Return confidence level
+    GameSystem -->> AAC Game Developer: Return confidence level
     deactivate GameSystem
     
     Note over GameSystem: Game accurately interprets game commands
     
     opt Incorrect voice input
         activate GameSystem
-        GameSystem -->> Steven: Incorrectly interpreted voice input
-        Steven ->> GameSystem: Adjusts code accordingly
+        GameSystem -->> AAC Game Developer: Incorrectly interpreted voice input
+        AAC Game Developer ->> GameSystem: Adjusts code accordingly
         deactivate GameSystem
     end
 
