@@ -168,36 +168,18 @@ sequenceDiagram
 
     API->>SynonymMapper: Look up "hop" in synonym table
     activate SynonymMapper
-    SynonymMapper-->>Game: Map to "Jump" command
+    SynonymMapper-->>API: Map to "Jump" command
     deactivate SynonymMapper
-    API->>API: Isolate command (See Diagram 2)
     API-->>Game: Return command
     deactivate API
     
-    
-    Game->>API: Send Jump command
-    activate API
-    API->>Game: Execute Jump action
     activate Game
-    Game-->>AAC Player: Show visual confirmation
+    Game->>Game: Execute Jump callback function
+    Game-->>AAC Player: Changed game state and logs
     deactivate Game
-    API->>Game: Log command with synonym info
-    deactivate API
-
-    alt Multiple possible matches
-        Game->>Game: Check confidence scores
-        alt High confidence match exists
-            Game->>API: Send highest confidence command
-            API->>Game: Execute action
-            Game-->>AAC Player: Show visual feedback
-        else No clear match
-            Game-->>AAC Player: Request command confirmation
-        end
-    else Synonym mapping disabled
-        Game-->>AAC Player: "Command not recognized"
+    alt Synonym mapping disabled by AAC Game Developer
+        Game-->>AAC Player: No change to game state
     end
-    
-    Game->>Game: Log synonym usage and confidence
     deactivate Game
 ```
 
