@@ -52,15 +52,21 @@ sequenceDiagram
 sequenceDiagram
     actor AAC Player
     participant Game
-    participant API
+    participant SpeechConverter
+    participant CommandConverter
     
     AAC Player->>Game: "please jump now"
     activate Game
-    Game->>API: transcribe audio
-    activate API
-    API->>API: Tokenize and filter out non-command words
-    API-->>Game: Return game commands
-    deactivate API
+    Game->>SpeechConverter: transcribe audio
+    activate SpeechConverter
+    SpeechConverter->>CommandConverter: Normalize and tokenize transcription
+    activate CommandConverter
+    CommandConverter->>CommandConverter: Check for commands in Commandlibrary
+    CommandConverter-->>SpeechConverter: Return command match
+    deactivate CommandConverter
+
+    SpeechConverter-->>Game: Return game commands
+    deactivate SpeechConverter
     activate Game
     Game->>Game: Execute callback function
     deactivate Game
@@ -149,60 +155,50 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor Suzy
-    actor AAC Game Developer
+    actor AAC Player
     participant Game
-    participant System
-    participant ASR
     participant SynonymMapper
     participant API
     
-    Note over AAC Game Developer: Previously configured<br/>synonym mappings
-    
-    Suzy->>System: Speak command "hop"
-    activate System
-    System->>ASR: Process audio
-    activate ASR
-    ASR-->>System: Return transcribed text
-    deactivate ASR
-    
-    System->>SynonymMapper: Look up "hop" in synonym table
+    AAC Player->>Game: Speak command "hop"
+    activate Game
+    Game->>API: Process audio data
+    activate API
+    API->>API: Transcribe and tokenize audio
+
+    API->>SynonymMapper: Look up "hop" in synonym table
     activate SynonymMapper
-    SynonymMapper-->>System: Map to "Jump" command
+    SynonymMapper-->>Game: Map to "Jump" command
     deactivate SynonymMapper
+    API->>API: Isolate command (See Diagram 2)
+    API-->>Game: Return command
+    deactivate API
     
-    alt High confidence mapping
-        System->>API: Send Jump command
-        activate API
-        API->>Game: Execute Jump action
-        activate Game
-        Game-->>Suzy: Show visual confirmation
-        deactivate Game
-        API->>System: Log command with synonym info
-        deactivate API
-    else Unknown synonym
-        System-->>Suzy: "Did you mean JUMP?"
-        Suzy->>System: Confirm command
-        System->>API: Send Jump command
-        API->>Game: Execute Jump action
-        Game-->>Suzy: Show visual feedback
     
-    else Multiple possible matches
-        System->>System: Check confidence scores
+    Game->>API: Send Jump command
+    activate API
+    API->>Game: Execute Jump action
+    activate Game
+    Game-->>AAC Player: Show visual confirmation
+    deactivate Game
+    API->>Game: Log command with synonym info
+    deactivate API
+
+    alt Multiple possible matches
+        Game->>Game: Check confidence scores
         alt High confidence match exists
-            System->>API: Send highest confidence command
+            Game->>API: Send highest confidence command
             API->>Game: Execute action
-            Game-->>Suzy: Show visual feedback
+            Game-->>AAC Player: Show visual feedback
         else No clear match
-            System-->>Suzy: Request command confirmation
+            Game-->>AAC Player: Request command confirmation
         end
     else Synonym mapping disabled
-        System-->>Suzy: "Command not recognized"
-        System-->>AAC Game Developer: Option to enable synonym mapping
+        Game-->>AAC Player: "Command not recognized"
     end
     
-    System->>System: Log synonym usage and confidence
-    deactivate System
+    Game->>Game: Log synonym usage and confidence
+    deactivate Game
 ```
 
 ### Sequence Diagram 6 - Register Game Commands
