@@ -53,7 +53,6 @@ export class CommandMapping {
     options?: {
       description?: string;
       active?: boolean;
-      // icon?: unknown; // Uncomment if you reintroduce `icon` in the interface
     }
   ): boolean {
     const normalized = this.normalize(name);
