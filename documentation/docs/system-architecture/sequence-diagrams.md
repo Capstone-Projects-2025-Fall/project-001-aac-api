@@ -190,44 +190,39 @@ sequenceDiagram
     actor AAC Game Developer
     participant APIToolkit
     participant CommandLibrary
-    participant System
     
-    AAC Game Developer->>APIToolkit: Open API toolkit
+    AAC Game Developer->>APIToolkit: Download API toolkit
     activate APIToolkit
         
-    loop Add Common Game Commands
+    loop Add Game Commands
         AAC Game Developer->>APIToolkit: Add command
-        APIToolkit->>CommandLibrary: Register command 
-    end
-    
-    AAC Game Developer->>APIToolkit: Map commands to game actions
-    APIToolkit->>CommandLibrary: Store command mappings
-    activate CommandLibrary
+        APIToolkit->>CommandLibrary: Register command
+        AAC Game Developer->>APIToolkit: Map commands to game actions
+        APIToolkit->>CommandLibrary: Store command mappings
+        activate CommandLibrary
 
-    CommandLibrary-->>APIToolkit: Confirm successful registration
-    deactivate CommandLibrary
-    
-    AAC Game Developer->>APIToolkit: Test command recognition
-    activate APIToolkit
-    APIToolkit->>System: Turn on microphone
-    activate System
-    System-->>APIToolkit: Microphone ready
-    deactivate System
-    APIToolkit-->>AAC Game Developer: Ready to listen for commands
-    AAC Game Developer->>System: Speak Command
-    activate System
-    System->>System: Process audio input
-    Note over System, CommandLibrary: Handled by API (see Sequence Diagram 1)
-    System-->>CommandLibrary: Transcribed command
-    deactivate System
-    activate CommandLibrary
-    CommandLibrary->>CommandLibrary: Match text to command
-    CommandLibrary-->>APIToolkit: Command recognized
-    deactivate CommandLibrary
-    APIToolkit-->>AAC Game Developer: Command recognized
-    deactivate APIToolkit
-    APIToolkit-->>AAC Game Developer: Setup complete
-    deactivate APIToolkit
+        CommandLibrary-->>APIToolkit: Confirm successful registration
+        deactivate CommandLibrary
+    end
+    opt Test command recognition
+        AAC Game Developer->>Game: Start AAC Game, initialize model
+        activate Game
+        Game-->>AAC Game Developer: Model initialized
+        AAC Game Developer->>Game: Speak commands
+        activate Game
+        Game->>API: Process audio input
+        activate API
+        API-->>CommandLibrary: Check tokens with known commands
+        activate CommandLibrary
+        CommandLibrary->>CommandLibrary: Match token to command
+        CommandLibrary-->>API: Matched commands
+        deactivate CommandLibrary
+        API-->>Game: Return game commands
+        deactivate API
+        Game-->>AAC Game Developer: Changed gamestate and logs
+        deactivate Game
+        deactivate Game
+    end
 ```
 ### Sequence Diagram 7 - Toggle Input History
 
