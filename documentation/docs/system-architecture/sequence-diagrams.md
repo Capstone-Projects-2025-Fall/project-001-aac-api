@@ -228,25 +228,26 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor Caretaker
     actor AAC Game Developer
-    participant AAC Game
+    participant Game
+    participant APIToolkit
     
-    Stan's Caretaker ->> AAC Game: Access API window
-    activate AAC Game
-    Stan's Caretaker ->> AAC Game: Navigates to settings
-    AAC Game -->> Stan's Caretaker: Displays toggable settings for input history
-    Stan's Caretaker ->> AAC Game: Toggle off input history
-    
-    AAC Game -->> Stan: Reduced visual stimuli
-    deactivate AAC Game    
-    alt AAC game developer troubleshoots new command registered
-        AAC Game Developer ->> AAC Game: Register new command
-        activate AAC Game
-        AAC Game Developer ->> AAC Game: Checks command history
-        AAC Game -->> AAC Game Developer: Displays command history
-        Note over AAC Game Developer, AAC Game: Confidence tha command ws registered and working correctly
-    end
+    AAC Game Developer->>APIToolkit: Download API
+    activate APIToolkit
+    APIToolkit-->>AAC Game Developer: API package downloaded
+    deactivate APIToolkit
+    AAC Game Developer->>APIToolkit: Turn on toggleable command history
+    AAC Game Developer->>Game: Start AAC game
+    activate Game
+    AAC Game Developer->>Game: Click command history
+    activate Game
+    Game-->>AAC Game Developer: Display command history window
+    deactivate Game
+    AAC Game Developer->>Game: Click on command history again
+    activate Game
+    Game-->>AAC Game Developer: Hide command history window
+    deactivate Game
+    deactivate Game
 ```
 
 ### Sequence Diagram 8 - Confidence Level of Interpreted Game Input
