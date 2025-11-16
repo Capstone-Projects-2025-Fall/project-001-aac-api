@@ -61,8 +61,10 @@ sequenceDiagram
     API->>API: Tokenize and filter out non-command words
     API-->>Game: Return game commands
     deactivate API
+    activate Game
     Game->>Game: Execute callback function
-
+    deactivate Game
+    Game-->>AAC Player: Changed game state and logs
     alt Filter removes all words
         Game-->>AAC Player: No change to game state
     else Multiple possible commands
@@ -124,56 +126,23 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    actor Suzy
+    actor AAC Player
     participant Game
-    participant System
-    participant NoiseFilter
     participant API
     
-    Note over Suzy,System: Noisy environment (e.g., TV playing)
-    Suzy->>System: Speak command "left"
-    activate System
-    
-    System->>NoiseFilter: Process noisy audio
-    activate NoiseFilter
-    Note right of NoiseFilter: Apply noise suppression/<br/>filtering
-    NoiseFilter-->>System: Return cleaned audio
-    deactivate NoiseFilter
-    
-    System->>API: Transcribe cleaned audio
+    AAC Player->>Game: Speak command in noisy environment
+    activate Game
+    Game->>API: Audio data
     activate API
-    API-->>System: Return transcribed text
+    API->>API: Remove background noise with NoiseFilter
+    API->>API: Isolate command through audio processing pipeline (See Diagram 2)
+    API-->>Game: Return command
     deactivate API
-    
-    System->>System: Match to command
-    Note right of System: Maps to MoveLeft command
-    
-    alt High confidence
-        System->>API: Send MoveLeft command
-        activate API
-        API->>Game: Execute move action
-        activate Game
-        Game-->>Suzy: Show visual confirmation
-        deactivate Game
-        API->>System: Log command with noise metrics
-        deactivate API
-    else Noise overwhelms voice
-        System-->>Suzy: "Can't hear you"
-        Note right of System: Record noise level metrics
-        opt Adaptive response
-            System-->>Suzy: "Try push-to-talk mode"
-            System->>System: Switch to push-to-talk
-        end
-    else Low confidence due to noise
-        System-->>Suzy: "Please repeat command"
-        opt After multiple failures
-            System-->>Suzy: "Move closer to mic"
-        end
-    end
-    
-    System->>System: Record environment metadata
-    Note right of System: Log noise levels for debugging
-    deactivate System
+    activate Game
+    Game->>Game: Execute callback functions
+    deactivate Game
+    Game-->>AAC Player: Changed game state and logs
+    deactivate Game
 ```
 
 ### Sequence Diagram 5 - Interpret Synonyms of Commands
