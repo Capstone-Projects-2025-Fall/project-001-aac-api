@@ -163,7 +163,7 @@ classDiagram
     index ..> commandLibrary
     AudioInputHandler *-- SpeechSeparation : contains
 ```
-**Figure 2** Class Architecture of our Api
+**Figure 2** Class Architecture of our API
 
 ### index
 This is the main entry point for npm package `'aac-voice-api'`.
