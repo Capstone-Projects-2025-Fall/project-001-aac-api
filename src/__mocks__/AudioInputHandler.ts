@@ -5,11 +5,9 @@ export const AudioInputHandlerMock = vi.fn().mockImplementation((onAudioChunk) =
     
     startListening: vi.fn().mockImplementation(() => {
 
-        const buffer = new Float32Array(48000*2);
-        for(let i =0; i< buffer.length; i++){
-            buffer[i] = 0.5;
-        }
-        onAudioChunk(buffer);//returns a float32 array of vlaues 0.5
+        const buffer = new Float32Array(48000*3).fill(0.5);
+
+       return onAudioChunk(buffer);//returns a float32 array of values 0.5
     }),
     stopListening: vi.fn(),
     isListening: false,

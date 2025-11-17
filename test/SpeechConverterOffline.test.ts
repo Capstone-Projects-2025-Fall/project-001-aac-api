@@ -20,7 +20,7 @@ import {SpeechConverterOffline} from "../src/SpeechConverterOffline";
 
 
 
-describe("SpeechConverter", () => {
+describe("SpeechConverterOffline", () => {
 
     
     let converter: SpeechConverterOffline;
@@ -111,6 +111,7 @@ describe("SpeechConverter", () => {
         const instance = AudioInputHandlerMock.mock.results[0].value;
         expect(instance.startListening).toHaveBeenCalled();
 
+        await new Promise(resolve => setTimeout(resolve, 0));
         //makes sure core methods were called within start listening
         expect(spySetAudio).toHaveBeenCalled();
         expect(WhisperModuleInstance.set_audio).toHaveBeenCalled();
@@ -200,6 +201,38 @@ describe("SpeechConverter", () => {
         (converter as any).processText(text);
         expect(mockCommandConverter.processTranscription).not.toHaveBeenCalledWith(text);
     });
+    it('returns true for silence (RMS below 0.01)', () => {
+    const waveform = new Float32Array([0.001, -0.002, 0.0005]);
+
+    const result = (converter as any).isSilence(waveform);
+
+    expect(result).toBe(true);
+  });
+
+  it('returns false for non-silence (RMS >= 0.01)', () => {
+    const waveform = new Float32Array([0.1, -0.05, 0.08]);
+
+    const result = (converter as any).isSilence(waveform);
+
+    expect(result).toBe(false);
+  });
+
+  it('returns true for an all-zero waveform', () => {
+    const waveform = new Float32Array([0, 0, 0, 0]);
+
+    const result = (converter as any).isSilence(waveform);
+
+    expect(result).toBe(true);
+  });
+
+  it('returns false at the threshold (RMS exactly 0.01)', () => {
+    // needs to be these numbers because of rounding 
+    const waveform = new Float32Array([0.0100001, -0.0100001]);
+
+    const result = (converter as any).isSilence(waveform);
+
+    expect(result).toBe(false);
+  });
 
     
 
