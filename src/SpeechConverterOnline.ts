@@ -45,7 +45,7 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
      */
     public init(modelPath: string, lang: string): Promise<void> {
         console.log("This implementation does not support this method. Please switch implementation to offline to use: ", modelPath, lang)
-        throw new Error("init() is not applicaple for this Online transcription.");
+        throw new Error("init() is not applicable for this Online transcription.");
     }
 
     /**
