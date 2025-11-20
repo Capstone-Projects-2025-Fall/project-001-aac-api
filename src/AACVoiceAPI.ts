@@ -206,23 +206,30 @@ export class AACVoiceAPI{
 
     /**
      * Adds a voice command to the system.
+     * Optionally fetches and registers synonyms from DataMuse API.
      *
      * @param {string} name: The name of the command that the user needs to speak.
      * @param {Function} action: A callback function that executes when the command is triggered.
-     * @param {string} description: A short explanation of what the command does. 
-     * @param {boolean} active: Whether the command is currently active. (true or false)
-     * @returns true if successfully added
+     * @param {string} options.description: A short explanation of what the command does. 
+     * @param {boolean} options.active: Whether the command is currently active. (true or false)
+     * @param {boolean} options.fetchSynonyms: Whether to automatically fetch synonyms (default: true)
+     * @returns Promise<boolean> true if successfully added
      */
-    public addVoiceCommand(
+    public async addVoiceCommand(
     name: string,
     action: () => void,
     options?: {
       description?: string;
       active?: boolean;
+      fetchSynonyms?: boolean;
       
     }
-    ): boolean {
-        return this.mapping?.addCommand(name,action, options) || false;
+    ): Promise<boolean> {
+        if (!this.mapping) {
+            return false;
+        }
+
+        return await this.mapping?.addCommand(name,action, options);
     }
 
     /**

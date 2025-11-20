@@ -8,13 +8,15 @@ describe('CommandMapping <-> CommandLibrary integration', () => {
     CommandLibrary.getInstance().clear();
   });
 
-  it('adds a command into the library and can retrieve it', () => {
+  it('adds a command into the library and can retrieve it', async() => {
     const mapper = new CommandMapping();
     
     // Try adding a Jump command - should work fine
-    const added = mapper.addCommand('Jump', () => {/* no-op */}, { 
+    const added = await mapper.addCommand('Jump', () => {/* no-op */}, { 
       description: 'Make avatar jump', 
-      active: true 
+      active: true ,
+      fetchSynonyms: false
+
     });
     
     expect(added).toBe(true);
@@ -31,13 +33,19 @@ describe('CommandMapping <-> CommandLibrary integration', () => {
     expect(cmd?.active).toBe(true);
   });
 
-  it('rejects duplicates by name (case-insensitive)', () => {
+  it('rejects duplicates by name (case-insensitive)', async() => {
     const mapper = new CommandMapping();
     
     // Add "Attack" first
-    const first = mapper.addCommand('Attack', () => {}, { description: 'Atk' });
+    const first = await mapper.addCommand('Attack', () => {}, { 
+      description: 'Atk',
+      fetchSynonyms: false
+     });
     // Try adding "attack" again - should fail because it's the same command
-    const second = mapper.addCommand('attack', () => {}, { description: 'Duplicate' });
+    const second = await mapper.addCommand('attack', () => {}, { 
+      description: 'Duplicate',
+      fetchSynonyms: false
+     });
     
     expect(first).toBe(true);
     expect(second).toBe(false); // nope, no duplicates allowed through this. 
@@ -50,11 +58,14 @@ describe('CommandMapping <-> CommandLibrary integration', () => {
     expect(all[0].description).toBe('Atk'); // kept the original description
   });
 
-  it('removes an existing command', () => {
+  it('removes an existing command', async() => {
     const mapper = new CommandMapping();
     
     // Add a defend command
-    mapper.addCommand('Defend', () => {}, { description: 'Block' });
+    await mapper.addCommand('Defend', () => {}, { 
+      description: 'Block',
+      fetchSynonyms: false
+     });
     expect(mapper.hasCommand('defend')).toBe(true);
     
     // Remove it using uppercase (testing case-insensitivity)
@@ -68,24 +79,36 @@ describe('CommandMapping <-> CommandLibrary integration', () => {
     expect(lib.get('defend')).toBeUndefined();
   });
 
-  it('lists all commands (normalized names)', () => {
+  it('lists all commands (normalized names)', async() => {
     const mapper = new CommandMapping();
     
     // Add a couple commands with mixed casing
-    mapper.addCommand('Jump', () => {}, { description: 'J' });
-    mapper.addCommand('Spin', () => {}, { description: 'S' });
+    await mapper.addCommand('Jump', () => {}, { 
+      description: 'J',
+      fetchSynonyms: false 
+  });
+    await mapper.addCommand('Spin', () => {}, { 
+      description: 'S',
+      fetchSynonyms: false 
+     });
     
     const names = mapper.getAllCommands();
     // Sort them so the order doesn't matter in our test
     expect(names.sort()).toEqual(['jump', 'spin']); // all lowercase
   });
 
-  it('clearAllCommands empties the library', () => {
+  it('clearAllCommands empties the library', async() => {
     const mapper = new CommandMapping();
     
     // Add two commands
-    mapper.addCommand('A', () => {}, { description: '' });
-    mapper.addCommand('B', () => {}, { description: '' });
+    await mapper.addCommand('A', () => {}, { 
+      description: '' ,
+      fetchSynonyms: false 
+    });
+    await mapper.addCommand('B', () => {}, {
+      description: '',
+      fetchSynonyms: false 
+     });
     
     const lib = CommandLibrary.getInstance();
     expect(lib.list().length).toBe(2); // yep, both are there
@@ -95,21 +118,28 @@ describe('CommandMapping <-> CommandLibrary integration', () => {
     expect(lib.list().length).toBe(0); // all gone!
   });
 
-  it('normalizes and still works with whitespace', () => {
+  it('normalizes and still works with whitespace', async() => {
     const mapper = new CommandMapping();
     
     // Add a command with spaces around it - should still work
-    const ok = mapper.addCommand(' TaP ', () => {}, { description: 'tap' });
+    const ok = await mapper.addCommand(' TaP ', () => {}, { 
+      description: 'tap',
+      fetchSynonyms: false 
+     });
+
     
     expect(ok).toBe(true);
     expect(mapper.hasCommand('tap')).toBe(true); // finds it without the spaces
   });
 
-  it('rejects empty name after trim', () => {
+  it('rejects empty name after trim', async() => {
     const mapper = new CommandMapping();
     
     // Try adding a command that's just whitespace - should fail
-    const ok = mapper.addCommand('   ', () => {}, { description: '' });
+    const ok = await mapper.addCommand('   ', () => {}, { 
+      description: '',
+      fetchSynonyms: false 
+     });
     
     expect(ok).toBe(false); // nope!
     
@@ -117,12 +147,15 @@ describe('CommandMapping <-> CommandLibrary integration', () => {
     expect(lib.list().length).toBe(0); // nothing got added
   });
 
-  it('stored action executes when called from library', () => {
+  it('stored action executes when called from library', async() => {
     const mapper = new CommandMapping();
     let executed = false;
     
     // Add a command that flips a flag when executed
-    mapper.addCommand('fire', () => { executed = true; }, { description: 'shoot' });
+    await mapper.addCommand('fire', () => { executed = true; }, { 
+      description: 'shoot',
+      fetchSynonyms: false 
+     });
     
     // Grab it from the library and execute it
     const lib = CommandLibrary.getInstance();
