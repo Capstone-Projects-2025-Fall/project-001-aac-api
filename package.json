@@ -12,7 +12,7 @@
     "lint": "eslint 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "format": "prettier --write '**/*.{ts,js,json}'",
     "test": "vitest",
-    "docs": "typedoc && node scripts/fix-mdx.js && node rename-docs.js",
+    "docs": "typedoc && node scripts/fix-mdx.js && node scripts/rename-docs.js",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
     "coverage": "vitest run --coverage"
   },
