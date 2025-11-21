@@ -12,7 +12,7 @@
     "lint": "eslint 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "format": "prettier --write '**/*.{ts,js,json}'",
     "test": "vitest",
-    "docs": "typedoc && node rename-docs.js",
+    "docs": "typedoc && node scripts/fix-mdx.js && node rename-docs.js",
     "ci": "npm run lint && npm run typecheck && npm run test && npm run build",
     "coverage": "vitest run --coverage"
   },
@@ -51,6 +51,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
+    "glob": "^13.0.0",
     "globals": "^16.4.0",
     "jiti": "^2.5.1",
     "prettier": "^3.6.2",
