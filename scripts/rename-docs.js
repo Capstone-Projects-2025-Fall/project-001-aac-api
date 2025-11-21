@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const docsDir = path.join(__dirname, 'documentation/docs/api-specification/');
+const docsDir = path.join(__dirname, '../documentation/docs/api-specification/');
 
 function renameReadmeToParentFolder(dir) {
   const readmePath = path.join(dir, 'README.md');
