@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/132</span>
+                <span class='fraction'>0/135</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/132</span>
+                <span class='fraction'>0/135</span>
             </div>
         
             
@@ -354,7 +354,14 @@
 <a name='L289'></a><a href='#L289'>289</a>
 <a name='L290'></a><a href='#L290'>290</a>
 <a name='L291'></a><a href='#L291'>291</a>
-<a name='L292'></a><a href='#L292'>292</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -569,15 +576,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -853,23 +867,30 @@ export interface voiceAPIConfig {
 &nbsp;
     /**
      * Adds a voice command to the system.
+     * Optionally fetches and registers synonyms from DataMuse API.
      *
      * @param {string} name: The name of the command that the user needs to speak.
      * @param {Function} action: A callback function that executes when the command is triggered.
-     * @param {string} description: A short explanation of what the command does. 
-     * @param {boolean} active: Whether the command is currently active. (true or false)
-     * @returns true if successfully added
+     * @param {string} options.description: A short explanation of what the command does. 
+     * @param {boolean} options.active: Whether the command is currently active. (true or false)
+     * @param {boolean} options.fetchSynonyms: Whether to automatically fetch synonyms (default: true)
+     * @returns Promise&lt;boolean&gt; true if successfully added
      */
-<span class="cstat-no" title="statement not covered" >    public addVoiceCommand(</span>
+<span class="cstat-no" title="statement not covered" >    public async addVoiceCommand(</span>
 <span class="cstat-no" title="statement not covered" >    name: string,</span>
 <span class="cstat-no" title="statement not covered" >    action: () =&gt; void,</span>
 <span class="cstat-no" title="statement not covered" >    options?: {</span>
       description?: string;
       active?: boolean;
+      fetchSynonyms?: boolean;
       
     }
-<span class="cstat-no" title="statement not covered" >    ): boolean {</span>
-<span class="cstat-no" title="statement not covered" >        return this.mapping?.addCommand(name,action, options) || false;</span>
+<span class="cstat-no" title="statement not covered" >    ): Promise&lt;boolean&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (!this.mapping) {</span>
+<span class="cstat-no" title="statement not covered" >            return false;</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return await this.mapping?.addCommand(name,action, options);</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 &nbsp;
     /**
@@ -943,7 +964,7 @@ export interface voiceAPIConfig {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-17T14:45:11.059Z
+                at 2025-11-21T02:44:05.617Z
             </div>
         <script src="prettify.js"></script>
         <script>
