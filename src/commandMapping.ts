@@ -83,7 +83,7 @@ export class CommandMapping {
     };
 
     const ok = this.library.add(cmd);
-    
+
     if (!ok) {
       console.warn(`Failed to add command "${normalized}"`);
       return false;
@@ -93,7 +93,7 @@ export class CommandMapping {
 
     // Fetch and register synonyms if enabled (default: true)
     const fetchSynonyms = options?.fetchSynonyms ?? true;
-    
+
     if (fetchSynonyms) {
       // Fetch synonyms asynchronously (doesn't block command registration)
       this.fetchAndRegisterSynonyms(normalized).catch(error => {
@@ -107,18 +107,18 @@ export class CommandMapping {
   /**
    * Fetches synonyms from the API and registers them in the CommandLibrary.
    * This is called automatically by addCommand() unless fetchSynonyms is disabled.
-   * 
+   *
    * @private
    * @param {string} commandName - The command name to fetch synonyms for
    * @returns {Promise<void>}
    */
   private async fetchAndRegisterSynonyms(commandName: string): Promise<void> {
     console.log(`Fetching synonyms for "${commandName}"...`);
-    
+
     try {
       // Get synonyms from the API (cached if already fetched)
       const synonyms = await this.synonymResolver.getSynonyms(commandName);
-      
+
       if (synonyms.length === 0) {
         console.log(`No synonyms found for "${commandName}"`);
         return;
@@ -126,7 +126,7 @@ export class CommandMapping {
 
       // Register all synonyms in the library
       const count = this.library.addSynonyms(synonyms, commandName);
-      
+
       console.log(`Registered ${count} synonym(s) for "${commandName}": ${synonyms.slice(0, 5).join(', ')}${synonyms.length > 5 ? '...' : ''}`);
     } catch (error) {
       console.error(`Failed to fetch synonyms for "${commandName}":`, error);
@@ -136,11 +136,11 @@ export class CommandMapping {
   /**
    * Manually adds a synonym for an existing command.
    * Use this to add custom synonyms that aren't in the API.
-   * 
+   *
    * @param {string} synonym - The synonym word
    * @param {string} commandName - The command it should trigger
    * @returns {boolean} True if synonym was added successfully
-   * 
+   *
    * @example
    * ```ts
    * mapper.addSynonym('hop', 'jump');  // Now "hop" triggers "jump" command
@@ -152,11 +152,11 @@ export class CommandMapping {
 
   /**
    * Manually adds multiple synonyms for an existing command.
-   * 
+   *
    * @param {string[]} synonyms - Array of synonym words
    * @param {string} commandName - The command they should trigger
    * @returns {number} Number of synonyms successfully added
-   * 
+   *
    * @example
    * ```ts
    * mapper.addSynonyms(['hop', 'leap', 'spring'], 'jump');
@@ -168,10 +168,10 @@ export class CommandMapping {
 
   /**
    * Gets all synonyms for a specific command.
-   * 
+   *
    * @param {string} commandName - The command name
    * @returns {string[]} Array of synonyms
-   * 
+   *
    * @example
    * ```ts
    * const synonyms = mapper.getSynonymsForCommand('jump');
@@ -240,10 +240,10 @@ export class CommandMapping {
     this.library.clear();
     console.log('All commands and synonyms cleared');
   }
-  
+
   /**
    * Gets the total number of synonym mappings registered.
-   * 
+   *
    * @returns {number} Number of synonyms
    */
   public getSynonymCount(): number {

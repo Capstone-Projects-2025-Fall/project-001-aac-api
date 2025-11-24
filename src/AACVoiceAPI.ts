@@ -4,6 +4,8 @@ import { SpeechConverterInterface } from "./SpeechConverterInterface";
 import { SpeechConverterOffline } from "./SpeechConverterOffline";
 import { SpeechConverterOnline } from "./SpeechConverterOnline";
 import { CommandMapping } from "./commandMapping";
+import { ConfidenceConfig } from './ConfidenceConfig';
+import { CommandConverter} from './CommandConverter';
 
 /**
  * AACVoiceAPI is a facade class that provides a simplified interface
@@ -38,6 +40,9 @@ export interface voiceAPIConfig {
     modelUrl: string,
     language?: string;
     useSpeakerSeparation?: boolean;
+    confidenceThreshold?: number;
+    usePhoneticMatching?: boolean;
+    logConfidenceScores?: boolean;
     }
 
 export class AACVoiceAPI{
@@ -60,7 +65,26 @@ export class AACVoiceAPI{
      */
     public async initiate(config: voiceAPIConfig): Promise<void> {
         this.currentMode = config.mode;
-        
+
+        if (config.confidenceThreshold !== undefined ||
+          config.usePhoneticMatching !== undefined ||
+          config.logConfidenceScores !== undefined) {
+
+          const confidenceConfig: Partial<ConfidenceConfig> = {};
+
+          if (config.confidenceThreshold !== undefined) {
+            confidenceConfig.globalThreshold = config.confidenceThreshold;
+          }
+          if (config.usePhoneticMatching !== undefined) {
+            confidenceConfig.usePhoneticMatching = config.usePhoneticMatching;
+          }
+          if (config.logConfidenceScores !== undefined) {
+            confidenceConfig.logConfidenceScore = config.logConfidenceScores;
+          }
+
+          const converter = CommandConverter.getInstance();
+          converter.getConfidenceMatcher().updateConfig(confidenceConfig);
+      }
 
         if (config.mode === 'offline') {
             if (!config.modelUrl || !config.language) {

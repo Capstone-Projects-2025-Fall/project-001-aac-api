@@ -3,7 +3,7 @@
  * 
  * @interface GameCommand
  * @example
- * ```typescript
+ * ```TypeScript
  * const jumpCommand: GameCommand = {
  *   name: "jump",
  *   action: () => player.jump(),

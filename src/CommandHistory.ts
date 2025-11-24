@@ -8,6 +8,10 @@ export interface CommandLogEntry {
   commandName: string;
   /** Whether the callback executed successfully */
   status: 'success' | 'failed';
+  /** The confidence level of its match with said word */
+  confidence?: number,
+  /** If it was an exact match or not */
+  matchType?: string,
 }
 
 /**
