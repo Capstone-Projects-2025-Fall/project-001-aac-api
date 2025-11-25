@@ -25,10 +25,16 @@ const voice = new AACVoiceAPI();
 await voiceAPI.initiateMultiSpeaker('http://localhost:8000');
 ```
 
-Also, since you may or may not be using speaker separation, we have exposed a method for you that returns `true` or `false` depending on if Speaker Separation is enabled.
+We also expose methods that allow the user to switch from speaker separation mode on the fly. to do so, you simply just need to either of these two methods:
 
 ```ts
 const voice = new AACVoiceAPI();
 
-voice.isUsingSpeakerSeparation()
+voice.switchSpeakerMode(true);
+```
+or
+```ts
+const voice = new AACVoiceAPI();
+
+voice.toggleSpeakerMode();
 ```

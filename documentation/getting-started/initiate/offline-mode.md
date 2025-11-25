@@ -31,3 +31,12 @@ All available models to use and download can be found [here](https://huggingface
 :::tip Recommendation
 For best real-time speech transcription use the ggml-tiny.bin model
 :::
+
+If you would like to find out which mode is currently running during the game in case you have both options available to the user, use the command:
+
+```ts
+const voice = new AACVoiceAPI();
+
+voice.getMode();
+```
+Returns a string containing the word 'online' or 'offline' depending on which one is currently running
