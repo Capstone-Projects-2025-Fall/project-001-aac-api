@@ -57,3 +57,12 @@ await voiceAPI.initiateMultiSpeaker('http://localhost:8000');
 |Parameters|Type|Description|
 |:----------:|:-----:|:----------|
 |modelUrl    | string| The domain name of where the backend is being hosted<br/>During development, you can simply pass in ```http://localhost:PORT``` where PORT = the port it is running on|
+
+If you would like to find out which mode is currently running during the game in case you have both options available to the user, use the command:
+
+```ts
+const voice = new AACVoiceAPI();
+
+voice.getMode();
+```
+Returns a string containing the word 'online' or 'offline' depending on which one is currently running
