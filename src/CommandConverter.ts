@@ -1,6 +1,7 @@
 import { CommandLibrary, GameCommand } from './commandLibrary';
 import { CommandHistory, CommandLogEntry } from './CommandHistory';
 import { ConfidenceMatcher } from './ConfidenceMatcher';
+import { SynonymResolver } from './SynonymResolver';
 
 /**
  * CommandConverter processes transcribed text in real-time, tokenizes it,
@@ -10,6 +11,7 @@ import { ConfidenceMatcher } from './ConfidenceMatcher';
  * - Tokenizes incoming transcription text into individual words
  * - Normalizes and cleans tokens (lowercase, trim, remove punctuation)
  * - Checks each token against the CommandLibrary
+ * - Uses SynonymResolver to check for synonym matches
  * - Sends matched commands to CommandHistory with timestamps
  * - Automatically executes matched commands
  * - Invokes callback when commands are matched
@@ -24,6 +26,9 @@ export class CommandConverter {
   /** Reference to ConfidenceMatcher for phonetic matching */
   private confidenceMatcher: ConfidenceMatcher;
 
+  /** Reference to SynonymResolver for synonym matching */
+  private synonymResolver: SynonymResolver;
+
   /** Callback function invoked when commands are matched */
   private onCommandMatched?: (commands: GameCommand[], transcription: string) => void;
 
@@ -35,6 +40,7 @@ export class CommandConverter {
     this.library = CommandLibrary.getInstance();
     this.commandHistory = CommandHistory.getInstance();
     this.confidenceMatcher = new ConfidenceMatcher();
+    this.synonymResolver = SynonymResolver.getInstance();
   }
 
   /**
@@ -55,6 +61,15 @@ export class CommandConverter {
    */
   public getConfidenceMatcher(): ConfidenceMatcher {
     return this.confidenceMatcher;
+  }
+
+  /**
+   * Gets the synonym resolver instance
+   * @returns {SynonymResolver} The synonym resolver instance
+   */
+
+  public getSynonymResolver(): SynonymResolver {
+    return this.synonymResolver;
   }
 
   /**
@@ -88,28 +103,61 @@ export class CommandConverter {
   }
 
   /**
-   * Processes new transcription text by tokenizing it and checking
-   * each token against the CommandLibrary.
+   * Attempts to find a command match for a given token.
+   * Checks in order:
+   * 1. Direct match in library
+   * 2. Synonym match in library's synonym map
+   * 3. API-based synonym match using SynonymResolver
    * 
-   * For each matched command:
-   * - Logs it to the command log with a timestamp
-   * - Automatically executes the command's action/callback function
-   * 
-   * @param {string} transcription - The new transcribed text from getTranscribed()
-   * @returns {GameCommand[]} Array of matched commands found in the transcription
+   * @private
+   * @param {string} token - The word token to match
+   * @returns {Promise<GameCommand | null>} The matched command or null
    */
+  private async findCommandMatch(token: string): Promise<GameCommand | null> {
+    // 1. Check for direct command match
+    const directMatch = this.library.get(token);
+    if (directMatch) {
+      return directMatch;
+    }
+
+    // 2. Check for registered synonym match
+    const synonymMatch = this.library.findCommandBySynonym(token);
+    if (synonymMatch) {
+      return synonymMatch;
+    }
+
+    // 3. Check for API-based synonym match
+    // Get all registered command names
+    const registeredCommands = this.library.list().map(cmd => cmd.name);
+    
+    // Check if the spoken word is a synonym of any registered command
+    for (const commandName of registeredCommands) {
+      const areSynonyms = await this.synonymResolver.areSynonyms(token, commandName);
+      if (areSynonyms) {
+        console.log(`Synonym match found: "${token}" → "${commandName}"`);
+        return this.library.get(commandName) || null;
+      }
+    }
+
+    return null;
+  }
+
   /**
    * Processes new transcription text by tokenizing it and checking
-   * each token against the CommandLibrary using confidence matching.
+   * each token against the CommandLibrary using multiple matching strategies:
+   * - Direct command match
+   * - Registered synonym match
+   * - API-based synonym match
+   * - Confidence/phonetic matching
    *
    * For each matched command:
    * - Logs it to the command log with a timestamp
    * - Automatically executes the command's action/callback function
    *
    * @param {string} transcription - The new transcribed text from getTranscribed()
-   * @returns {GameCommand[]} Array of matched commands found in the transcription
+   * @returns {Promise<GameCommand[]>} Array of matched commands found in the transcription
    */
-  public processTranscription(transcription: string): GameCommand[] {
+  public async processTranscription(transcription: string): Promise<GameCommand[]> {
     if (!transcription || !transcription.trim()) {
       return [];
     }
@@ -120,10 +168,31 @@ export class CommandConverter {
 
     for (const token of tokens) {
       // Use confidence matcher to find matches
-      const matchResult = this.confidenceMatcher.findMatch(token, this.library);
+      const synonymMatch = await this.findCommandMatch(token);
 
-      if (matchResult && !processedCommandNames.has(matchResult.command.name)) {
-        const command = matchResult.command;
+      if (synonymMatch && !processedCommandNames.has(synonymMatch.name)) {
+        matchedCommands.push(synonymMatch);
+        processedCommandNames.add(synonymMatch.name);
+
+        // Execute the command and log with status
+        let status: 'success' | 'failed' = 'success';
+        try {
+          synonymMatch.action();
+        } catch (error) {
+          status = 'failed';
+          console.error(`Error executing command "${synonymMatch.name}":`, error);
+        }
+
+        // Log the command with execution status and confidence info
+        // Log as exact match since synonym was found
+        this.logCommand(synonymMatch, transcription, status, 1.0, true);
+        continue;
+      }
+
+      const confidenceMatch = this.confidenceMatcher.findMatch(token, this.library);
+
+      if (confidenceMatch && !processedCommandNames.has(confidenceMatch.command.name)) {
+        const command = confidenceMatch.command;
         matchedCommands.push(command);
         processedCommandNames.add(command.name);
 
@@ -141,8 +210,8 @@ export class CommandConverter {
           command,
           transcription,
           status,
-          matchResult.confidence,
-          matchResult.isExactMatch
+          confidenceMatch.confidence,
+          confidenceMatch.isExactMatch
         );
       }
     }
