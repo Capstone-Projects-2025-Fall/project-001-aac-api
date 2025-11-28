@@ -2,6 +2,8 @@
 
 The backend transcription model is the system that receives raw audio, processes it, and returns the text version of what was spoken. It handles tasks like chunking audio, running it through a speech-to-text engine, and sending back structured transcription results.
 
+
+
 ## Why It’s Useful
 
 Using a backend model keeps all the heavy processing off the user’s device, giving faster and more reliable results. It also lets you centralize improvements (like better accuracy, noise handling, or new features) without requiring users to update anything. Overall, it makes transcription consistent, scalable, and easy to integrate with commands or game logic.
@@ -10,7 +12,7 @@ Using a backend model keeps all the heavy processing off the user’s device, gi
 
 
 ### For Mac/Linux
-- Clone this project.
+- Clone this [project](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api).
 - Navigate to the folder called backend
 - Ensure you have python version 3.11 installed To check your version, use command ```python3 --version```
 - Create a virtual environment using the command ```python3.11 -m venv venv```
@@ -19,7 +21,7 @@ Using a backend model keeps all the heavy processing off the user’s device, gi
 - Once all requirements have installed successfully, start the server using the command ```fastapi dev main.py```
 
 ### For Windows
-- Clone this project.
+- Clone this [project](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api).
 - Navigate to the folder called backend
 - Ensure you have python version 3.11 installed. To check your version, use command ```python3 --version```
 - Create a virtual environment using the command ```python3.11 -m venv venv```
