@@ -23,6 +23,3 @@ or
 ```bash
 npm i aac-voice-api
 ```
-
-
-This command simply adds our npm package to your project for immediate use.
