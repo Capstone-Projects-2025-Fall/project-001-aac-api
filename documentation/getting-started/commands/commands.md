@@ -89,7 +89,9 @@ Removes all commands previously registered withing the library.
 
 voice.isRegistered('jump');
 ```
+
 |Parameters|Type|Description|
 |:----------:|:-----:|:----------|
 |name|string|Takes the name of the command you are checking|
+
 Returns ```true``` if command has already been registered.
