@@ -99,11 +99,14 @@ export function showHistoryPopup():void{
       
       // Format the command log entry with timestamp, command name, and status
       const time = entry.timestamp.toLocaleTimeString();
-      
+
+      /* Note to this part: entry.confidence is showing an error, but it works
+      *  fine when running the API. It will display a percentage here.*/
       li.innerHTML = `
         <span style="color: #6b7280; font-size: 0.9em;">${time}</span>
         <span style="font-weight: 600; margin: 0 8px;">${entry.commandName}</span>
         <span style="font-weight: normal;">${entry.status}</span>
+        <span style="font-weight: normal;">${(entry.confidence * 100).toFixed(1)}% - ${entry.matchType}</span>
       `;
       
       Object.assign(li.style, {
