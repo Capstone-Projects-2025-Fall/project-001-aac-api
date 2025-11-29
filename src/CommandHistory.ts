@@ -17,6 +17,23 @@ export interface CommandLogEntry {
 /**
  * CommandHistory keeps track of a chronological log of commands.
  * 
+ * **When to use `CommandHistory` vs `Logger`:**
+ * 
+ * - **Use `CommandHistory`** for:
+ *   - Lightweight command-only tracking
+ *   - UI features like command history popup (`showHistoryPopup()`)
+ *   - Simple execution tracking without full context
+ *   - End-user facing features that need quick command lookups
+ *   - Backward compatibility with existing UI components
+ * 
+ * - **Use `Logger`** (see Logging.ts) for:
+ *   - Comprehensive session analytics with full transcription text
+ *   - Detailed synonym resolution tracking (library vs API sources)
+ *   - Confidence scores and error messages
+ *   - Multi-speaker support and speaker identification
+ *   - JSON export for data analysis and debugging
+ *   - Research and development purposes
+ * 
  * This class allows you to:
  * - Add new commands to the history (if logging is enabled).
  * - Retrieve all commands or a slice of commands.
