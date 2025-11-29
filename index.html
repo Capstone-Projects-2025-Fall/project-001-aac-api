@@ -18,11 +18,15 @@
     import { SpeechConverterOnline } from './src/SpeechConverterOnline.js';
     import {showHistoryPopup } from './src/showHistoryPopup.js';
     import { CommandMapping } from './src/commandMapping.js';
+    import { SpeechConverterOffline } from './src/SpeechConverterOffline.js';
     
 
     document.getElementById("popUp").onclick = () => showHistoryPopup();
+    // Speech Converter Online
+    // const sc = new SpeechConverterOnline();
 
-    const sc = new SpeechConverterOnline();
+    // Speech Converter Offline
+    const sc = new SpeechConverterOffline();
     const logEl = document.getElementById("transcriptionLog");
     let pollingId = null;
     let lastTextIndex = 0;

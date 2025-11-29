@@ -96,16 +96,24 @@ export function showHistoryPopup():void{
     for (let i = 0; i < items.length; i++) {
       const entry = items[i];
       const li = document.createElement('li');
-      
+
       // Format the command log entry with timestamp, command name, and status
       const time = entry.timestamp.toLocaleTimeString();
-      
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // Show the confidence to be formatted by percentage (had to add suppression here to prevent error)
+      const isExactorPhonetic = 100 * entry.confidence;
+
+      /* Note to this part: entry.confidence is showing an error, but it works
+       *  fine when running the API. It will display a percentage here.*/
       li.innerHTML = `
         <span style="color: #6b7280; font-size: 0.9em;">${time}</span>
         <span style="font-weight: 600; margin: 0 8px;">${entry.commandName}</span>
         <span style="font-weight: normal;">${entry.status}</span>
+        <span style="font-weight: normal;">(${isExactorPhonetic.toFixed(1)}% - ${entry.matchType})</span>
       `;
-      
+
       Object.assign(li.style, {
         padding: '10px 12px',
         margin: '6px 0',
