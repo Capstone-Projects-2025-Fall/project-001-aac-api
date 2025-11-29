@@ -455,7 +455,7 @@ describe('Logger', () => {
     it('should clear all entries and reset ID counter', () => {
       const id1 = logger.createEntry('test 1');
       logger.finalizeEntry(id1);
-      const id2 = logger.createEntry('test 2');
+      logger.createEntry('test 2');
 
       logger.clear();
 
