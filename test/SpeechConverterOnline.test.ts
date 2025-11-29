@@ -58,7 +58,7 @@ describe("SpeechConverterOnline", () =>{
         const text = "run";
         (converter as any).processText(text);
 
-        expect(mockCommandConverter.processTranscription).toHaveBeenCalledWith(text);
+        expect(mockCommandConverter.processTranscription).toHaveBeenCalledWith(text, undefined);
     });
     it("ProcessText called with null value", () => {
 
@@ -70,7 +70,7 @@ describe("SpeechConverterOnline", () =>{
 
         const text = "[BLANK_AUIDIO]";
         (converter as any).processText(text);
-        expect(mockCommandConverter.processTranscription).toHaveBeenCalledWith(text);
+        expect(mockCommandConverter.processTranscription).toHaveBeenCalledWith(text, undefined);
     });
     it("ProcessText called with spaces only", () => {
 
