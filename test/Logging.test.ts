@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Logger, LogEntry, MatchedCommand } from '../src/Logging';
+import { Logger } from '../src/Logging';
 
 describe('Logger', () => {
   let logger: Logger;
@@ -116,7 +116,7 @@ describe('Logger', () => {
     it('should auto-finalize entry after 60 seconds', () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       
-      const entryId = logger.createEntry('test transcription');
+      logger.createEntry('test transcription');
       
       expect(logger.getPendingCount()).toBe(1);
       expect(logger.getFinalizedCount()).toBe(0);
@@ -168,7 +168,7 @@ describe('Logger', () => {
       const id1 = logger.createEntry('finalized 1');
       logger.finalizeEntry(id1);
 
-      const id2 = logger.createEntry('pending');
+      logger.createEntry('pending');
 
       const id3 = logger.createEntry('finalized 2');
       logger.finalizeEntry(id3);
@@ -247,7 +247,7 @@ describe('Logger', () => {
       expect(json).toContain('\n  ');
       // Nested objects will have 4 spaces, which is expected with 2-space indentation
       const lines = json.split('\n');
-      expect(lines[1]).toMatch(/^  /); // First nested level: 2 spaces
+      expect(lines[1]).toMatch(/^ {2}/); // First nested level: 2 spaces
     });
   });
 
