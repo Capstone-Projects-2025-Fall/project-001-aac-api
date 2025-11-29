@@ -2,6 +2,22 @@ import { CommandLibrary, GameCommand } from './commandLibrary';
 import { SynonymResolver } from './SynonymResolver';
 
 /**
+ * Result object returned when adding a command with synonym fetching.
+ * Provides developers with information about what synonyms were registered.
+ */
+export interface CommandAddResult {
+  /** Whether the command was successfully added */
+  success: boolean;
+  /** The command name that was added */
+  commandName: string;
+  /** Array of synonyms that were successfully registered */
+  synonymsMapped: string[];
+  /** Total number of synonyms mapped */
+  synonymCount: number;
+  /** Error message if command addition failed */
+  error?: string;
+}
+/**
  * CommandMapping provides a simple interface for developers to add and remove
  * commands from the CommandLibrary.
  *
@@ -51,7 +67,7 @@ export class CommandMapping {
    * @param {string} options.description - Description of what the command does
    * @param {boolean} options.active - Whether the command is active (default: true)
    * @param {boolean} options.fetchSynonyms - Whether to auto-fetch synonyms (default: true)
-   * @returns {Promise<boolean>} Returns true if command was added successfully, false if duplicate or invalid
+   * @returns {Promise<CommandAddResult>} Result object with command and synonym information
    */
   public async addCommand(
     name: string,
@@ -60,19 +76,30 @@ export class CommandMapping {
       description?: string;
       active?: boolean;
       fetchSynonyms?: boolean;
-      // icon?: unknown; // Uncomment if you reintroduce `icon` in the interface
     }
-  ): Promise<boolean> {
+  ): Promise<CommandAddResult> {
     const normalized = this.normalize(name);
 
     if (!normalized) {
       console.error('Command name cannot be empty');
-      return false;
+      return {
+        success: false,
+        commandName: name,
+        synonymsMapped: [],
+        synonymCount: 0,
+        error: 'Command name cannot be empty'
+      };
     }
 
     if (this.library.has(normalized)) {
       console.warn(`Command "${normalized}" already exists`);
-      return false;
+      return {
+        success: false,
+        commandName: normalized,
+        synonymsMapped: [],
+        synonymCount: 0,
+        error: `Command "${normalized}" already exists`
+      };
     }
 
     const cmd: GameCommand = {
@@ -86,22 +113,36 @@ export class CommandMapping {
 
     if (!ok) {
       console.warn(`Failed to add command "${normalized}"`);
-      return false;
+      return {
+        success: false,
+        commandName: normalized,
+        synonymsMapped: [],
+        synonymCount: 0,
+        error: `Failed to add command "${normalized}"`
+      };
     }
 
     console.log(`Command "${normalized}" added successfully`);
 
     // Fetch and register synonyms if enabled (default: true)
     const fetchSynonyms = options?.fetchSynonyms ?? true;
+    let synonymsMapped: string[] = [];
 
     if (fetchSynonyms) {
-      // Fetch synonyms asynchronously (doesn't block command registration)
-      this.fetchAndRegisterSynonyms(normalized).catch(error => {
+      try {
+        synonymsMapped = await this.fetchAndRegisterSynonyms(normalized);
+      } catch (error) {
         console.error(`Error fetching synonyms for "${normalized}":`, error);
-      });
+      }
     }
 
-    return true;
+
+    return {
+      success: true,
+      commandName: normalized,
+      synonymsMapped: synonymsMapped,
+      synonymCount: synonymsMapped.length
+    };
   }
 
   /**
@@ -110,9 +151,9 @@ export class CommandMapping {
    *
    * @private
    * @param {string} commandName - The command name to fetch synonyms for
-   * @returns {Promise<void>}
+   * @returns {Promise<string[]>}
    */
-  private async fetchAndRegisterSynonyms(commandName: string): Promise<void> {
+  private async fetchAndRegisterSynonyms(commandName: string): Promise<string[]>{
     console.log(`Fetching synonyms for "${commandName}"...`);
 
     try {
@@ -121,18 +162,32 @@ export class CommandMapping {
 
       if (synonyms.length === 0) {
         console.log(`No synonyms found for "${commandName}"`);
-        return;
+        return [];
       }
 
       // Register all synonyms in the library
-      const count = this.library.addSynonyms(synonyms, commandName);
+      const successfullyAdded: string[] = [];
 
-      console.log(`Registered ${count} synonym(s) for "${commandName}": ${synonyms.slice(0, 5).join(', ')}${synonyms.length > 5 ? '...' : ''}`);
+      for (const synonym of synonyms) {
+        const added = this.library.addSynonym(synonym, commandName);
+        if (added) {
+          successfullyAdded.push(synonym);
+        }
+      }
+      console.log(
+        `Registered ${successfullyAdded.length} synonym(s) for "${commandName}": ` +
+        `${successfullyAdded.slice(0, 5).join(', ')}${successfullyAdded.length > 5 ? '...' : ''}`
+      );
+
+      return successfullyAdded;
     } catch (error) {
       console.error(`Failed to fetch synonyms for "${commandName}":`, error);
+      return [];
     }
   }
 
+      
+      
   /**
    * Manually adds a synonym for an existing command.
    * Use this to add custom synonyms that aren't in the API.
@@ -180,6 +235,37 @@ export class CommandMapping {
    */
   public getSynonymsForCommand(commandName: string): string[] {
     return this.library.getSynonymsForCommand(commandName);
+  }
+
+  /**
+   * Gets a detailed mapping of all commands and their synonyms.
+   * Useful for debugging or displaying to developers.
+   *
+   * @returns {Map<string, string[]>} Map of command names to their synonym arrays
+   *
+   * @example
+   * ```ts
+   * const mapping = mapper.getAllSynonymMappings();
+   * for (const [command, synonyms] of mapping.entries()) {
+   *   console.log(`${command}: ${synonyms.join(', ')}`);
+   * }
+   * // Output:
+   * // jump: leap, hop, spring, bound
+   * // run: sprint, jog, dash
+   * ```
+   */
+  public getAllSynonymMappings(): Map<string, string[]> {
+    const mappings = new Map<string, string[]>();
+    const commands = this.library.list();
+
+    for (const command of commands) {
+      const synonyms = this.library.getSynonymsForCommand(command.name);
+      if (synonyms.length > 0) {
+        mappings.set(command.name, synonyms);
+      }
+    }
+
+    return mappings;
   }
 
   /**

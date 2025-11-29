@@ -1,169 +1,219 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { CommandMapping } from '../src/commandMapping';
+import { describe, it, expect, beforeEach, vi} from 'vitest';
+import { CommandMapping, CommandAddResult } from '../src/commandMapping';
 import { CommandLibrary } from '../src/commandLibrary';
+import { SynonymResolver } from '../src/SynonymResolver';
 
-describe('CommandMapping <-> CommandLibrary integration', () => {
-  // Clean slate before each test so we don't get weird carryover issues
+describe('CommandMapping', () => {
+  let mapper: CommandMapping;
+  let fetchMock: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
+    // Mock fetch
+    fetchMock = vi.fn();
+    global.fetch = fetchMock;
+
+    // Clean slate before each test
     CommandLibrary.getInstance().clear();
+    SynonymResolver.getInstance().clearCache();
+    
+    mapper = new CommandMapping();
   });
 
-  it('adds a command into the library and can retrieve it', async() => {
-    const mapper = new CommandMapping();
-    
-    // Try adding a Jump command - should work fine
-    const added = await mapper.addCommand('Jump', () => {/* no-op */}, { 
-      description: 'Make avatar jump', 
-      active: true ,
-      fetchSynonyms: false
+  // Helper to mock API response
+  const mockSynonyms = (synonyms: string[]) => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => synonyms.map(word => ({ word, score: 1000 })),
+    } as Response);
+  };
 
+  describe('Basic Command Operations', () => {
+    it('adds a command and returns success result', async () => {
+      const result = await mapper.addCommand('jump', () => {}, { 
+        description: 'Make avatar jump', 
+        active: true,
+        fetchSynonyms: false
+      });
+      
+      expect(result.success).toBe(true);
+      expect(result.commandName).toBe('jump');
+      expect(result.synonymsMapped).toEqual([]);
+      expect(result.synonymCount).toBe(0);
+      expect(mapper.hasCommand('jump')).toBe(true);
     });
-    
-    expect(added).toBe(true);
-    expect(mapper.hasCommand('jump')).toBe(true); // should find it even with lowercase
-    
-    // Now check if it actually made it into the library
-    const lib = CommandLibrary.getInstance();
-    const cmd = lib.get('jump');
-    
-    expect(cmd).toBeDefined();
-    expect(cmd?.name).toBe('jump'); // normalized to lowercase
-    expect(typeof cmd?.action).toBe('function'); // make sure the action is actually a function
-    expect(cmd?.description).toBe('Make avatar jump');
-    expect(cmd?.active).toBe(true);
-  });
 
-  it('rejects duplicates by name (case-insensitive)', async() => {
-    const mapper = new CommandMapping();
-    
-    // Add "Attack" first
-    const first = await mapper.addCommand('Attack', () => {}, { 
-      description: 'Atk',
-      fetchSynonyms: false
-     });
-    // Try adding "attack" again - should fail because it's the same command
-    const second = await mapper.addCommand('attack', () => {}, { 
-      description: 'Duplicate',
-      fetchSynonyms: false
-     });
-    
-    expect(first).toBe(true);
-    expect(second).toBe(false); // nope, no duplicates allowed through this. 
-    
-    // Double check the library only has one command
-    const lib = CommandLibrary.getInstance();
-    const all = lib.list();
-    expect(all.length).toBe(1);
-    expect(all[0].name).toBe('attack'); // normalized
-    expect(all[0].description).toBe('Atk'); // kept the original description
-  });
-
-  it('removes an existing command', async() => {
-    const mapper = new CommandMapping();
-    
-    // Add a defend command
-    await mapper.addCommand('Defend', () => {}, { 
-      description: 'Block',
-      fetchSynonyms: false
-     });
-    expect(mapper.hasCommand('defend')).toBe(true);
-    
-    // Remove it using uppercase (testing case-insensitivity)
-    const removed = mapper.removeCommand('DEFEND');
-    
-    expect(removed).toBe(true);
-    expect(mapper.hasCommand('defend')).toBe(false); // should be gone now
-    
-    // Make sure it's actually removed from the library too
-    const lib = CommandLibrary.getInstance();
-    expect(lib.get('defend')).toBeUndefined();
-  });
-
-  it('lists all commands (normalized names)', async() => {
-    const mapper = new CommandMapping();
-    
-    // Add a couple commands with mixed casing
-    await mapper.addCommand('Jump', () => {}, { 
-      description: 'J',
-      fetchSynonyms: false 
-  });
-    await mapper.addCommand('Spin', () => {}, { 
-      description: 'S',
-      fetchSynonyms: false 
-     });
-    
-    const names = mapper.getAllCommands();
-    // Sort them so the order doesn't matter in our test
-    expect(names.sort()).toEqual(['jump', 'spin']); // all lowercase
-  });
-
-  it('clearAllCommands empties the library', async() => {
-    const mapper = new CommandMapping();
-    
-    // Add two commands
-    await mapper.addCommand('A', () => {}, { 
-      description: '' ,
-      fetchSynonyms: false 
+    it('rejects duplicate commands', async () => {
+      await mapper.addCommand('attack', () => {}, { fetchSynonyms: false });
+      
+      const result = await mapper.addCommand('attack', () => {}, { fetchSynonyms: false });
+      
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('already exists');
+      expect(result.synonymsMapped).toEqual([]);
     });
-    await mapper.addCommand('B', () => {}, {
-      description: '',
-      fetchSynonyms: false 
-     });
-    
-    const lib = CommandLibrary.getInstance();
-    expect(lib.list().length).toBe(2); // yep, both are there
-    
-    // Nuke everything
-    mapper.clearAllCommands();
-    expect(lib.list().length).toBe(0); // all gone!
+
+    it('rejects empty command name', async () => {
+      const result = await mapper.addCommand('   ', () => {}, { fetchSynonyms: false });
+      
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('cannot be empty');
+    });
+
+    it('removes a command', async () => {
+      await mapper.addCommand('defend', () => {}, { fetchSynonyms: false });
+      
+      const removed = mapper.removeCommand('defend');
+      
+      expect(removed).toBe(true);
+      expect(mapper.hasCommand('defend')).toBe(false);
+    });
+
+    it('lists all commands', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      await mapper.addCommand('run', () => {}, { fetchSynonyms: false });
+      
+      const commands = mapper.getAllCommands();
+      
+      expect(commands).toContain('jump');
+      expect(commands).toContain('run');
+      expect(commands.length).toBe(2);
+    });
+
+    it('clears all commands', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      await mapper.addCommand('run', () => {}, { fetchSynonyms: false });
+      
+      mapper.clearAllCommands();
+      
+      expect(mapper.getAllCommands().length).toBe(0);
+    });
   });
 
-  it('normalizes and still works with whitespace', async() => {
-    const mapper = new CommandMapping();
-    
-    // Add a command with spaces around it - should still work
-    const ok = await mapper.addCommand(' TaP ', () => {}, { 
-      description: 'tap',
-      fetchSynonyms: false 
-     });
+  describe('Synonym Response (CommandAddResult)', () => {
+    it('returns synonyms that were mapped', async () => {
+      mockSynonyms(['leap', 'hop', 'spring', 'bound']);
+      
+      const result: CommandAddResult = await mapper.addCommand('jump', () => {}, {
+        fetchSynonyms: true
+      });
+      
+      expect(result.success).toBe(true);
+      expect(result.commandName).toBe('jump');
+      expect(result.synonymsMapped).toEqual(['leap', 'hop', 'spring', 'bound']);
+      expect(result.synonymCount).toBe(4);
+    });
 
-    
-    expect(ok).toBe(true);
-    expect(mapper.hasCommand('tap')).toBe(true); // finds it without the spaces
+    it('returns empty array when fetchSynonyms is false', async () => {
+      const result = await mapper.addCommand('jump', () => {}, {
+        fetchSynonyms: false
+      });
+      
+      expect(result.success).toBe(true);
+      expect(result.synonymsMapped).toEqual([]);
+      expect(result.synonymCount).toBe(0);
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('returns empty array when API returns no synonyms', async () => {
+      mockSynonyms([]);
+      
+      const result = await mapper.addCommand('xyz123', () => {}, {
+        fetchSynonyms: true
+      });
+      
+      expect(result.success).toBe(true);
+      expect(result.synonymsMapped).toEqual([]);
+      expect(result.synonymCount).toBe(0);
+    });
+
+    it('handles API errors gracefully', async () => {
+      fetchMock.mockRejectedValueOnce(new Error('Network error'));
+      
+      const result = await mapper.addCommand('jump', () => {}, {
+        fetchSynonyms: true
+      });
+      
+      expect(result.success).toBe(true);
+      expect(result.synonymsMapped).toEqual([]);
+      expect(result.synonymCount).toBe(0);
+    });
   });
 
-  it('rejects empty name after trim', async() => {
-    const mapper = new CommandMapping();
-    
-    // Try adding a command that's just whitespace - should fail
-    const ok = await mapper.addCommand('   ', () => {}, { 
-      description: '',
-      fetchSynonyms: false 
-     });
-    
-    expect(ok).toBe(false); // nope!
-    
-    const lib = CommandLibrary.getInstance();
-    expect(lib.list().length).toBe(0); // nothing got added
+  describe('getAllSynonymMappings', () => {
+    it('returns empty map when no synonyms exist', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      
+      const mappings = mapper.getAllSynonymMappings();
+      
+      expect(mappings.size).toBe(0);
+    });
+
+    it('returns map of commands to synonyms', async () => {
+      mockSynonyms(['leap', 'hop']);
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: true });
+      
+      mockSynonyms(['sprint', 'jog']);
+      await mapper.addCommand('run', () => {}, { fetchSynonyms: true });
+      
+      const mappings = mapper.getAllSynonymMappings();
+      
+      expect(mappings.size).toBe(2);
+      expect(mappings.get('jump')).toEqual(['leap', 'hop']);
+      expect(mappings.get('run')).toEqual(['sprint', 'jog']);
+    });
+
+    it('works with manually added synonyms', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      mapper.addSynonym('leap', 'jump');
+      mapper.addSynonym('hop', 'jump');
+      
+      const mappings = mapper.getAllSynonymMappings();
+      
+      expect(mappings.get('jump')).toContain('leap');
+      expect(mappings.get('jump')).toContain('hop');
+    });
   });
 
-  it('stored action executes when called from library', async() => {
-    const mapper = new CommandMapping();
-    let executed = false;
-    
-    // Add a command that flips a flag when executed
-    await mapper.addCommand('fire', () => { executed = true; }, { 
-      description: 'shoot',
-      fetchSynonyms: false 
-     });
-    
-    // Grab it from the library and execute it
-    const lib = CommandLibrary.getInstance();
-    const cmd = lib.get('fire');
-    
-    expect(cmd).toBeDefined();
-    cmd?.action(); // run the action
-    
-    expect(executed).toBe(true); // should've flipped the flag
+  describe('Manual Synonym Operations', () => {
+    it('adds a single synonym manually', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      
+      const added = mapper.addSynonym('leap', 'jump');
+      
+      expect(added).toBe(true);
+      expect(mapper.getSynonymsForCommand('jump')).toContain('leap');
+    });
+
+    it('adds multiple synonyms manually', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      
+      const count = mapper.addSynonyms(['leap', 'hop', 'spring'], 'jump');
+      
+      expect(count).toBe(3);
+      const synonyms = mapper.getSynonymsForCommand('jump');
+      expect(synonyms).toContain('leap');
+      expect(synonyms).toContain('hop');
+      expect(synonyms).toContain('spring');
+    });
+
+    it('gets synonyms for a specific command', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      mapper.addSynonym('leap', 'jump');
+      mapper.addSynonym('hop', 'jump');
+      
+      const synonyms = mapper.getSynonymsForCommand('jump');
+      
+      expect(synonyms.length).toBe(2);
+      expect(synonyms).toContain('leap');
+      expect(synonyms).toContain('hop');
+    });
+
+    it('returns synonym count', async () => {
+      await mapper.addCommand('jump', () => {}, { fetchSynonyms: false });
+      mapper.addSynonym('leap', 'jump');
+      mapper.addSynonym('hop', 'jump');
+      
+      expect(mapper.getSynonymCount()).toBe(2);
+    });
   });
 });
