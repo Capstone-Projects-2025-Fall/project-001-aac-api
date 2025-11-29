@@ -3,7 +3,7 @@ import { showHistoryPopup } from "./showHistoryPopup";
 import { SpeechConverterInterface } from "./SpeechConverterInterface";
 import { SpeechConverterOffline } from "./SpeechConverterOffline";
 import { SpeechConverterOnline } from "./SpeechConverterOnline";
-import { CommandMapping } from "./commandMapping";
+import { CommandMapping, CommandAddResult } from "./commandMapping";
 import { ConfidenceConfig } from './ConfidenceConfig';
 import { CommandConverter} from './CommandConverter';
 import { Logger, LogEntry } from './Logging';
@@ -238,7 +238,7 @@ export class AACVoiceAPI{
      * @param {string} options.description: A short explanation of what the command does. 
      * @param {boolean} options.active: Whether the command is currently active. (true or false)
      * @param {boolean} options.fetchSynonyms: Whether to automatically fetch synonyms (default: true)
-     * @returns Promise<boolean> true if successfully added
+     * @returns Promise<CommandAddResult> Result object with command and synonym information
      */
     public async addVoiceCommand(
     name: string,
@@ -249,12 +249,18 @@ export class AACVoiceAPI{
       fetchSynonyms?: boolean;
       
     }
-    ): Promise<boolean> {
+    ): Promise<CommandAddResult> {
         if (!this.mapping) {
-            return false;
+            return {
+            success: false,
+            commandName: name,
+            synonymsMapped: [],
+            synonymCount: 0,
+            error: 'CommandMapping not initialized'
+        };
         }
 
-        return await this.mapping?.addCommand(name,action, options);
+        return await this.mapping.addCommand(name, action, options);
     }
 
     /**
