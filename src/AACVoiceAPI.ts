@@ -6,6 +6,7 @@ import { SpeechConverterOnline } from "./SpeechConverterOnline";
 import { CommandMapping } from "./commandMapping";
 import { ConfidenceConfig } from './ConfidenceConfig';
 import { CommandConverter} from './CommandConverter';
+import { Logger, LogEntry } from './Logging';
 
 /**
  * AACVoiceAPI is a facade class that provides a simplified interface
@@ -319,5 +320,114 @@ export class AACVoiceAPI{
         }
 
         return null;
+    }
+
+    /**
+     * Exports all finalized session logs as a formatted JSON string.
+     * 
+     * Use this method to get comprehensive analytics data including:
+     * - Full transcription text with timestamps
+     * - Matched commands with confidence scores
+     * - Synonym resolution details (library vs API)
+     * - Error messages for failed command executions
+     * - Speaker IDs (in multi-speaker mode)
+     * 
+     * @returns Pretty-printed JSON string of all session logs
+     * 
+     * @example
+     * ```typescript
+     * const json = api.exportSessionLogs();
+     * console.log(json);
+     * ```
+     */
+    public exportSessionLogs(): string {
+        return Logger.getInstance().exportToJSON();
+    }
+
+    /**
+     * Gets the raw log data as a JavaScript object.
+     * Useful for Node.js environments where manual file operations are needed.
+     * 
+     * @returns Array of log entry objects
+     * 
+     * @example
+     * ```typescript
+     * // Node.js usage
+     * const fs = require('fs');
+     * const logData = api.getSessionLogsData();
+     * fs.writeFileSync('session-logs.json', JSON.stringify(logData, null, 2));
+     * ```
+     */
+    public getSessionLogsData(): LogEntry[] {
+        return Logger.getInstance().getJSONBlob();
+    }
+
+    /**
+     * Downloads session logs as a JSON file (browser only).
+     * Triggers a browser download with the specified filename.
+     * 
+     * Note: This method only works in browser environments.
+     * For Node.js, use `getSessionLogsData()` instead.
+     * 
+     * @param filename - Name of the file to download (default: 'aac-session-log.json')
+     * 
+     * @example
+     * ```typescript
+     * // Download logs with default filename
+     * api.downloadLogsAsJSON();
+     * 
+     * // Download with custom filename
+     * api.downloadLogsAsJSON('my-session-2024-01-15.json');
+     * ```
+     */
+    public downloadLogsAsJSON(filename: string = 'aac-session-log.json'): void {
+        try {
+            Logger.getInstance().saveToFile(filename);
+        } catch (error) {
+            console.error(
+                'Failed to download logs. This method only works in browser environments. ' +
+                'For Node.js, use getSessionLogsData() instead.',
+                error
+            );
+        }
+    }
+
+    /**
+     * Gets all finalized session logs.
+     * Returns detailed information about each transcription and matched commands.
+     * 
+     * Use `Logger` for comprehensive analytics data.
+     * Use `CommandHistory` (via displayCommandHistory()) for simple UI display.
+     * 
+     * @returns Array of finalized log entries
+     * 
+     * @example
+     * ```typescript
+     * const logs = api.getSessionLogs();
+     * logs.forEach(log => {
+     *   console.log(`[${log.timestamp}] "${log.transcriptionText}"`);
+     *   console.log(`  Matched ${log.matchedCommands.length} command(s)`);
+     * });
+     * ```
+     */
+    public getSessionLogs(): LogEntry[] {
+        return Logger.getInstance().getAllLogs();
+    }
+
+    /**
+     * Clears all session logs.
+     * Removes all stored transcriptions, matched commands, and resets the log counter.
+     * 
+     * Note: This does NOT clear CommandHistory. Use displayCommandHistory() to
+     * access the separate command-only history.
+     * 
+     * @example
+     * ```typescript
+     * api.clearSessionLogs();
+     * console.log('Session logs cleared');
+     * ```
+     */
+    public clearSessionLogs(): void {
+        Logger.getInstance().clear();
     }
 }

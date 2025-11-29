@@ -109,7 +109,7 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
                 const sepResponse = transcribed as SeparatedTranscriptionResponse;
                 sepResponse.speakers.forEach(speaker => {
                     if (speaker.text && speaker.text.trim()) {
-                        this.processText(speaker.text);
+                        this.processText(speaker.text, speaker.speaker_id);
                         this.logText(speaker.text, speaker.speaker_id);
                     }
                 });
@@ -192,10 +192,11 @@ export class SpeechConverterOnline implements SpeechConverterInterface{
    * command matching.
    *
    * @param text transcribed words that have been recognized by whisper
+   * @param speakerId optional speaker identifier for multi-speaker mode
    */
-  private processText(text: string): void {
+  private processText(text: string, speakerId?: string): void {
     if (text && text.trim() && !text.includes('[BLANK_AUDIO]')) {
-      this.commandConverter?.processTranscription(text);
+      this.commandConverter?.processTranscription(text, speakerId);
     }
   }
   /**
