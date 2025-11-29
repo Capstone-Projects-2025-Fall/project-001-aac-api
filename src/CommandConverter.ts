@@ -176,7 +176,7 @@ export class CommandConverter {
    *
    * For each matched command:
    * - Logs it to the command log with a timestamp
-   * - Logs it to the ogger with full details
+   * - Logs it to the logger with full details
    * - Automatically executes the command's action/callback function
    *
    * @param {string} transcription - The new transcribed text from getTranscribed()
@@ -205,7 +205,7 @@ export class CommandConverter {
         matchedCommands.push(command);
         processedCommandNames.add(command.name);
 
-        // Execute the command and capture status
+        // Execute the command and log with status
         let status: 'success' | 'failed' = 'success';
         let errorMessage: string | undefined;
         try {
@@ -232,7 +232,6 @@ export class CommandConverter {
         continue;
       }
 
-      // Try phonetic matching if synonym match failed
       const confidenceMatch = this.confidenceMatcher.findMatch(token, this.library);
 
       if (confidenceMatch && !processedCommandNames.has(confidenceMatch.command.name)) {
@@ -240,7 +239,7 @@ export class CommandConverter {
         matchedCommands.push(command);
         processedCommandNames.add(command.name);
 
-        // Execute the command and capture status
+        // Execute the command and log with status
         let status: 'success' | 'failed' = 'success';
         let errorMessage: string | undefined;
         try {
@@ -261,7 +260,7 @@ export class CommandConverter {
           error: errorMessage
         });
 
-        // Log to CommandHistory (for backward compatibility)
+        // Log to CommandHistory
         this.logCommand(
           command,
           transcription,
