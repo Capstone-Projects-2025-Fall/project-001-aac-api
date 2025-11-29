@@ -2,6 +2,16 @@ import { CommandLibrary, GameCommand } from './commandLibrary';
 import { CommandHistory, CommandLogEntry } from './CommandHistory';
 import { ConfidenceMatcher } from './ConfidenceMatcher';
 import { SynonymResolver } from './SynonymResolver';
+import { Logger } from './Logging';
+
+/**
+ * Details about a command match including the source of the match.
+ */
+interface CommandMatchResult {
+  command: GameCommand;
+  matchSource: 'direct' | 'library-synonym' | 'api-synonym';
+  matchedSynonym?: string;
+}
 
 /**
  * CommandConverter processes transcribed text in real-time, tokenizes it,
@@ -111,19 +121,26 @@ export class CommandConverter {
    * 
    * @private
    * @param {string} token - The word token to match
-   * @returns {Promise<GameCommand | null>} The matched command or null
+   * @returns {Promise<CommandMatchResult | null>} The matched command with match source details or null
    */
-  private async findCommandMatch(token: string): Promise<GameCommand | null> {
+  private async findCommandMatch(token: string): Promise<CommandMatchResult | null> {
     // 1. Check for direct command match
     const directMatch = this.library.get(token);
     if (directMatch) {
-      return directMatch;
+      return {
+        command: directMatch,
+        matchSource: 'direct'
+      };
     }
 
     // 2. Check for registered synonym match
     const synonymMatch = this.library.findCommandBySynonym(token);
     if (synonymMatch) {
-      return synonymMatch;
+      return {
+        command: synonymMatch,
+        matchSource: 'library-synonym',
+        matchedSynonym: token
+      };
     }
 
     // 3. Check for API-based synonym match
@@ -135,7 +152,14 @@ export class CommandConverter {
       const areSynonyms = await this.synonymResolver.areSynonyms(token, commandName);
       if (areSynonyms) {
         console.log(`Synonym match found: "${token}" → "${commandName}"`);
-        return this.library.get(commandName) || null;
+        const command = this.library.get(commandName);
+        if (command) {
+          return {
+            command,
+            matchSource: 'api-synonym',
+            matchedSynonym: token
+          };
+        }
       }
     }
 
@@ -152,43 +176,63 @@ export class CommandConverter {
    *
    * For each matched command:
    * - Logs it to the command log with a timestamp
+   * - Logs it to the ogger with full details
    * - Automatically executes the command's action/callback function
    *
    * @param {string} transcription - The new transcribed text from getTranscribed()
+   * @param {string} speakerId - Optional speaker identifier for multi-speaker mode
    * @returns {Promise<GameCommand[]>} Array of matched commands found in the transcription
    */
-  public async processTranscription(transcription: string): Promise<GameCommand[]> {
+  public async processTranscription(transcription: string, speakerId?: string): Promise<GameCommand[]> {
     if (!transcription || !transcription.trim()) {
       return [];
     }
+
+    // Create logging entry
+    const logger = Logger.getInstance();
+    const logEntryId = logger.createEntry(transcription, speakerId);
 
     const tokens = this.tokenize(transcription);
     const matchedCommands: GameCommand[] = [];
     const processedCommandNames = new Set<string>(); // Prevent duplicate executions
 
     for (const token of tokens) {
-      // Use confidence matcher to find matches
-      const synonymMatch = await this.findCommandMatch(token);
+      // Try to find command match using synonym resolution
+      const matchResult = await this.findCommandMatch(token);
 
-      if (synonymMatch && !processedCommandNames.has(synonymMatch.name)) {
-        matchedCommands.push(synonymMatch);
-        processedCommandNames.add(synonymMatch.name);
+      if (matchResult && !processedCommandNames.has(matchResult.command.name)) {
+        const command = matchResult.command;
+        matchedCommands.push(command);
+        processedCommandNames.add(command.name);
 
-        // Execute the command and log with status
+        // Execute the command and capture status
         let status: 'success' | 'failed' = 'success';
+        let errorMessage: string | undefined;
         try {
-          synonymMatch.action();
+          command.action();
         } catch (error) {
           status = 'failed';
-          console.error(`Error executing command "${synonymMatch.name}":`, error);
+          errorMessage = error instanceof Error ? error.message : String(error);
+          console.error(`Error executing command "${command.name}":`, error);
         }
 
-        // Log the command with execution status and confidence info
-        // Log as exact match since synonym was found
-        this.logCommand(synonymMatch, transcription, status, 1.0, true);
+        // Log to Logger with full details
+        logger.addMatch(logEntryId, {
+          commandName: command.name,
+          matchedWord: token,
+          matchedSynonym: matchResult.matchedSynonym,
+          synonymSource: matchResult.matchSource,
+          confidence: 1.0,
+          status,
+          error: errorMessage
+        });
+
+        // Log to CommandHistory (for backward compatibility)
+        this.logCommand(command, transcription, status, 1.0, true);
         continue;
       }
 
+      // Try phonetic matching if synonym match failed
       const confidenceMatch = this.confidenceMatcher.findMatch(token, this.library);
 
       if (confidenceMatch && !processedCommandNames.has(confidenceMatch.command.name)) {
@@ -196,16 +240,28 @@ export class CommandConverter {
         matchedCommands.push(command);
         processedCommandNames.add(command.name);
 
-        // Execute the command and log with status
+        // Execute the command and capture status
         let status: 'success' | 'failed' = 'success';
+        let errorMessage: string | undefined;
         try {
           command.action();
         } catch (error) {
           status = 'failed';
+          errorMessage = error instanceof Error ? error.message : String(error);
           console.error(`Error executing command "${command.name}":`, error);
         }
 
-        // Log the command with execution status and confidence info
+        // Log to Logger with full details
+        logger.addMatch(logEntryId, {
+          commandName: command.name,
+          matchedWord: token,
+          synonymSource: 'phonetic',
+          confidence: confidenceMatch.confidence,
+          status,
+          error: errorMessage
+        });
+
+        // Log to CommandHistory (for backward compatibility)
         this.logCommand(
           command,
           transcription,
@@ -215,6 +271,9 @@ export class CommandConverter {
         );
       }
     }
+
+    // Finalize the log entry
+    logger.finalizeEntry(logEntryId);
 
     // Invoke callback if commands were matched 
     if (matchedCommands.length > 0 && this.onCommandMatched) {
