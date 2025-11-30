@@ -25,7 +25,7 @@ export class SynonymResolver {
   private readonly API_URL = 'https://api.datamuse.com/words';
 
   /** Maximum number of synonyms to fetch per word */
-  private readonly MAX_RESULTS = 20;
+  private readonly MAX_RESULTS = 5;
 
   /** Private constructor prevents direct instantiation - use getInstance() */
   private constructor() {
