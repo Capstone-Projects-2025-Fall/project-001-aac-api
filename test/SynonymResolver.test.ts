@@ -182,6 +182,6 @@ describe('SynonymResolver', () => {
     await resolver.getSynonyms('jump');
     
     expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('ml=jump'));
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('max=20'));
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('max=5'));
   });
 });

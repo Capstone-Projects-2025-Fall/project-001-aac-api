@@ -57,13 +57,28 @@ export class AACVoiceAPI{
     }
 
     /**
-     * 
-     * Initializes the API with the specified model and language
-     * 
-     * @param url Path to URL for the Whisper model file
-     * @param language Language code to configure the model (e.g. 'en') for offline mode 
-     * @throws {Error} Throws error when modelUrl is not provided in the params in .initiate() for online mode  
-     */
+ * @typedef {Object} voiceAPIConfig
+ * @property {'offline' | 'online'} mode
+ *     The mode the API should operate in.
+ * @property {string} modelUrl
+ *     The URL of the model. 
+ * @property {string} [language]
+ *     Language the model was trained in. Required for 'offline' mode
+ * @property {boolean} [useSpeakerSeparation]
+ *     Optional - Enables speaker separation if supported. Only available in 'online' mode
+ * @property {number} [confidenceThreshold]
+ *     Optional - Minimum confidence required to determine a phonetic match. (Decimal format [0-1])
+ * @property {boolean} [usePhoneticMatching]
+ *     Optional - Enables phonetic matching for recognition.
+ * @property {boolean} [logConfidenceScores]
+ *     Optional - Enables logging of confidence values.
+ *
+ * @param {voiceAPIConfig} config
+ *     Configuration object used to initialize the API.
+ *
+ * @throws {Error}
+ *     Throws an error if `modelUrl` is not provided when initiating in online mode.
+ */
     public async initiate(config: voiceAPIConfig): Promise<void> {
         this.currentMode = config.mode;
 
