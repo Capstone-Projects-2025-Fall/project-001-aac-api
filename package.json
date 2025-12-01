@@ -1,6 +1,6 @@
 {
   "name": "aac-voice-api",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "description": "Games where augmentative and alternative communication (AAC) devices are used as controllers for the game is promising for increasing social inclusion of children who use these devices, such as minimally verbal autistic children. We want to build out an API which supports audio-controlled games where the output from an AAC device is automatically converted into game actions.",
   "main": "dist/AACommodateAPI.js",
   "module": "dist/AACommodateAPI.js",
