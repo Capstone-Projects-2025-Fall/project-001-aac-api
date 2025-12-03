@@ -32,7 +32,7 @@ Example in ```Online``` Mode:
 ```ts
 const voice = new AACVoiceAPI();
 
-await voiceApi.current.initiate({//d4s
+await voiceApi.current.initiate({
     mode: 'online',
     modelUrl: 'http://localhost:8000',
     usePhoneticMatching: true,
