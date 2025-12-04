@@ -1,0 +1,8 @@
+{
+  "label": "Transcription Backend",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "How to start and run the transcription backend."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "label": "Logging System",
+  "position": 7,
+  "link": {
+    "type": "generated-index",
+    "description": "How to access and view the different logs available."
+  }
+}

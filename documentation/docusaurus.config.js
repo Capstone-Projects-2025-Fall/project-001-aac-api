@@ -37,8 +37,8 @@ const title = rawProjectName
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   /*TODO: Change to your project's title and tagline*/
-  title: title,
-  tagline: 'Owls are cool',
+  title: 'Team AACcommodate',
+  tagline: 'AAC Voice API',
   /*Unless you move this website to a seperate repo don't change url and baseurl.*/
   url: 'https://' + process.env.ORG_NAME + '.github.io/',
   baseUrl: '/' + process.env.PROJECT_NAME + '/',
@@ -145,10 +145,10 @@ const config = {
             label: 'Documentation',
           },
           {
-            to: '/tutorial/Intro',
-            label: 'Docusaurus Tutorial',
+            to: '/getting-started/Intro',
+            label: 'Getting Started',
             position: 'left',
-            activeBaseRegex: `/tutorial/`,
+            activeBaseRegex: `/getting-started/`,
           },
           {
             href: 'https://github.com/' + process.env.ORG_NAME + '/' + process.env.PROJECT_NAME,
@@ -221,12 +221,22 @@ const config = {
       },
     }),
   plugins: [
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'tutorial',
+    //     path: 'tutorial',
+    //     routeBasePath: 'tutorial',
+    //     sidebarPath: require.resolve('./sidebars.js'),
+    //     // ... other options
+    //   },
+    // ],
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'tutorial',
-        path: 'tutorial',
-        routeBasePath: 'tutorial',
+        id: 'getting-started',
+        path: 'getting-started',
+        routeBasePath: 'getting-started',
         sidebarPath: require.resolve('./sidebars.js'),
         // ... other options
       },

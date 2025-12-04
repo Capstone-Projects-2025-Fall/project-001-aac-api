@@ -1,0 +1,8 @@
+{
+  "label": "Initiation",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Initiation is the process of starting the voice system in either offline or online mode. This determines how audio is processed and which resources are used: Offline initiation loads a local model directly in the browser, requiring no backend or external services. Online initiation connects to a backend service for higher accuracy and faster processing. Once initiated, the voice system will operate entirely within the selected mode until reconfigured."
+  }
+}
