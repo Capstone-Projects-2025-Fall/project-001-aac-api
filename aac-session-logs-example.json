@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2025-12-04T01:47:50.506Z",
+    "transcriptionText": " [S",
+    "matchedCommands": [],
+    "finalized": true
+  },
+  {
+    "id": 2,
+    "timestamp": "2025-12-04T01:47:52.504Z",
+    "transcriptionText": " Hello.",
+    "matchedCommands": [],
+    "finalized": true
+  },
+  {
+    "id": 3,
+    "timestamp": "2025-12-04T01:47:54.509Z",
+    "transcriptionText": " red.",
+    "matchedCommands": [
+      {
+        "commandName": "red",
+        "matchedWord": "red",
+        "synonymSource": "direct",
+        "confidence": 1,
+        "status": "success"
+      }
+    ],
+    "finalized": true
+  },
+  {
+    "id": 4,
+    "timestamp": "2025-12-04T01:47:56.304Z",
+    "transcriptionText": " Green.",
+    "matchedCommands": [
+      {
+        "commandName": "green",
+        "matchedWord": "green",
+        "synonymSource": "direct",
+        "confidence": 1,
+        "status": "success"
+      }
+    ],
+    "finalized": true
+  },
+  {
+    "id": 5,
+    "timestamp": "2025-12-04T01:47:58.502Z",
+    "transcriptionText": " Hello.",
+    "matchedCommands": [],
+    "finalized": true
+  },
+  {
+    "id": 6,
+    "timestamp": "2025-12-04T01:48:00.509Z",
+    "transcriptionText": " This is a test.",
+    "matchedCommands": [],
+    "finalized": true
+  }
+]
