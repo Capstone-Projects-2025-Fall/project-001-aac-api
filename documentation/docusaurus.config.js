@@ -37,8 +37,8 @@ const title = rawProjectName
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   /*TODO: Change to your project's title and tagline*/
-  title: title,
-  tagline: 'Owls are cool',
+  title: 'Team AACcommodate',
+  tagline: 'AAC Voice API',
   /*Unless you move this website to a seperate repo don't change url and baseurl.*/
   url: 'https://' + process.env.ORG_NAME + '.github.io/',
   baseUrl: '/' + process.env.PROJECT_NAME + '/',

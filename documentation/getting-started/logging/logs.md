@@ -1,7 +1,7 @@
 # Transcription Logs
 
 
-To get a list of all words that have been transcribed speech, simply use:
+If you just want a list of all words spoken with a timestamp associated with them, simply use:
 
 ```ts
 const voice = new AACVoiceAPI();
