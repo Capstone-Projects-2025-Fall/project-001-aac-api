@@ -71,8 +71,9 @@ export class ConfidenceMatcher {
       const threshold = this.config.globalThreshold;
 
       if (similarity >= threshold) {
-        console.log(`[Phonetic Match] "${token}" -> "${command.name}" (${(similarity * 100).toFixed(1)}%)`);
-
+        if (this.config.logConfidenceScore) {
+          console.log(`[Phonetic Match] "${token}" -> "${command.name}" (${(similarity * 100).toFixed(1)}%)`);
+        }
         return {
           command,
           confidence: similarity,
