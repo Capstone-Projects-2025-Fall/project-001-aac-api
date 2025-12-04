@@ -24,7 +24,7 @@ await voice.initiate({
 |Parameters|Type|Description|
 |:----------:|:-----:|:----------|
 |mode        |string |Takes in a string of either 'offline' or 'online'|
-|modelUrl    |string | <strong>Two Options</strong><br/><br/>Local Path such as ```'models/whisper-tiny.bin'```<br/>Remote URL such as  ```https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin```|
+|modelUrl    |string | <strong>Two Options</strong><br/><br/>Local Path such as ```models/whisper-tiny.bin```<br/>Remote URL such as  ```https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin```|
 |language    |string | The language that the model was trained in. Uses ISO 639-1 codes|
 
 All available models to use and download can be found [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main)
@@ -39,6 +39,23 @@ const voice = new AACVoiceAPI();
 
 voice.getMode();
 ```
-Returns a string containing the word 'online' or 'offline' depending on which one is currently running
+Returns a string containing the word 'online' or 'offline' depending on which one is currently running.
 
 
+## Server Settings Required
+
+To use offline mode, your site must enable **cross-origin isolation**, which browsers require for features like SharedArrayBuffer. 
+
+For example, if yoiu were to use vite, the following code can be added to your vite.config:
+
+
+```ts
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+```
+:::tip
+If you do not have access to the server settings, then ```online``` exists as an alternative.
+:::

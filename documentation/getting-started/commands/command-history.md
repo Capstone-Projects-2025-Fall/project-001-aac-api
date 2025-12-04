@@ -31,3 +31,10 @@ Here is an example of what the modal looks like with some commands processed:
 
 ![Modal](/img/getting-started/command-history-modal.png)
 
+### What's going on in this picture?
+
+This picture shows the commands that were successfully executed based on the user’s spoken words. Some commands match exactly, while others are triggered through phonetic matching. This helps users understand when a command was recognized by sound similarity rather than an exact word match.
+
+For example, the command the was executed at timestamp 4:38:35 with a phonetic match of 100% had the word 'read' spoken. Since 'read' sounds exactly like 'red' in its past tense form, it has a 100% phonetic match.
+
+

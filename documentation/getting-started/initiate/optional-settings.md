@@ -4,7 +4,7 @@ In combination of the settings required to initiate the library into your desire
 
 |Parameters|Type|Description|
 |:----------:|:-----:|:----------|
-|usePhoneticMatching|boolean| Matches transcribed words and game commands based on how the words sound rather than how they are spelled.<br/><br/>Phonetic Matching will convert each spoken word into a phonetic code using the Double Metaphone algorithm. Depending on how close the two codes are, will determine the confidence level in which they are phonetically the same.|
+|usePhoneticMatching|boolean| Matches transcribed words and game commands based on how the words sound rather than how they are spelled.<br/><br/>Phonetic Matching will convert each spoken word into a phonetic code using the Double Metaphone algorithm. Depending on how close the two codes are, will determine the confidence level in which they are phonetically the same.<br/><br/> Example: The word 'read' as in "I read a book", sounds exactly the same as the word 'red', as in "My favorite color is red." The phonetic matching algorithm will have these two words match at a 100% confidence level.|
 |confidenceThreshold|number| Takes a number between 0-1 inclusive. 1 being an exact match. The confidence level required to trigger a game command if a word is spoken.|
 |logConfidenceScores|boolean|A developer tool that will display confidence levels of words in the console log. Should be turned off in a production environment|
 

@@ -3,9 +3,26 @@
 ## Adding Commands
 
 :::note
-Returns true if the command has successfully been added.
+Returns an object with details on whether or not the command was successfully added.
 :::
 
+|Parameters|Type|Description|
+|:----------:|:-----:|:----------|
+|name|string|the voice command that needs to be said for action to occur|
+|action| Function | A function that the developer passes to the library to be executed any time the voice command is recognized|
+|options| Object (optional)| **description** ```Default is ""```<br/> - Value that allows the developer to describe what the command does in more detail<br/>**active** ```Default is true``` <br/> - Turns on or off voice command. Defaults to true if user does not supply a value.<br/>**fetchSynonyms** ```Default is true``` <br/>    - Determines whether to fetch words similar in meaning or sound based on the provided name parameter.<br/>**numberOfSynonyms** ```Default is 3``` <br/>  - The number of synonyms to fetch if fetch synonyms is set to true. |
+
+
+Returns an object in the format:
+```ts
+{
+    success: boolean,
+    commandName: string,
+    synonymsMapped: string[],
+    synonymCount: number,
+}
+```
+### Examples of how to call the method:
 
 ```ts
 const voice = new AACVoiceAPI();
@@ -15,10 +32,13 @@ voice.addVoiceCommand(
     () => console.log('player jumped'),
     {
         description:'displays a message that the player jumped',
-        active: true
+        active: true,
+        fetchSynonyms: true,
+
     }
 )
 ```
+
 or
 ```ts
 const voice = new AACVoiceAPI();
@@ -41,12 +61,47 @@ voice.addVoiceCommand(
 )
 ```
 
+Here is an example of making an array of commands to add to the Command Library:
+```ts
+const voice = new AACVoiceAPI();
 
-|Parameters|Type|Description|
-|:----------:|:-----:|:----------|
-|name|string|the voice command that needs to be said for action to occur|
-|action| Function | A function that the developer passes to the library to be executed any time the voice command is recognized|
-|Option| Object (optional)| **description** (optional) value that allows the developer to describe what the command does in more detail<br/>**active** (optional) - Turns on or off voice command. Defaults to true if user does not supply a value.|
+const setupVoiceCommands = () => {
+
+    const commands = [
+        {
+            name: "blue",
+            action: () => changeColor("dodgerblue", "Blue"),
+            options:{
+                description: "changes color to blue",
+                fetchSynonyms: true,
+            }
+        },
+        {
+            name: "red",
+            action: () => changeColor("darkred", "Red"),
+            options:{
+                description: "changes color to red",
+                fetchSynonyms: true,
+            }
+        },
+        {
+            name: "green",
+            action: () => changeColor("darkseagreen", "Green"),
+            options:{
+                description: "changes color to green",
+                fetchSynonyms: false,
+            }                
+        },
+
+    ];
+
+    commands.forEach(async cmd => {
+        const added =  await voice.addVoiceCommand(cmd.name, cmd.action, cmd.options);//d12e
+        if (added?.success) console.log(`[System] Command added: ${added.commandName} with synonyms ${added.synonymsMapped}`);
+    });
+};
+    ```
+
 
 
 ## Getting Voice Commands
