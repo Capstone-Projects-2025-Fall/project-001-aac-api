@@ -1,8 +1,8 @@
 {
   "label": "Audio Capture",
-  "position": 3,
+  "position": 4,
   "link": {
     "type": "generated-index",
-    "description": "Goes into detail on how to start and stop listening."
+    "description": "How to start and stop the Audio recording and voice transcription."
   }
 }
