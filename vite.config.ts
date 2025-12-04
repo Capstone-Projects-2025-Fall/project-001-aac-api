@@ -17,7 +17,7 @@ export default defineConfig({
         'module',
         'worker_threads',
         /.*\/whisper\/libstream\.js$/, // Mark libstream as external
-        './whisper/libstream.js' // Also add direct path
+        './whisper/libstream.js', // Also add direct path
       ],
     },
     copyPublicDir: false,
@@ -26,15 +26,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src:
-          ['src/whisper/**/*',
-            '!src/whisper/__mocks__/**',
-            '!src/whisper/models/**'
-          ],
-          dest: 'whisper'
-        }
-      ]
-    })
+          src: ['src/whisper/**/*', '!src/whisper/__mocks__/**', '!src/whisper/models/**'],
+          dest: 'whisper',
+        },
+      ],
+    }),
   ],
   worker: {
     format: 'es',
@@ -53,6 +49,14 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['src/*.ts', 'src/*.js'],
+      exclude: [
+        './src/showHistoryPopup.ts',
+        './src/index.ts',
+        './src/SpeechConverterInterface.ts',
+        './src/SpeechConverterInterface.ts',
+        './src/AACVoiceAPI.ts',
+        './src/API-doc-entry.ts',
+      ],
     },
   },
 });

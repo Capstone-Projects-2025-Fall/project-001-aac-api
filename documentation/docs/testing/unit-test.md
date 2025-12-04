@@ -1,4 +1,4 @@
-# Testing
+# Unit Tests
 
 ### Our testing framework: Vitest
 Vitest is a modern, fast, and feature rich testing

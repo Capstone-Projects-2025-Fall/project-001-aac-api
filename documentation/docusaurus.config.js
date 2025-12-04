@@ -8,7 +8,7 @@
  * The URL or reference to your projects logo!
  * @type {string}
  */
-const logo = 'https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg';
+const logo = 'img/ACC-Docs-Logo.png';
 
 const main_template_jira_scripts = () => {
   if (process.env.ORG_NAME === 'ApplebaumIan') {
@@ -161,6 +161,11 @@ const config = {
         logo: {
           alt: 'My Site Logo',
           src: logo,
+          style: {
+            width: '60px',
+            height: '60px',
+            objectFit: 'contain',
+          },
         },
         links: [
           {
