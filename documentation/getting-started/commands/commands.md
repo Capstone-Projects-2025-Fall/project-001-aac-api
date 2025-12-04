@@ -2,9 +2,7 @@
 
 ## Adding Commands
 
-:::note
-Returns an object with details on whether or not the command was successfully added.
-:::
+This page explains how to manage voice commands using the AACVoiceAPI library. It covers how to add commands with optional descriptions, activation states, and synonym fetching, showing multiple examples including batch addition of commands. It also explains how to retrieve all registered commands, remove individual or all commands, and check if a command is already registered. The guide provides clear parameter definitions, return formats, and usage examples to help developers integrate and control voice-driven actions in their applications.
 
 |Parameters|Type|Description|
 |:----------:|:-----:|:----------|
@@ -100,7 +98,7 @@ const setupVoiceCommands = () => {
         if (added?.success) console.log(`[System] Command added: ${added.commandName} with synonyms ${added.synonymsMapped}`);
     });
 };
-    ```
+```
 
 
 
