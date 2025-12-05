@@ -19,11 +19,11 @@ environment.
     with minimal configuration. Also built on top of vite with is fast (APIs bundler 
     of choice is also vite). 
 ---
-#### Suitability for AACommodate  
-- Given that AACommodate is a client side library with complex internal
+#### Suitability for AACcommodate  
+- Given that AACcommodate is a client side library with complex internal
 logic and dependencies on browser specific functions, Vitest is an ideal choice.
 Powerful mocking, Typescript support, and Vite bundling are the primary reason 
-for its suitability. This ensure AACommodate can be a dependable tool for developers.
+for its suitability. This ensure AACcommodate can be a dependable tool for developers.
 --- 
 
 #### Testing Coverage Report 

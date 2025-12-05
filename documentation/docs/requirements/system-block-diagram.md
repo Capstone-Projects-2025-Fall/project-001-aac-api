@@ -5,7 +5,7 @@ sidebar_position: 2
 # System Block Diagram
 
 ![System Block Diagram](/img/AAC_API_diagram.png)
-**Figure 1** High level design of AACommodate API 
+**Figure 1** High level design of AACcommodate API 
 
 ## Description
 
