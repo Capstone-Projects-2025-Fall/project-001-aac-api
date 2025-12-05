@@ -8,7 +8,7 @@ Our goal is to make it easy for you to integrate voice controls into your web ap
 
 To see our code in action, feel free to explore a simple coloring game in which we show our code in use here: [Sample Coloring Game](https://github.com/Russo903/aac-voice-api-milestone-demo-1.git)
 
-## Why AACommodate API?
+## Why AACcommodate API?
 
 This page is for developers who want to learn how to use our npm package to enable voice interaction in their apps.
 
