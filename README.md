@@ -4,11 +4,15 @@
 
 [![Report Issue on Jira](https://img.shields.io/badge/Report%20Issues-Jira-0052CC?style=flat&logo=jira-software)](https://temple-cis-projects-in-cs.atlassian.net/jira/software/c/projects/AAC/issues?jql=project%20%3D%20%22AAC%22%20ORDER%20BY%20created%20DESC)
 [![Deploy Docs](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/Capstone-Projects-2025-Fall/project-001-aac-api/actions/workflows/deploy.yml)
-[![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://capstone-projects-2025-fall.github.io/project-001-aac-api/docs/requirements/system-overview)
+[![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://capstone-projects-2025-fall.github.io/project-001-aac-api/)
+[![NPM Version](https://img.shields.io/npm/v/aac-voice-api?style=flat&logo=npm)](https://www.npmjs.com/package/aac-voice-api)
+
 
 </div>
 
 # Getting Started
+
+For a comprehensive guide to our npm library, refer to our [Getting Started Page.](https://capstone-projects-2025-fall.github.io/project-001-aac-api/getting-started/Intro) 
 
 ### Setting up Backend Transcription for Online mode
 
@@ -88,7 +92,7 @@ voice.initiate("online", "domain", false);
 voice.start();
 ```
 
-For comprehensive details on our API endpoints refer to our documentation [AACVoiceAPI](https://capstone-projects-2025-fall.github.io/project-001-aac-api/docs/api-specification/classes/AACVoiceAPI)
+For comprehensive details on our library, refer to our [Getting Started](https://capstone-projects-2025-fall.github.io/project-001-aac-api/getting-started/Intro) page.
 
 ## Project Abstract
 
@@ -104,7 +108,7 @@ The proposed solution is a client side Typescript API designed for integration i
 
 ## Background
 
-Augmentative and Alternate Communication (AAC) devices provide essential communication capabilities for individuals with significant speech impairments resulting from conditions such as Autism Spectrum Disorder, Cerebral Palsy, or ALS. While effective for structured expression, these devices often present challenges in the fast paced, interactive context of video games. This technological gap can lead to frustrating user experience and social exclusion for AAC users. Current solutions for this issue generally look like this. Involving in game, simulated AAC boards, which require users to learn a new, game specific interface rather than using their own familiar device. This project addresses these limitations by developing a reusable software tool, a developer focused API, rather than a single, standalone game. The goal is to provide a solution that game developers can integrate into any new or exisiting web based application. This approach improves upon the current model by allowing direct input from the users personal devices.
+Augmentative and Alternate Communication (AAC) devices provide essential communication capabilities for individuals with significant speech impairments resulting from conditions such as Autism Spectrum Disorder, Cerebral Palsy, or ALS. While effective for structured expression, these devices often present challenges in the fast paced, interactive context of video games. This technological gap can lead to frustrating user experience and social exclusion for AAC users. Current solutions for this issue generally look like this. Involving in game, simulated AAC boards, which require users to learn a new, game specific interface rather than using their own familiar device. This project addresses these limitations by developing a reusable software tool, a developer focused API, rather than a single, standalone game. The goal is to provide a solution that game developers can integrate into any new or existing web based application. This approach improves upon the current model by allowing direct input from the users personal devices.
 
 ## Collaborators
 

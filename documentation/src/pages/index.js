@@ -20,15 +20,10 @@ function HomepageHeader() {
           <Link className="button button--secondary button--lg" to="/getting-started/intro">
             Learn the Basics
           </Link>
-          
         </div>
-        <pre style={{
-  maxWidth: '25rem',
-  minWidth: '20rem',
-  margin: '20px auto',
-  borderRadius: '8px',
-  overflow: 'hidden',
-}}><CodeBlock title="Add To Your Project" language="bash">{`npm install aac-voice-api`}</CodeBlock></pre>
+        <div className="heroPreBlock">
+          <CodeBlock className='heroCodeBlock' title="Add To Your Project" language="bash">{`npm install aac-voice-api`}</CodeBlock>
+        </div>
       </div>
     </header>
   );

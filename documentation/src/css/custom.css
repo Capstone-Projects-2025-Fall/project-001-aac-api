@@ -45,3 +45,17 @@
   background-color: var(--ifm-color-primary);
 }
 
+.heroCodeBlock {
+  max-width: 25rem;
+  min-width: 20rem;
+  margin: 20px auto;/* have negative bottom margin because hero gets too big */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.heroPreBlock {
+  margin: 0 auto -40px auto;
+  max-width: 25rem;
+  min-width: 20rem;
+}
+
