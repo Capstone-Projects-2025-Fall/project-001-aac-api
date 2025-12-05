@@ -25,7 +25,7 @@ export class SynonymResolver {
   private readonly API_URL = 'https://api.datamuse.com/words';
 
   /** Maximum number of synonyms to fetch per word */
-  private readonly MAX_RESULTS = 5;
+  private MAX_RESULTS = 3;
 
   /** Private constructor prevents direct instantiation - use getInstance() */
   private constructor() {
@@ -212,5 +212,18 @@ export class SynonymResolver {
     console.log(`Pre-fetch complete. Cache now contains ${this.getCacheSize()} words`);
   }
 
+public setMAX_RESULTS(numberOfSynonyms: number):void{
+  if(!numberOfSynonyms){
+    numberOfSynonyms = 3;
+  }
+  if(numberOfSynonyms <1){
+    numberOfSynonyms = 1;
+  }
+
+  this.MAX_RESULTS = numberOfSynonyms;
+}
+public getMax_Results():number{
+  return this.MAX_RESULTS;
+}
 
 }

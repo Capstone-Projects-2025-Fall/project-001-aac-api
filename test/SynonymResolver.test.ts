@@ -178,10 +178,10 @@ describe('SynonymResolver', () => {
 
   it('should call API with correct URL parameters', async () => {
     mockApiSuccess(['leap', 'hop']);
-    
+    const max = resolver.getMax_Results();
     await resolver.getSynonyms('jump');
     
     expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('ml=jump'));
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('max=5'));
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining(`max=${max}`));
   });
 });

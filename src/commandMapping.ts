@@ -67,6 +67,7 @@ export class CommandMapping {
    * @param {string} options.description - Description of what the command does
    * @param {boolean} options.active - Whether the command is active (default: true)
    * @param {boolean} options.fetchSynonyms - Whether to auto-fetch synonyms (default: true)
+   * @param {number} options.numberOfSynonyms - Number of synonyms to fetch (default: 3)
    * @returns {Promise<CommandAddResult>} Result object with command and synonym information
    */
   public async addCommand(
@@ -76,6 +77,7 @@ export class CommandMapping {
       description?: string;
       active?: boolean;
       fetchSynonyms?: boolean;
+      numberOfSynonyms?: number;
     }
   ): Promise<CommandAddResult> {
     const normalized = this.normalize(name);
@@ -126,10 +128,15 @@ export class CommandMapping {
 
     // Fetch and register synonyms if enabled (default: true)
     const fetchSynonyms = options?.fetchSynonyms ?? true;
+    let numOfSynonyms = options?.numberOfSynonyms ?? 3;
     let synonymsMapped: string[] = [];
 
     if (fetchSynonyms) {
       try {
+        if(numOfSynonyms<1){
+          numOfSynonyms = 1;
+        }
+        this.synonymResolver.setMAX_RESULTS(numOfSynonyms);//set the number of synonyms to be added
         synonymsMapped = await this.fetchAndRegisterSynonyms(normalized);
       } catch (error) {
         console.error(`Error fetching synonyms for "${normalized}":`, error);
