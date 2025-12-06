@@ -6,6 +6,7 @@ import Layout from '@theme/Layout';
 import ProjectReadme from '../components/ReademeMD';
 import styles from './index.module.css';
 import MDXContent from '@theme/MDXContent';
+import CodeBlock from '@theme/CodeBlock';
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -19,6 +20,9 @@ function HomepageHeader() {
           <Link className="button button--secondary button--lg" to="/getting-started/intro">
             Learn the Basics
           </Link>
+        </div>
+        <div className="heroPreBlock">
+          <CodeBlock className='heroCodeBlock' title="Add To Your Project" language="bash">{`npm install aac-voice-api`}</CodeBlock>
         </div>
       </div>
     </header>

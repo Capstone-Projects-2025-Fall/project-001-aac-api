@@ -262,6 +262,7 @@ export class AACVoiceAPI{
       description?: string;
       active?: boolean;
       fetchSynonyms?: boolean;
+      numberOfSynonyms?: number;
       
     }
     ): Promise<CommandAddResult> {

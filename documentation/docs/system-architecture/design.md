@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ### AudioHandler
 
-The AudioHandler component manages all audio processing within the AACommodate API, handling both input audio processing and output speech synthesis.
+The AudioHandler component manages all audio processing within the AACcommodate API, handling both input audio processing and output speech synthesis.
 
 Key Features:
 1. RNNoise – Advanced noise suppression and audio filtering to remove background noise and improve audio quality
@@ -18,12 +18,12 @@ Interfaces:
 - Receives audio input from AAC users
 - Sends processed audio data to Command Converter for interpretation
 - Provides speech output through system audio APIs
-- ntegrates with web audio APIs for real-time processing
+- Integrates with web audio APIs for real-time processing
 
 
 ### Developer Tools
 
-The Developer Tools component provides essential utilities for AAC game developers to integrate and customize the AACommodate API within their applications.
+The Developer Tools component provides essential utilities for AAC game developers to integrate and customize the AACcommodate API within their applications.
 
 Key Features:
 1. Command Library–  repository of pre-defined game commands that developers can implement
