@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">86.57% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>126/144</span>
+                <span class='fraction'>129/149</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.21% </span>
+                <span class="strong">82.92% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>32/38</span>
+                <span class='fraction'>34/41</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">86.57% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>126/144</span>
+                <span class='fraction'>129/149</span>
             </div>
         
             
@@ -402,7 +402,14 @@
 <a name='L337'></a><a href='#L337'>337</a>
 <a name='L338'></a><a href='#L338'>338</a>
 <a name='L339'></a><a href='#L339'>339</a>
-<a name='L340'></a><a href='#L340'>340</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -473,6 +480,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
@@ -481,6 +489,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -531,8 +540,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -810,6 +824,7 @@ export class CommandMapping {
    * @param {string} options.description - Description of what the command does
    * @param {boolean} options.active - Whether the command is active (default: true)
    * @param {boolean} options.fetchSynonyms - Whether to auto-fetch synonyms (default: true)
+   * @param {number} options.numberOfSynonyms - Number of synonyms to fetch (default: 3)
    * @returns {Promise&lt;CommandAddResult&gt;} Result object with command and synonym information
    */
   public async addCommand(
@@ -819,6 +834,7 @@ export class CommandMapping {
       description?: string;
       active?: boolean;
       fetchSynonyms?: boolean;
+      numberOfSynonyms?: number;
     }
   ): Promise&lt;CommandAddResult&gt; {
     const normalized = this.normalize(name);
@@ -869,10 +885,15 @@ export class CommandMapping {
 &nbsp;
     // Fetch and register synonyms if enabled (default: true)
     const fetchSynonyms = options?.<span class="branch-0 cbranch-no" title="branch not covered" >fetchSynonyms ?? true;</span>
+    let numOfSynonyms = options?.numberOfSynonyms ?? 3;
     let synonymsMapped: string[] = [];
 &nbsp;
     if (fetchSynonyms) {
       try {
+        if(numOfSynonyms&lt;1)<span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >          numOfSynonyms = 1;</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+        this.synonymResolver.setMAX_RESULTS(numOfSynonyms);//set the number of synonyms to be added
         synonymsMapped = await this.fetchAndRegisterSynonyms(normalized);
 <span class="branch-0 cbranch-no" title="branch not covered" >      } catch (error) {</span>
 <span class="cstat-no" title="statement not covered" >        console.error(`Error fetching synonyms for "${normalized}":`, error);</span>
@@ -1087,7 +1108,7 @@ export class CommandMapping {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-04T03:36:36.214Z
+                at 2025-12-06T01:23:54.739Z
             </div>
         <script src="prettify.js"></script>
         <script>
